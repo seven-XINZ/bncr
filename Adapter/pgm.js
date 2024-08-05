@@ -2,11 +2,11 @@
  * This file is part of the App project.
  * @author YuanKK
  * @name pgm
- * @origin 空中楼阁
+ * team xinz
  * @version 1.0.0
  * @description pgm适配器
  * @adapter true
- * @public false
+ * @public true
  * @disable false
  * @priority 200
  */
