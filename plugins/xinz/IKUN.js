@@ -1,5 +1,5 @@
 /**作者
- * @author 薛定谔的大灰机
+ * @author seven
  * @name IKUN
  * @team xinz
  * @version 1.0.2
