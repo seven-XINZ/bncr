@@ -7,6 +7,7 @@
  * @rule ^(ai|画图|yy) ([\s\S]+)$
  * @rule ^(ai|yy|画图)$
  * @admin false
+ * @public true
  * @priority 99999
  * @classification ["插件"]
  * @disable false
