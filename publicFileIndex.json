@@ -1,1 +1,157 @@
-
+{
+  "annotation": "该文件由系统自动生成. 用于插件市场索引,请勿编辑该文件中的任何内容",
+  "QX5RavlIH31jh9yV9vKMzahK+tk=": {
+    "type": "github",
+    "name": "HumanTG",
+    "author": "Aming",
+    "team": "Bncr团队",
+    "version": "1.0.6",
+    "description": "Telegarm人行适配器",
+    "classification": [
+      "官方适配器"
+    ],
+    "filename": "HumanTG.js",
+    "fileDir": "/Adapter/HumanTG.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": true,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "QX5RavlIH31jh9yV9vKMzahK+tk=",
+    "isChatPlugin": false
+  },
+  "xXwpd8SPCfZ06vcvqQCTKXAiHQ8=": {
+    "type": "github",
+    "name": "tgBot",
+    "author": "Aming",
+    "team": "Bncr团队",
+    "version": "1.0.3",
+    "description": "tgBot适配器",
+    "classification": [
+      "官方适配器"
+    ],
+    "filename": "tgBot.js",
+    "fileDir": "/Adapter/tgBot.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": true,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "xXwpd8SPCfZ06vcvqQCTKXAiHQ8=",
+    "isChatPlugin": false
+  },
+  "vgi94FtwpjHpVNpQrC9Fb3Q8BIA=": {
+    "type": "github",
+    "name": "wxKeAImao",
+    "author": "Aming",
+    "team": "Bncr团队",
+    "version": "1.0.3",
+    "description": "wxKeAImao适配器",
+    "classification": [
+      "官方适配器"
+    ],
+    "filename": "wxKeAImao.js",
+    "fileDir": "/Adapter/wxKeAImao.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": true,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "vgi94FtwpjHpVNpQrC9Fb3Q8BIA=",
+    "isChatPlugin": false
+  },
+  "wAOS0D6TIOBHib03r3xqCxDF5Ac=": {
+    "type": "github",
+    "name": "wxQianxun",
+    "author": "Aming",
+    "team": "Bncr团队",
+    "version": "1.0.3",
+    "description": "wxQianxun适配器",
+    "classification": [
+      "官方适配器"
+    ],
+    "filename": "wxQianxun.js",
+    "fileDir": "/Adapter/wxQianxun.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": true,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "wAOS0D6TIOBHib03r3xqCxDF5Ac=",
+    "isChatPlugin": false
+  },
+  "WqKaJKsunZOU1J3q1DGFigrkdA0=": {
+    "type": "github",
+    "name": "wxXyo",
+    "author": "Anmour",
+    "team": "Bncr团队",
+    "version": "1.0.2",
+    "description": "wxXyo适配器",
+    "classification": [
+      "官方适配器"
+    ],
+    "filename": "wxXyo.js",
+    "fileDir": "/Adapter/wxXyo.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": true,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "WqKaJKsunZOU1J3q1DGFigrkdA0=",
+    "isChatPlugin": false
+  },
+  "fqglT/LUjxe/ftVwql910keHGs4=": {
+    "type": "github",
+    "name": "ping",
+    "author": "seven",
+    "team": "xinz",
+    "version": "1.17.0",
+    "description": "ping/web测速插件",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "ping.js",
+    "fileDir": "/plugins/xinz/ping.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "fqglT/LUjxe/ftVwql910keHGs4=",
+    "isChatPlugin": true
+  },
+  "CnSNt7HhDyxvH10xE1PZGNfv1Jo=": {
+    "type": "github",
+    "name": "二维码生成",
+    "author": "seven",
+    "team": "xinz",
+    "version": "1.0.1",
+    "description": "二维码生成插件，通过自定义的API接口生成二维码",
+    "classification": [
+      "工具"
+    ],
+    "filename": "二维码生成.js",
+    "fileDir": "/plugins/xinz/二维码生成.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "CnSNt7HhDyxvH10xE1PZGNfv1Jo=",
+    "isChatPlugin": true
+  }
+}
