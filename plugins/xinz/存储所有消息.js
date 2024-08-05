@@ -1,7 +1,7 @@
 /**
  * @author zhu
  * @name 全体消息
- * @origin zhu
+ * @team xinz
  * @version v1.0.0
  * @description 将无界收到的所有消息存放的本地数据库。
  * @create_at 2023-01-24 21:24:15
