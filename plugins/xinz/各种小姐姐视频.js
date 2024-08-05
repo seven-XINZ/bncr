@@ -4,7 +4,7 @@
  * @admin false
  * @public false
  * @author zhu
- * @origin zhu
+ * @team xinz
  * @Github https://github.com/Mrzqd
  * @version 1.0.0
  * @disable false
