@@ -66,6 +66,28 @@
     "id": "xXwpd8SPCfZ06vcvqQCTKXAiHQ8=",
     "isChatPlugin": false
   },
+  "IxmdixsmKwTuMOl9hQjyBBk6Oqc=": {
+    "type": "github",
+    "name": "web",
+    "author": "Aming",
+    "team": "官方",
+    "version": "3.0.0",
+    "description": "web交互适配器",
+    "classification": [
+      "官方适配器"
+    ],
+    "filename": "web.js",
+    "fileDir": "/Adapter/web.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": true,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": true,
+    "id": "IxmdixsmKwTuMOl9hQjyBBk6Oqc=",
+    "isChatPlugin": false
+  },
   "vgi94FtwpjHpVNpQrC9Fb3Q8BIA=": {
     "type": "github",
     "name": "wxKeAImao",
