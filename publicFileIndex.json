@@ -527,5 +527,27 @@
     "isEncPlugin": false,
     "id": "EEdkb1ElSNir3XDk+Xss4Vv7eGU=",
     "isChatPlugin": true
+  },
+  "HhXF/FXEqzOYxpPt9IAV9NRVWjc=": {
+    "type": "github",
+    "name": "爱快重拨",
+    "author": "seven",
+    "team": "xinz",
+    "version": "1.1.7",
+    "description": "控制iKuai重新拨号",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "爱快重拨.js",
+    "fileDir": "/plugins/xinz/爱快重拨.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "HhXF/FXEqzOYxpPt9IAV9NRVWjc=",
+    "isChatPlugin": true
   }
 }
