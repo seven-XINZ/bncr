@@ -264,6 +264,28 @@
     "id": "cUAH+l5tCi24vPAuJndteWullJY=",
     "isChatPlugin": true
   },
+  "QlcN9vH0oBUdgkJvjZQEeXOICxQ=": {
+    "type": "github",
+    "name": "USER_AGENTS",
+    "author": "seven",
+    "team": "xinz",
+    "version": "v1.0.4",
+    "description": "🐒本仓库插件依赖此模块",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "USER_AGENTS.js",
+    "fileDir": "/plugins/xinz/mod/USER_AGENTS.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": true,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "QlcN9vH0oBUdgkJvjZQEeXOICxQ=",
+    "isChatPlugin": false
+  },
   "fqglT/LUjxe/ftVwql910keHGs4=": {
     "type": "github",
     "name": "ping",
