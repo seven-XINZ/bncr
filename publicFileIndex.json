@@ -593,5 +593,27 @@
     "isEncPlugin": false,
     "id": "Jlzj4O9eWqROJqkM+yIuW4taqHQ=",
     "isChatPlugin": true
+  },
+  "oqntx40MX++gA/ZFucquO6DKebU=": {
+    "type": "github",
+    "name": "舔狗日记",
+    "author": "seven",
+    "team": "xinz",
+    "version": "1.0.5",
+    "description": "舔狗日记",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "舔狗日记.js",
+    "fileDir": "/plugins/xinz/舔狗日记.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "oqntx40MX++gA/ZFucquO6DKebU=",
+    "isChatPlugin": true
   }
 }
