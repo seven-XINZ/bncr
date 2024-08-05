@@ -8,8 +8,9 @@
  * @rule ^上([\s\S]+)条消息$
  * @priority 1
  * @admin flase
- * @public false
+ * @public true
  * @disable false
+ * @classification ["功能插件"]  
  */
 
 
