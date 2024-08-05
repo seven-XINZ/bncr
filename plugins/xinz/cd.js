@@ -1,15 +1,16 @@
 /**
  * @author 咸鱼
- * @name cd2
- * @team 
+ * @name cd
+ * @team xinz
  * @version v1.0.0
  * @description 菜单功能
  * @rule ^(菜单)$
  * @priority 10
  * @admin false
- * @public false
+ * @public true
  * @encrypt false
  * @disable false
+ * @classification ["功能插件"]  
  */
 
 module.exports = async s => {
