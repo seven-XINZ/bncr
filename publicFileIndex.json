@@ -110,6 +110,28 @@
     "id": "vgi94FtwpjHpVNpQrC9Fb3Q8BIA=",
     "isChatPlugin": false
   },
+  "/dYGSmV9Q9z/dctWzOcKXrN9Q04=": {
+    "type": "github",
+    "name": "wxMP",
+    "author": "Merrick",
+    "team": "Merrick",
+    "version": "1.0.4",
+    "description": "微信公众号适配器",
+    "classification": [
+      "适配器"
+    ],
+    "filename": "wxMP.js",
+    "fileDir": "/Adapter/wxMP.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": true,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "/dYGSmV9Q9z/dctWzOcKXrN9Q04=",
+    "isChatPlugin": false
+  },
   "wAOS0D6TIOBHib03r3xqCxDF5Ac=": {
     "type": "github",
     "name": "wxQianxun",
