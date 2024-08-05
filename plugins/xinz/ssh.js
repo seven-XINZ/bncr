@@ -7,7 +7,9 @@
  * @rule ^(SSH|ssh)$
  * @priority 10000
  * @admin true
+ * @public true
  * @disable false
+ * @classification ["功能插件"]  
  */
 
 // 引入所需的 SSH2 模块和 child_process 模块
