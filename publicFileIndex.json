@@ -417,5 +417,27 @@
     "isEncPlugin": false,
     "id": "XYzGWiCTgCXS4mMV7/Xbq1wZwvM=",
     "isChatPlugin": true
+  },
+  "9rT6GpPCLzYeLk9a71i/XTUUMuI=": {
+    "type": "github",
+    "name": "摸鱼",
+    "author": "Dswang",
+    "team": "xinz",
+    "version": "1.0.1",
+    "description": "摸鱼人日历，可以自定义接口",
+    "classification": [
+      "工具"
+    ],
+    "filename": "摸鱼.js",
+    "fileDir": "/plugins/xinz/摸鱼.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "9rT6GpPCLzYeLk9a71i/XTUUMuI=",
+    "isChatPlugin": true
   }
 }
