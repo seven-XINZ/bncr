@@ -461,5 +461,27 @@
     "isEncPlugin": false,
     "id": "TdWDwcxDxUw3XcpraUVujPjjW2w=",
     "isChatPlugin": true
+  },
+  "UosC73daLJcJvkCXq/D+1MCvl+w=": {
+    "type": "github",
+    "name": "每天60s",
+    "author": "seven",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "60秒读懂世界",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "每天60s.js",
+    "fileDir": "/plugins/xinz/每天60s.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "UosC73daLJcJvkCXq/D+1MCvl+w=",
+    "isChatPlugin": true
   }
 }
