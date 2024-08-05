@@ -7,7 +7,7 @@
  * @description Telegarm人行适配器
  * @adapter true
  * @public true
- * @public true
+ 
  * @priority 101
  * @Copyright ©2023 Aming and Anmours. All rights reserved
  * @classification ["官方适配器"]
