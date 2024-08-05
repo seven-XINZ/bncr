@@ -351,5 +351,27 @@
     "isEncPlugin": false,
     "id": "CnSNt7HhDyxvH10xE1PZGNfv1Jo=",
     "isChatPlugin": true
+  },
+  "DGUtbcT2hyCFeCzRK8Ro3xcNfps=": {
+    "type": "github",
+    "name": "命令大全",
+    "author": "Doraemon",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "无界命令大全",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "命令大全.js",
+    "fileDir": "/plugins/xinz/命令大全.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "DGUtbcT2hyCFeCzRK8Ro3xcNfps=",
+    "isChatPlugin": true
   }
 }
