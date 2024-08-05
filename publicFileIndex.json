@@ -154,10 +154,10 @@
     "id": "5heElVjXhQ8CWR8kI6PlSlVrDd4=",
     "isChatPlugin": true
   },
-  "sj8Wa9ZA2Z8twf6RtKHvDqj6KhM=": {
+  "Vz+9Ew7UNoaiqCCbEh2PF2j7VJA=": {
     "type": "github",
     "name": "IKUN",
-    "author": "薛定谔的大灰机",
+    "author": "seven",
     "team": "xinz",
     "version": "1.0.2",
     "description": "发送IKUN语录和表情包支持所有平台",
@@ -173,7 +173,7 @@
     "isService": false,
     "isAuthentication": false,
     "isEncPlugin": false,
-    "id": "sj8Wa9ZA2Z8twf6RtKHvDqj6KhM=",
+    "id": "Vz+9Ew7UNoaiqCCbEh2PF2j7VJA=",
     "isChatPlugin": true
   },
   "cUAH+l5tCi24vPAuJndteWullJY=": {
