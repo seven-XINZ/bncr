@@ -1,4 +1,4 @@
-<h1 align="center">无界 | Bncr | Boundless Nodejs Chat Robot</h1>
+<h1 align="center">无界 | Bncr | Xinz / XianYu </h1>
 <div align="center">
 # -无界机器人插件以及其他的一些自己写的或者从开源项目二改的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置
 xinz/ChatGPT.js   
