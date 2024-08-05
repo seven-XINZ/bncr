@@ -373,5 +373,27 @@
     "isEncPlugin": false,
     "id": "DGUtbcT2hyCFeCzRK8Ro3xcNfps=",
     "isChatPlugin": true
+  },
+  "A29KLLDv1JjGthz03ihmzT8Vd64=": {
+    "type": "github",
+    "name": "天气",
+    "author": "seven",
+    "team": "xinz",
+    "version": "1.0.22",
+    "description": "中文城市自动转英文查询天气",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "天气.js",
+    "fileDir": "/plugins/xinz/天气.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "A29KLLDv1JjGthz03ihmzT8Vd64=",
+    "isChatPlugin": true
   }
 }
