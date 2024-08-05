@@ -395,5 +395,27 @@
     "isEncPlugin": false,
     "id": "A29KLLDv1JjGthz03ihmzT8Vd64=",
     "isChatPlugin": true
+  },
+  "XYzGWiCTgCXS4mMV7/Xbq1wZwvM=": {
+    "type": "github",
+    "name": "微信好友申请、拉群",
+    "author": "薛定谔的大灰机",
+    "team": "xinz",
+    "version": "2.0.1",
+    "description": "下方加群关键词可自定义",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "微信好友申请、拉群.js",
+    "fileDir": "/plugins/xinz/微信好友申请、拉群.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "XYzGWiCTgCXS4mMV7/Xbq1wZwvM=",
+    "isChatPlugin": true
   }
 }
