@@ -15,6 +15,7 @@
  *  @priority 9999
  *  @public false
  *  @disable false
+ * @classification ["功能插件"]  
  说明：
  1.支持设置多个主机信息
  2.ssh后不跟数字会让你选择要执行的主机编号
