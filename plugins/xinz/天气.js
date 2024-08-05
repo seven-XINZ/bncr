@@ -7,10 +7,11 @@
  * @rule ^天气([\s\S]+)$
  * @rule ^([\s\S]+)(天气)$
  * @admin false
- * @public false
+ * @public true
  * @priority 9999
  * @disable false
  * @service false
+ * @classification ["功能插件"]  
  */
 
 const https = require('https'); // 使用 Node.js 内置的 https 模块
