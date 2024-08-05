@@ -6,7 +6,7 @@
  * @team xinz
  * @rule ^(gems|gemc|gemp)([\s\S]+)$
  * @admin false
- * @public false
+ * @public true
  * @priority 9999
  * @classification ["插件"]
  * @disable false
