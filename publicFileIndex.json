@@ -615,5 +615,27 @@
     "isEncPlugin": false,
     "id": "oqntx40MX++gA/ZFucquO6DKebU=",
     "isChatPlugin": true
+  },
+  "igoPTLlTJSwn8BHC8emGklKO0yM=": {
+    "type": "github",
+    "name": "菜单",
+    "author": "seven",
+    "team": "xinz",
+    "version": "1.0.4",
+    "description": "可自定义菜单内容和底部显示的菜单插件",
+    "classification": [
+      "工具"
+    ],
+    "filename": "菜单.js",
+    "fileDir": "/plugins/xinz/菜单.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "igoPTLlTJSwn8BHC8emGklKO0yM=",
+    "isChatPlugin": true
   }
 }
