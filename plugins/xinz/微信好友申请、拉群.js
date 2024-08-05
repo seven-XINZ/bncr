@@ -9,7 +9,9 @@
  * @platform wxXyo
  * @priority 99999
  * @admin false
+ * @public true
  * @disable false
+ * @classification ["功能插件"]  
  */
 
  /**    更新日志：
