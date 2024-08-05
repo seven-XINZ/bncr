@@ -2,7 +2,7 @@
  * This file is part of the App project.
  * @author 小寒寒
  * @name wechaty
- * @origin Bncr团队
+ * @team Bncr团队
  * @version 1.0.5
  * @description wx机器人内置适配器，微信需要实名
  * @adapter true
@@ -139,13 +139,13 @@ module.exports = async () => {
     });
 
     // 心跳，防止掉线
-    // bot.on('heartbeat', async data => {
-    //     try {
-    //         const contact = await bot.Contact.find({ name: "文件传输助手" });
-    //         await contact.say("[爱心]")
-    //     }
-    //     catch (e) { }
-    // });
+    bot.on('heartbeat', async data => {
+        try {
+            const contact = await bot.Contact.find({ name: "文件传输助手" });
+            await contact.say("[爱心]")
+        }
+        catch (e) { }
+    });
 
     bot.on('error', async (error) => {
         if (error.message.includes('Network error')) {

@@ -1,12 +1,14 @@
 /**
  * @author Merrick
  * @name wxMP
- * @version 1.0.3
+ * @version 1.0.4
  * @description 微信公众号适配器
+ * @team Merrick
  * @adapter true
  * @public false
  * @disable false
- * @priority 2
+ * @priority 2 
+ * @classification ["适配器"]
  * @Copyright ©2023 Merrick. All rights reserved
  */
 
@@ -18,6 +20,7 @@ v1.0.1 1.修复回复视频出错的问题
 v1.0.2 优化消息拉取方式，提高响应，减少错漏
 v1.0.3 1.添加关注公众号推送欢迎消息的功能，消息可以自定义
        2.优化控制台里的错误信息显示
+v1.0.4 适配3.0
 
 注意：1.适配器只提供基本功能，可以用无界的官方命令测试，其他各种插件的问题请@插件作者适配
       2.服务号消息连续回复、自定义菜单等附件功能超出了个人订阅号的权限，因无法测试暂不添加

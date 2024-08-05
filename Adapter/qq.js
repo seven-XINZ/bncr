@@ -6,7 +6,7 @@
  * @version 1.0.1
  * @description 外置qq机器人适配器
  * @adapter true
- * @public true
+ * @public false
  * @disable false
  * @priority 10000
  * @classification ["官方适配器"]

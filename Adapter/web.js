@@ -6,7 +6,7 @@
  * @version 3.0.0
  * @description web交互适配器
  * @adapter true
- * @public true
+ * @public false
  * @disable false
  * @priority 100
  * @classification ["官方适配器"]
