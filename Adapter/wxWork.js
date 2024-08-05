@@ -4,7 +4,7 @@
  * @version 1.0.1
  * @description 企业微信适配器
  * @adapter true
- * @public false
+ * @public true
  * @disable false
  * @priority 2
  * @Copyright ©2023 Merrick. All rights reserved
