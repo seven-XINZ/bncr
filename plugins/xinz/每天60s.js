@@ -7,10 +7,11 @@
  *  @description 60秒读懂世界
  *  @rule ^(60s)$
  *  @admin false
- *  @public false
+ * @public true
  *  @priority 99999
  *  @disable false
  *  @cron 0 10 9 * * *
+ * @classification ["功能插件"]  
  */
 
 module.exports = async s => {
