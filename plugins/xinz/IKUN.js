@@ -7,7 +7,9 @@
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty
  * @rule ^(鸡你太美|坤坤|ikun|IKUN|小黑子|小黑粉|真爱粉|你干嘛|纯路人|人民网)(.*)$
  * @admin false
+ * @public true
  * @disable false
+ * @classification ["功能插件"]  
  */
 
 const request = require('request');
