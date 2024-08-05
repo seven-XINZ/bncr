@@ -110,6 +110,28 @@
     "id": "WqKaJKsunZOU1J3q1DGFigrkdA0=",
     "isChatPlugin": false
   },
+  "cUAH+l5tCi24vPAuJndteWullJY=": {
+    "type": "github",
+    "name": "cd",
+    "author": "咸鱼",
+    "team": "xinz",
+    "version": "v1.0.0",
+    "description": "菜单功能",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "cd.js",
+    "fileDir": "/plugins/xinz/cd.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "cUAH+l5tCi24vPAuJndteWullJY=",
+    "isChatPlugin": true
+  },
   "fqglT/LUjxe/ftVwql910keHGs4=": {
     "type": "github",
     "name": "ping",
