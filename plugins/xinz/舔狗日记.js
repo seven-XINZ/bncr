@@ -14,13 +14,14 @@
  * // 是否管理员才能触发命令
  * @admin flase
  * // 是否发布插件，预留字段，可忽略
- * @public false
+ * @public true
  * // 插件优先级，越大优先级越高  如果两个插件正则一样，则优先级高的先被匹配
  * @priority 9999
  * // 是否禁用插件
  * @disable false
  * // 是否服务模块，true不会作为插件加载，会在系统启动时执行该插件内容
  * @service false
+ * @classification ["功能插件"]  
  */
 
 const request = require('request');
