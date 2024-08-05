@@ -110,6 +110,28 @@
     "id": "WqKaJKsunZOU1J3q1DGFigrkdA0=",
     "isChatPlugin": false
   },
+  "J+17f9sYzVwMnDK0Mjj39zIpAKI=": {
+    "type": "github",
+    "name": "ChatGPT",
+    "author": "seven",
+    "team": "xinz",
+    "version": "1.0.5",
+    "description": "ChatGpt聊天，适配无界3.0，增加TTS功能",
+    "classification": [
+      "插件"
+    ],
+    "filename": "ChatGPT.js",
+    "fileDir": "/plugins/xinz/ChatGPT.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "J+17f9sYzVwMnDK0Mjj39zIpAKI=",
+    "isChatPlugin": true
+  },
   "sj8Wa9ZA2Z8twf6RtKHvDqj6KhM=": {
     "type": "github",
     "name": "IKUN",
