@@ -6,7 +6,7 @@
  * @description 可自定义菜单内容和底部显示的菜单插件
  * @rule ^(菜单)$
  * @admin false
- * @public false
+ * @public true
  * @priority 1000
  * @disable false
  * @classification ["工具"]
