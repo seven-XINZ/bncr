@@ -7,7 +7,9 @@
  * @rule ^(爱快|ikuai|iKuai)(重拨|重播)([0-9]+)$
  * @rule ^(爱快|ikuai|iKuai)(查询|重拨|重播|重启|重置)$
  * @admin true
+ * @public true
  * @disable false
+ * @classification ["功能插件"]  
  */
 
 /**
