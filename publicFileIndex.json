@@ -110,29 +110,6 @@
     "id": "WqKaJKsunZOU1J3q1DGFigrkdA0=",
     "isChatPlugin": false
   },
-  "gzT0fxKB/t6XQG9ml6arKGIoF/g=": {
-    "type": "github",
-    "name": "Bncr_ChatGPT",
-    "author": "seven",
-    "team": "xinz",
-    "version": "1.2.0",
-    "description": "ChatGpt聊天 借助于chatgpt模块，增加tts功能",
-    "classification": [
-      "ai",
-      "gpt"
-    ],
-    "filename": "Bncr_ChatGPT.js",
-    "fileDir": "/plugins/xinz/Bncr_ChatGPT.js",
-    "systemVersionRange": "",
-    "isCron": false,
-    "isAdapter": false,
-    "isMod": false,
-    "isService": false,
-    "isAuthentication": false,
-    "isEncPlugin": false,
-    "id": "gzT0fxKB/t6XQG9ml6arKGIoF/g=",
-    "isChatPlugin": true
-  },
   "fqglT/LUjxe/ftVwql910keHGs4=": {
     "type": "github",
     "name": "ping",
