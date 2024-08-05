@@ -132,6 +132,28 @@
     "id": "J+17f9sYzVwMnDK0Mjj39zIpAKI=",
     "isChatPlugin": true
   },
+  "5heElVjXhQ8CWR8kI6PlSlVrDd4=": {
+    "type": "github",
+    "name": "Gemini",
+    "author": "Merrick",
+    "team": "xinz",
+    "version": "1.0.2",
+    "description": "gemini聊天",
+    "classification": [
+      "插件"
+    ],
+    "filename": "Gemini.js",
+    "fileDir": "/plugins/xinz/Gemini.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "5heElVjXhQ8CWR8kI6PlSlVrDd4=",
+    "isChatPlugin": true
+  },
   "sj8Wa9ZA2Z8twf6RtKHvDqj6KhM=": {
     "type": "github",
     "name": "IKUN",
