@@ -5,8 +5,9 @@
 * @description Crypto算法模块，更新支持全加密种类
 * @version v1.1.1
 * @title CryptoJS
-* @public false
+* @public true
 * @encrypt true
+* @classification ["功能插件"]  
 
 //与原生语法相同，详见https://github.com/brix/crypto-js
 */
