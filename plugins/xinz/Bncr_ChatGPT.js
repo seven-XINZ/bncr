@@ -8,7 +8,7 @@
  * @rule ^(ai)$
  * @rule ^(yy) ([\s\S]+)$
  * @admin false
- * @public true
+ * @public false
  * @priority 10
  * @platform wx pgm tg web qq ntqq
  * @disable false
