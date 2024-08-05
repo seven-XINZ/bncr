@@ -7,7 +7,9 @@
  * @rule ^(qb操作)$
  * @priority 10000
  * @admin true
+ * @public true
  * @disable false
+ * @classification ["功能插件"]  
  */
 sysMethod.testModule(['@ctrl/qbittorrent'], { install: true });
 
