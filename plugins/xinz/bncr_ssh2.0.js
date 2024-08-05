@@ -14,7 +14,7 @@
  *  @admin true
  *  @priority 9999
  *  @public false
- *  @disable false
+ * @public true
  * @classification ["功能插件"]  
  说明：
  1.支持设置多个主机信息
