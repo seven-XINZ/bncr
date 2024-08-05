@@ -5,7 +5,8 @@
  * @team xinz
  * @description 🐒本仓库插件依赖此模块
  * @module true
- * @public false
+ * @public true
+ * @classification ["功能插件"]  
  */
 
  module.exports = {
