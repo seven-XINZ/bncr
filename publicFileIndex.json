@@ -483,5 +483,49 @@
     "isEncPlugin": false,
     "id": "UosC73daLJcJvkCXq/D+1MCvl+w=",
     "isChatPlugin": true
+  },
+  "uIMWFYu8xQk+7/v2U84rUE9evWU=": {
+    "type": "github",
+    "name": "消息转发",
+    "author": "seven",
+    "team": "xinz",
+    "version": "v2.0.0",
+    "description": "监听某个人或群,当触发关键字,转发到指定目的地",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "消息转发.js",
+    "fileDir": "/plugins/xinz/消息转发.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "uIMWFYu8xQk+7/v2U84rUE9evWU=",
+    "isChatPlugin": true
+  },
+  "EEdkb1ElSNir3XDk+Xss4Vv7eGU=": {
+    "type": "github",
+    "name": "热点趋势",
+    "author": "Dswang",
+    "team": "xinz & SmartAI",
+    "version": "1.0.1",
+    "description": "获取网络热点",
+    "classification": [
+      "工具"
+    ],
+    "filename": "热点趋势.js",
+    "fileDir": "/plugins/xinz/热点趋势.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "EEdkb1ElSNir3XDk+Xss4Vv7eGU=",
+    "isChatPlugin": true
   }
 }
