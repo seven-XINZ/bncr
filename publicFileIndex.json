@@ -22,6 +22,28 @@
     "id": "QX5RavlIH31jh9yV9vKMzahK+tk=",
     "isChatPlugin": false
   },
+  "pM2geMZcPdbWEJ/qrwL666yEBP4=": {
+    "type": "github",
+    "name": "qq",
+    "author": "Aming",
+    "team": "Bncr团队",
+    "version": "1.0.1",
+    "description": "外置qq机器人适配器",
+    "classification": [
+      "官方适配器"
+    ],
+    "filename": "qq.js",
+    "fileDir": "/Adapter/qq.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": true,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "pM2geMZcPdbWEJ/qrwL666yEBP4=",
+    "isChatPlugin": false
+  },
   "xXwpd8SPCfZ06vcvqQCTKXAiHQ8=": {
     "type": "github",
     "name": "tgBot",
