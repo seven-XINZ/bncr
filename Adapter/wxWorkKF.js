@@ -4,7 +4,7 @@
  * @version 1.0.2
  * @description 微信客服适配器
  * @adapter true
- * @public false
+ * @public true
  * @disable false
  * @priority 2
  * @Copyright ©2023 Merrick. All rights reserved
