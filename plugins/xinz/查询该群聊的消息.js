@@ -1,7 +1,7 @@
 /**
  * @author zhu
  * @name 上一条消息
- * @origin zhu
+ * @team xinz
  * @version v1.0.0
  * @description 注意：该插件需要配合存储所有消息使用。
  * @create_at 2023-01-24 21:24:15
