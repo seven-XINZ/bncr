@@ -571,5 +571,27 @@
     "isEncPlugin": false,
     "id": "R9xiDKQxBsCGE6reRSDjuvEG3XE=",
     "isChatPlugin": true
+  },
+  "Jlzj4O9eWqROJqkM+yIuW4taqHQ=": {
+    "type": "github",
+    "name": "自动回复",
+    "author": "seven",
+    "team": "xinz",
+    "version": "v1.0.0",
+    "description": "自动回复",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "自动回复.js",
+    "fileDir": "/plugins/xinz/自动回复.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "Jlzj4O9eWqROJqkM+yIuW4taqHQ=",
+    "isChatPlugin": true
   }
 }
