@@ -7,7 +7,7 @@
  * @rule ^(摸鱼)$
  * @priority 99999
  * @admin false
- * @public false
+ * @public true
  * @classification ["工具"]
  * @disable false
  */
