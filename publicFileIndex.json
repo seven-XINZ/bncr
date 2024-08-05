@@ -549,5 +549,27 @@
     "isEncPlugin": false,
     "id": "HhXF/FXEqzOYxpPt9IAV9NRVWjc=",
     "isChatPlugin": true
+  },
+  "R9xiDKQxBsCGE6reRSDjuvEG3XE=": {
+    "type": "github",
+    "name": "状态查询",
+    "author": "seven",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "本机资源查询",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "状态查询.js",
+    "fileDir": "/plugins/xinz/状态查询.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "R9xiDKQxBsCGE6reRSDjuvEG3XE=",
+    "isChatPlugin": true
   }
 }
