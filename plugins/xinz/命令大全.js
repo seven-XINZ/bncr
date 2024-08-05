@@ -6,8 +6,9 @@
  * @description 无界命令大全
  * @rule ^(命令)$
  * @admin true
- * @public false
+ * @public true
  * @priority 1000
+ * @classification ["功能插件"]  
  */
 
 
