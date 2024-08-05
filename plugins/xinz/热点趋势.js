@@ -7,7 +7,7 @@
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty
  * @rule ^((抖音|微博|知乎|bilibili|bili|哔哩|哔哩哔哩)热搜)$
  * @admin false
- * @public false
+ * @public true
  * @priority 9999
  * @classification ["工具"]
  */
