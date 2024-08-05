@@ -110,6 +110,28 @@
     "id": "WqKaJKsunZOU1J3q1DGFigrkdA0=",
     "isChatPlugin": false
   },
+  "sj8Wa9ZA2Z8twf6RtKHvDqj6KhM=": {
+    "type": "github",
+    "name": "IKUN",
+    "author": "薛定谔的大灰机",
+    "team": "xinz",
+    "version": "1.0.2",
+    "description": "发送IKUN语录和表情包支持所有平台",
+    "classification": [
+      "功能插件"
+    ],
+    "filename": "IKUN.js",
+    "fileDir": "/plugins/xinz/IKUN.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "sj8Wa9ZA2Z8twf6RtKHvDqj6KhM=",
+    "isChatPlugin": true
+  },
   "cUAH+l5tCi24vPAuJndteWullJY=": {
     "type": "github",
     "name": "cd",
