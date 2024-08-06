@@ -6,7 +6,7 @@
 无界机器人插件以及其他的一些自己写的或者从开源项目二改的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置
 xinz/ChatGPT.js   完美版
 ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt
-[gpt对接教程]((https://www.master-jsx.top/archives/1722776733167) 
+[gpt对接教程](https://www.master-jsx.top/archives/1722776733167) 
 [各种模型中转站](https://chatai.master-jsx.top/) 
 [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=qDBPb2) 
 
