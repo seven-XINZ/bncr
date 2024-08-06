@@ -70,15 +70,15 @@ _
 
 # 其他
 
- [Github]https://github.com/seven-XINZ/bncr
- [博客教程]https://www.xinz.fun/archives/1717170773466
+ [Github](https://github.com/seven-XINZ/bncr)
+ [博客教程](https://www.xinz.fun/archives/1717170773466) 
  [Github](https://github.com/Anmours/Bncr)   
  [TG频道](https://t.me/BncrJS)  
  [TG群组](https://t.me/BncrJSChat)  
 
 
 ## 请喝茶 ?
- [联系到我](https://t.me/AmingSuper)  
+ [联系到我]([https://www.xinz.fun])  
 您的支持是我更新的动力,Thank~
 
 ## 免责声明
