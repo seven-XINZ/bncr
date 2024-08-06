@@ -6,6 +6,7 @@
 > **无界机器人插件以及其他的一些自己写的或者从开源项目二改的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置 **
  #xinz/ChatGPT.js   完美版
  ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt
+# ChatGpt聊天UIL
  [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce) 
  [大聪明各种模型中转站](https://chatai.master-jsx.top/) 
  [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=qDBPb2) 
@@ -35,20 +36,20 @@
  发送IKUN语录和表情包
 
 #xinz/ping.js
-ping/web测速插件
-ping www.xinz.fun
-dns: 154.37.152.17
-地区: Los Angeles, California, US
-ip: 154.37.152.17
-延迟: 190.059 ms
-访问 https://www.xinz.fun 成功，用时: 2275 ms
-发包: 4
-接收: 4
-丢包率: 0%
-成功率: 0.00%
+ ping/web测速插件
+ ping www.xinz.fun
+ dns: 154.37.152.17
+ 地区: Los Angeles, California, US
+ ip: 154.37.152.17
+ 延迟: 190.059 ms
+ 访问 https://www.xinz.fun 成功，用时: 2275 ms
+ 发包: 4
+ 接收: 4
+ 丢包率: 0%
+ 成功率: 0.00%
 
 #xinz/qbittorent操作.js
-请发送磁力连接(发送'q'退出'u'返回
+ 请发送磁力连接(发送'q'退出'u'返回
 
 无界项目官网：https://anmours.github.io/Bncr/#/
 无界tg群：https://t.me/BncrJSChat
