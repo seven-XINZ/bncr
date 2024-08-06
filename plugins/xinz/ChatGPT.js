@@ -26,11 +26,9 @@ const requiredModules = ['got', 'chatgpt'];
 function installModules(modules) {
     modules.forEach(module => {
         try {
-            // 尝试导入模块
             require(module);
             console.log(`模块 ${module} 已安装.`);
         } catch (error) {
-            // 如果导入失败，安装模块
             console.log(`模块 ${module} 未安装，正在尝试安装...`);
             execSync(`npm install ${module}`, { stdio: 'inherit' });
             console.log(`模块 ${module} 安装成功.`);
@@ -50,12 +48,10 @@ try {
 }
 
 // 生成 prompts 选项
-let promptNums = [],
-    promptNames = [];
-for (let i = 0; i < prompts.length; i++) {
-    promptNums.push(i);
-    promptNames.push(prompts[i].act);
-}
+const promptOptions = prompts.map((prompt, index) => ({
+    num: index,
+    name: prompt.act
+}));
 
 // 定义模型选项
 const modes = ['web-gpt-3.5-turbo', 'web-gpt-4o-mini', 'gpt-3.5-turbo-16k', 'gpt-4', 'gpt-4-browsing', 'gpt-4-dalle', 'gpt-4-32k', 'midjourney', 'dall-e-2', 'dall-e-3'];
@@ -66,7 +62,7 @@ const jsonSchema = BCS.object({
     apiBaseUrl: BCS.string().setTitle('ApiBaseUrl').setDescription('必填项，一般为"域名/v1"').setDefault(''), // API 基础 URL
     apiKey: BCS.string().setTitle('ApiKey').setDescription('必填项').setDefault(''), // API 密钥
     isEdit: BCS.boolean().setTitle('HumanTG是否开启编辑模式').setDescription('关闭则逐条回复，不编辑消息').setDefault(false), // 编辑模式开关
-    promptSel: BCS.number().setTitle('选择预设角色').setDescription('请根据需要选择').setEnum(promptNums).setEnumNames(promptNames).setDefault(0), // 选择预设角色
+    promptSel: BCS.number().setTitle('选择预设角色').setDescription('请根据需要选择').setEnum(promptOptions.map(opt => opt.num)).setEnumNames(promptOptions.map(opt => opt.name)).setDefault(0), // 选择预设角色
     modeSel: BCS.string().setTitle('选择GPT模型').setDescription('请根据需要选择').setEnum(modes).setDefault('gpt-3.5-turbo'), // 选择 GPT 模型
     promptDiy: BCS.string().setTitle('请输入自定义Prompt').setDescription('输入自定义Prompt会使预设角色失效').setDefault(''), // 自定义 Prompt
     imgBaseUrl: BCS.string().setTitle('画图的ApiBaseUrl').setDescription('启用画图功能必填，一般为"域名/v1"').setDefault(''), // 画图 API 基础 URL
@@ -75,6 +71,7 @@ const jsonSchema = BCS.object({
     ttsEnabled: BCS.boolean().setTitle('启用TTS功能').setDescription('开启后将使用TTS功能').setDefault(false), // TTS开关
     ttsApiBaseUrl: BCS.string().setTitle('TTS ApiBaseUrl').setDescription('启用TTS功能必填，一般为"域名/v1"').setDefault(''), // TTS API 基础 URL
     ttsApiKey: BCS.string().setTitle('TTS ApiKey').setDescription('启用TTS功能必填，根据自己的API支持情况填写').setDefault(''), // TTS API 密钥
+    ttsModel: BCS.string().setTitle('自定义TTS模型').setDescription('可根据需要输入自定义的TTS模型名称').setDefault('zh-CN-XiaoyiNeural') // 自定义 TTS 模型
 });
 
 const ConfigDB = new BncrPluginConfig(jsonSchema); // 创建配置数据库
@@ -107,6 +104,7 @@ module.exports = async s => {
     const ttsEnabled = CDB.ttsEnabled; // 获取TTS开关
     const ttsApiBaseUrl = CDB.ttsApiBaseUrl; // 获取TTS API 基础 URL
     const ttsApiKey = CDB.ttsApiKey; // 获取TTS API 密钥
+    const ttsModel = CDB.ttsModel; // 获取自定义 TTS 模型
 
     // 使用动态导入获取 ChatGPTAPI 和 got
     const { ChatGPTAPI } = await import('chatgpt'); // 导入 ChatGPT API
@@ -121,16 +119,10 @@ module.exports = async s => {
 
     // 处理 'ai' 命令
     if (s.param(1) === 'ai') {
-        let prompt = '';
-        if (!promptDiy) {
-            prompt = prompts[CDB.promptSel].prompt; // 获取选定的预设 Prompt
-        } else {
-            prompt = promptDiy; // 使用自定义 Prompt
-        }
+        let prompt = promptDiy || prompts[CDB.promptSel].prompt; // 获取选定的预设 Prompt 或自定义 Prompt
         const promptMessage = `${prompt}，另外，输出字符限制，输出50-100字。`;
         await relpyMod(s, isEdit, `正在思考中，请稍后...`); // 发送思考中的提示
-        let fistChat = '你好'; // 初始聊天内容
-        if (s.param(2)) fistChat = s.param(2); // 如果有第二个参数，则使用该参数
+        let fistChat = s.param(2) || '你好'; // 初始聊天内容
         let response = await gptAPI.sendMessage(fistChat, {
             systemMessage: promptMessage,
             timeoutMs: 3 * 10 * 1000 // 设置超时时间
@@ -194,8 +186,8 @@ module.exports = async s => {
             const ttsResponse = await got.default.post(`${ttsApiBaseUrl}/synthesize`, {
                 json: {
                     text: message,
-                    voice: 'zh-CN-XiaoyiNeural', // 根据需要设置语音
-                    format: 'mp3' // 根据需要设置格式
+                    voice: ttsModel, // 使用用户自定义的 TTS 模型
+                    format: 'mp3' // 设置格式
                 },
                 headers: {
                     'Authorization': `Bearer ${ttsApiKey}`, // 使用 TTS API 密钥进行身份验证
@@ -212,16 +204,6 @@ module.exports = async s => {
         } catch (error) {
             console.error("TTS请求失败:", error);
             await relpyMod(s, isEdit, "生成语音时发生错误，请稍后再试。");
-        }
-    }
-
-    // relpyMod 函数的实现
-    async function relpyMod(s, isEdit, replyVar) {
-        const userId = s.getUserId(); // 获取用户 ID
-        if (isEdit) {
-            await s.edit(replyVar); // 如果是编辑模式，编辑消息
-        } else {
-            await s.reply(replyVar); // 否则发送新消息
         }
     }
 };
