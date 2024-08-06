@@ -7,6 +7,8 @@
 
 # xinz/ChatGPT.js   完美版
   ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt
+  ![image](https://github.com/user-attachments/assets/4e60e67d-7bf5-4e41-92e9-ac5db9377350)
+
 # ChatGpt聊天UIL
  [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce)   
  [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
