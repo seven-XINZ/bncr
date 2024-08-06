@@ -3,36 +3,38 @@
  _
 </div>
 
-无界机器人插件以及其他的一些自己写的或者从开源项目二改的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置
-xinz/ChatGPT.js   完美版
-ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt
-[大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce) 
-[大聪明各种模型中转站](https://chatai.master-jsx.top/) 
-[TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=qDBPb2) 
+> **无界机器人插件以及其他的一些自己写的或者从开源项目二改的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置 **
+ #xinz/ChatGPT.js   完美版
+ ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt
+ [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce) 
+ [大聪明各种模型中转站](https://chatai.master-jsx.top/) 
+ [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=qDBPb2) 
+ [Github](https://github.com/seven-XINZ/bncr)
+ [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466) 
+ 
+# xinz/Bncr_ChatGPT.js   
+ 1. 添加对话模型引入 ✔
+ 2. 添加对话模型选择 gpt3.5 gpt4 gpts(联网能力) ✔
+ 3. initPrompt,发起会话调用数据库内prompt，数据库内无数据则生成，prompt为默认，修改handleUserActions，添加当前使用模型xx
+ 4. gpt 4 mobile 的连续对话中对于img的传递 ✔
+ 5. handleInput对于用户输入的img的处理,如何修改ntqq适配器使其接收图片的输出为[CQ:image,file=xxx] ✔
+ 6. 取消模型的选择，加入命令ai model ,并在第一条输出中提示当前使用模型
+ 12.17 添加画图功能 ✔
+ 12.19 添加backendUrl，用于调用pandoraToV1Api ✔
+ 12.21 优化请求格式，实现连续对话中对于img的传递
+ 2024.2.8 取消画图 backendurl  * @rule ^(画图) ([\s\S]+)$ ✔
+ 2024.4.10 添加tts功能* @rule ^(yy) ([\s\S]+)$ ✔,重写调用chatgpt模块，got发送请求
 
-xinz/Bncr_ChatGPT.js   
-1. 添加对话模型引入 ✔
-2. 添加对话模型选择 gpt3.5 gpt4 gpts(联网能力) ✔
-3. initPrompt,发起会话调用数据库内prompt，数据库内无数据则生成，prompt为默认，修改handleUserActions，添加当前使用模型xx
-4. gpt 4 mobile 的连续对话中对于img的传递 ✔
-5. handleInput对于用户输入的img的处理,如何修改ntqq适配器使其接收图片的输出为[CQ:image,file=xxx] ✔
-6. 取消模型的选择，加入命令ai model ,并在第一条输出中提示当前使用模型
-12.17 添加画图功能 ✔
-12.19 添加backendUrl，用于调用pandoraToV1Api ✔
-12.21 优化请求格式，实现连续对话中对于img的传递
-2024.2.8 取消画图 backendurl  * @rule ^(画图) ([\s\S]+)$ ✔
-2024.4.10 添加tts功能* @rule ^(yy) ([\s\S]+)$ ✔,重写调用chatgpt模块，got发送请求
+#xinz/Gemini.js
+ gemini聊天 来自谷歌的ai
+ v1.0.1 优化代码，增加单问答模式，修改触发命令，界面增加Max Tokens选项
+ v1.0.0 基于sumuen大佬的插件修改，本人仅修复bug和适配2.0界面
+ v1.0.2 适配3.0
 
-xinz/Gemini.js
-gemini聊天 来自谷歌的ai
-v1.0.1 优化代码，增加单问答模式，修改触发命令，界面增加Max Tokens选项
-v1.0.0 基于sumuen大佬的插件修改，本人仅修复bug和适配2.0界面
-v1.0.2 适配3.0
+# xinz/IKUN.js 
+ 发送IKUN语录和表情包
 
-xinz/IKUN.js 
-发送IKUN语录和表情包
-
-xinz/ping.js
+#xinz/ping.js
 ping/web测速插件
 ping www.xinz.fun
 dns: 154.37.152.17
@@ -45,7 +47,7 @@ ip: 154.37.152.17
 丢包率: 0%
 成功率: 0.00%
 
-xinz/qbittorent操作.js
+#xinz/qbittorent操作.js
 请发送磁力连接(发送'q'退出'u'返回
 
 无界项目官网：https://anmours.github.io/Bncr/#/
