@@ -14,6 +14,7 @@
 
 const os = require('os');
 const { execSync } = require('child_process');
+const si = require('systeminformation');
 
 /**
  * 获取系统运行时间
@@ -145,8 +146,8 @@ function getDiskInfo() {
     // 解析 df -h 的输出，提取每个磁盘的信息
     diskInfo.split('\n').slice(1).forEach(line => {
         const parts = line.split(/\s+/);
-        // 仅返回 /dev/sda1、/dev/sda2 和 /dev/sda3 的信息
-        if (parts[0] === '/dev/sda1' || parts[0] === '/dev/sda2' || parts[0] === '/dev/sda3') {
+        // 过滤并获取所有磁盘的信息，排除 overlay、tmpfs 和 shm
+        if (parts.length >= 6 && !['overlay', 'tmpfs', 'shm'].includes(parts[0])) {
             results[parts[0]] = {
                 '总大小': parts[1], // 总大小
                 '已用': parts[2],    // 已用空间
@@ -159,6 +160,14 @@ function getDiskInfo() {
 }
 
 /**
+ * 获取 CPU 温度
+ */
+async function getCpuTemperature() {
+    const data = await si.cpuTemperature();
+    return data.main; // 返回 CPU 主温度
+}
+
+/**
  * 获取系统信息并发送
  */
 async function getSystemInfo(sender) {
@@ -168,6 +177,7 @@ async function getSystemInfo(sender) {
     const networkInfo = getNetworkInfo();
     const memoryInfo = getMemoryInfo();
     const diskInfo = getDiskInfo();
+    const cpuTemperature = await getCpuTemperature();
 
     // 格式化输出
     const systemInfo = `
@@ -187,6 +197,7 @@ async function getSystemInfo(sender) {
 CPU信息:
 CPU型号: ${cpuInfo['CPU型号']}
 CPU使用率: ${cpuInfo['CPU使用率']}
+CPU温度: ${cpuTemperature} °C
 CPU具体运行状态:
 总进程数: ${cpuInfo['CPU具体运行状态']['总进程数']}
 活动进程数: ${cpuInfo['CPU具体运行状态']['活动进程数']}
