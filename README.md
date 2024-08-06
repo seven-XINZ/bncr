@@ -7,25 +7,25 @@
   [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
 # xinz/ChatGPT.js   完美版
-   ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt 。
-   ApiBaseUrl： 必填项，一般为"域名/v1" 
-   https://chatai.master-jsx.top/v1 
-   ApiKey：必填项 sk-64---------------------------------------edf7d 
-   HumanTG是否开启编辑模式： 关闭则逐条回复，不编辑消息 
-   选择预设角色： 请根据需要选择 猫娘 
-   选择GPT模型：请根据需要选择web-gpt-4o-mini 
-   请输入自定义Prompt： 输入自定义Prompt会使预设角色失 请输入 
-   请输入画图的ApiBaseUrl：启用画图功能必填，一般为"域名/v1" 
-   https://chatai.master-jsx.top/v1 
-   画图的模型：启用画图功能必填，根据自己的API支持情况填写 dall-e-3 
-   画图的ApiKey：启用画图功能必填，根据自己的API支持情况填写 
-   sk-64---------------------------------------edf7d 
-   启用TTS功能： 开启后将使用TTS功能 TTS ApiBaseUrl： 启用TTS功能必填，一般为"域名/v1" 
-   https://chatai.master-jsx.top/v1 
-   TTS ApiKey：启用TTS功能必填，根据自己的API支持情况填写 
-   sk-64---------------------------------------edf7d 
-   自定义TTS模型： 可根据需要输入自定义的TTS模型名称 
-   zh-CN-XiaoyiNeural 
+ ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt 。
+ ApiBaseUrl： 必填项，一般为"域名/v1" 
+ https://chatai.master-jsx.top/v1 
+ ApiKey：必填项 sk-64---------------------------------------edf7d 
+ HumanTG是否开启编辑模式： 关闭则逐条回复，不编辑消息 
+ 选择预设角色： 请根据需要选择 猫娘 
+ 选择GPT模型：请根据需要选择web-gpt-4o-mini 
+ 请输入自定义Prompt： 输入自定义Prompt会使预设角色失 请输入 
+ 请输入画图的ApiBaseUrl：启用画图功能必填，一般为"域名/v1" 
+ https://chatai.master-jsx.top/v1 
+ 画图的模型：启用画图功能必填，根据自己的API支持情况填写 dall-e-3 
+ 画图的ApiKey：启用画图功能必填，根据自己的API支持情况填写 
+ sk-64---------------------------------------edf7d 
+ 启用TTS功能： 开启后将使用TTS功能 TTS ApiBaseUrl： 启用TTS功能必填，一般为"域名/v1" 
+ https://chatai.master-jsx.top/v1 
+ TTS ApiKey：启用TTS功能必填，根据自己的API支持情况填写 
+ sk-64---------------------------------------edf7d 
+ 自定义TTS模型： 可根据需要输入自定义的TTS模型名称 
+ zh-CN-XiaoyiNeural 
 
 
 # ChatGpt聊天UIL
