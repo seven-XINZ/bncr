@@ -8,7 +8,8 @@ xinz/ChatGPT.js   完美版
 ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt
 gpt对接教程:[https://www.master-jsx.top/archives/1722776733167](https://www.master-jsx.top/docs/ChatNio/introduce)
 各种模型中转站:https://chatai.master-jsx.top/
- 
+TTS适配海豚Ai TTS-Online:https://www.ttson.cn/?source=qDBPb2
+
 xinz/Bncr_ChatGPT.js   
 1. 添加对话模型引入 ✔
 2. 添加对话模型选择 gpt3.5 gpt4 gpts(联网能力) ✔
