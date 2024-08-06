@@ -70,6 +70,8 @@ _
 
 # 其他
 
+ [Github]https://github.com/seven-XINZ/bncr
+ [博客教程]https://www.xinz.fun/archives/1717170773466
  [Github](https://github.com/Anmours/Bncr)   
  [TG频道](https://t.me/BncrJS)  
  [TG群组](https://t.me/BncrJSChat)  
