@@ -139,51 +139,38 @@ function getMemoryInfo() {
  * 获取磁盘信息
  */
 function getDiskInfo() {
-  const diskInfo = execSync('df -h').toString();
-  return diskInfo.split('\n').slice(1).map(line => {
-    const parts = line.split(/\s+/);
-    return {
-      '文件系统': parts[0],
-      '总大小': parts[1],
-      '已用': parts[2],
-      '可用': parts[3],
-      '使用率': parts[4],
-    };
-  });
-}
+    const diskInfo = execSync('df -h').toString();
+    const results = {};
 
-/**
- * 获取磁盘信息
- */
-function getDiskInfo() {
-  const diskInfo = execSync('df -h').toString();
-  return diskInfo.split('\n').slice(1).map(line => {
-    const parts = line.split(/\s+/);
-    // 仅返回 /dev/sda1 的信息
-    if (parts[0] === '/dev/sda1') {
-      return {
-        '总大小': parts[1],
-        '已用': parts[2],
-        '可用': parts[3],
-        '使用率': parts[4],
-      };
-    }
-  }).filter(Boolean); // 过滤掉未定义的值
+    // 解析 df -h 的输出，提取每个磁盘的信息
+    diskInfo.split('\n').slice(1).forEach(line => {
+        const parts = line.split(/\s+/);
+        // 仅返回 /dev/sda1、/dev/sda2 和 /dev/sda3 的信息
+        if (parts[0] === '/dev/sda1' || parts[0] === '/dev/sda2' || parts[0] === '/dev/sda3') {
+            results[parts[0]] = {
+                '总大小': parts[1], // 总大小
+                '已用': parts[2],    // 已用空间
+                '可用': parts[3]     // 剩余空间
+            };
+        }
+    });
+
+    return results; // 返回包含磁盘信息的对象
 }
 
 /**
  * 获取系统信息并发送
  */
 async function getSystemInfo(sender) {
-  const uptime = getUptime();
-  const loadInfo = getLoadInfo();
-  const cpuInfo = await getCpuInfo();
-  const networkInfo = getNetworkInfo();
-  const memoryInfo = getMemoryInfo();
-  const diskInfo = getDiskInfo();
+    const uptime = getUptime();
+    const loadInfo = getLoadInfo();
+    const cpuInfo = await getCpuInfo();
+    const networkInfo = getNetworkInfo();
+    const memoryInfo = getMemoryInfo();
+    const diskInfo = getDiskInfo();
 
-  // 格式化输出
-  const systemInfo = `
+    // 格式化输出
+    const systemInfo = `
 运行时间: ${uptime.hours}小时 ${uptime.minutes}分钟
 系统信息:
 版本: ${process.version}
@@ -210,22 +197,26 @@ CPU具体运行状态:
 已用内存: ${memoryInfo['已用内存']}
 
 磁盘信息:
-总大小: ${diskInfo[0]['总大小']}, 已用: ${diskInfo[0]['已用']}, 可用: ${diskInfo[0]['可用']}, 使用率: ${diskInfo[0]['使用率']}
+${Object.entries(diskInfo).map(([disk, info]) => `
+文件系统: ${disk}
+总大小: ${info['总大小']}
+已用: ${info['已用']}
+可用: ${info['可用']}
+`).join('')}
 `;
 
-  await sender.reply(systemInfo);
+    await sender.reply(systemInfo);
 }
 
 // 插件入口，处理指令“运行状态”
 module.exports = async sender => {
+    // 假设用户输入的指令
+    const command = '运行状态';
 
-  // 假设用户输入的指令
-  const command = '运行状态';
-
-  // 检查指令是否为“运行状态”
-  if (command === '运行状态') {
-    await getSystemInfo(sender);
-  } else {
-    await sender.reply('无效指令，请发送“运行状态”以获取系统信息。');
-  }
+    // 检查指令是否为“运行状态”
+    if (command === '运行状态') {
+        await getSystemInfo(sender);
+    } else {
+        await sender.reply('无效指令，请发送“运行状态”以获取系统信息。');
+    }
 };
