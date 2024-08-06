@@ -70,6 +70,8 @@ _
 
 # 其他
 
+
+ 鑫仔
  [Github](https://github.com/seven-XINZ/bncr)
  [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466) 
  官方
