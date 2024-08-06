@@ -7,7 +7,7 @@
   [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
 # xinz/ChatGPT.js   完美版
-   ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt 
+   ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt 。
    ApiBaseUrl： 必填项，一般为"域名/v1" 
    https://chatai.master-jsx.top/v1 
    ApiKey：必填项 sk-64---------------------------------------edf7d 
