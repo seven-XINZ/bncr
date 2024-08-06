@@ -462,28 +462,6 @@
     "id": "9rT6GpPCLzYeLk9a71i/XTUUMuI=",
     "isChatPlugin": true
   },
-  "TdWDwcxDxUw3XcpraUVujPjjW2w=": {
-    "type": "github",
-    "name": "查询该群聊的消息",
-    "author": "zhu",
-    "team": "xinz",
-    "version": "v1.0.0",
-    "description": "注意：该插件需要配合存储所有消息使用。",
-    "classification": [
-      "功能插件"
-    ],
-    "filename": "查询该群聊的消息.js",
-    "fileDir": "/plugins/xinz/查询该群聊的消息.js",
-    "systemVersionRange": "",
-    "isCron": false,
-    "isAdapter": false,
-    "isMod": false,
-    "isService": false,
-    "isAuthentication": false,
-    "isEncPlugin": false,
-    "id": "TdWDwcxDxUw3XcpraUVujPjjW2w=",
-    "isChatPlugin": true
-  },
   "UosC73daLJcJvkCXq/D+1MCvl+w=": {
     "type": "github",
     "name": "每天60s",
