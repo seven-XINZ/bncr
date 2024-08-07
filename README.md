@@ -20,11 +20,11 @@
   画图的模型：启用画图功能必填，根据自己的API支持情况填写 dall-e-3 
  画图的ApiKey：启用画图功能必填，根据自己的API支持情况填写 
  sk-64---------------------------------------edf7d 
-#  启用TTS功能： 开启后将使用TTS功能 TTS ApiBaseUrl： 启用TTS功能必填，一般为"域名/v1" 
+  启用TTS功能： 开启后将使用TTS功能 TTS ApiBaseUrl： 启用TTS功能必填，一般为"域名/v1" 
  https://chatai.master-jsx.top/v1 
-#  TTS ApiKey：启用TTS功能必填，根据自己的API支持情况填写 
+  TTS ApiKey：启用TTS功能必填，根据自己的API支持情况填写 
  sk-64---------------------------------------edf7d 
-#  自定义TTS模型： 可根据需要输入自定义的TTS模型名称 
+  自定义TTS模型： 可根据需要输入自定义的TTS模型名称 
  zh-CN-XiaoyiNeural 
 
 # ChatGpt聊天UIL
