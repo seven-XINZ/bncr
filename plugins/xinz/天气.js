@@ -103,7 +103,7 @@ module.exports = async s => {
     const city = cityMapping[cityInput] || cityInput; // 如果映射表中存在则转换，否则使用原输入
 
     // 构造请求 URL
-    const apiKey = '1d644fbd70be4c06a4c74543241905'; // 使用您提供的 WeatherAPI API 密钥
+    const apiKey = '去下面地址免费注册获取api'; // 使用您提供的 WeatherAPI API 密钥
     const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(city)}&aqi=no`;
     console.log("请求的 URL:", url); // 打印请求的 URL
     console.log("查询的城市名称:", city); // 打印查询的城市名称
