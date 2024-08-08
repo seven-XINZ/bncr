@@ -11,83 +11,84 @@
  * @priority 1
  * @admin false
  * @disable false
- * @public true
- * @classification ["功能插件"]  
  */
 
-/*
-使用示例 当触发你好无界 回复:我是无界Bot,你好
-添加自动回复 你好无界 我是无界Bot,你好
-删除自动回复 你好无界
-自动回复列表
-*/
-const { randomUUID } = require('crypto'),
-	db = new BncrDB('autoReplyInfo'),
-	delMsgTime = 15 /* 触发回复后撤回时间 秒  0不撤回 */,
-    head = `自动触发消息:\n`; /* 头部消息 不需要='' */
+const fs = require('fs');
+const path = require('path');
 
+const dataFilePath = path.join(__dirname, './mod/autoReplyData.json');
 
-/* mian */
+// 确保数据文件存在
+if (!fs.existsSync(dataFilePath)) {
+    fs.writeFileSync(dataFilePath, JSON.stringify({}));
+}
+
+const delMsgTime = 5000; // 设置删除消息的时间为 5000 毫秒
+
+/* main */
 module.exports = async s => {
-	const msgInfo = s.msgInfo,
-		keys = await db.keys();
-	switch (s.param(1)) {
-		case '添加自动回复':
-			if (!(await s.isAdmin())) return;
-			if (!+msgInfo.groupId) return s.reply('非群组禁用');
+    const msgInfo = s.msgInfo;
 
-			let logs0 = '添加成功',
-				uuid = randomUUID();
-			for (const e of keys) {
-				let r = await db.get(e, '');
-				if (msgInfo.from === r.from && msgInfo.groupId === r.groupId && r.listen === s.param(2)) {
-					logs0 = '已存在该关键词,更新成功';
-					uuid = e;
-					break;
-				}
-			}
-			/* 设置数据 */
-			db.set(uuid, {
-				groupId: msgInfo.groupId,
-				from: msgInfo.from,
-				listen: s.param(2),
-				reply: s.param(3),
-			});
-			return s.delMsg(await s.reply(logs0), { wait: 10 });
-		case '自动回复列表':
-			if (!(await s.isAdmin())) return;
-			let logs = ``;
-			let i = 1;
-			for (const e of keys) {
-				let r = await db.get(e, '');
-				logs += `${i}. ${r.from}:${r.groupId}=>${r.listen}|${r.reply}\n`;
-				i++;
-			}
-			return s.delMsg(await s.reply(logs || '空列表'), { wait: 10 });
-		case '删除自动回复':
-			if (!(await s.isAdmin())) return;
-			let logs1 = `没有该关键词回复列表`;
-			for (const e of keys) {
-				let r = await db.get(e, '');
-				if (r.listen !== s.param(2)) continue;
-				logs1 = `已删除:${r.listen}`;
-				db.del(e);
-			}
-			return s.delMsg(await s.reply(logs1), { wait: 10 });
-	}
+    // 从文件中读取自动回复数据
+    const loadAutoReplies = () => JSON.parse(fs.readFileSync(dataFilePath));
 
-	/* 异步处理 */
-	new Promise(async resolve => {
-		if (!+msgInfo.groupId) return;
-		for (const key of keys) {
-			let r = await db.get(key, '');
-			if (msgInfo.msg.search(r.listen) === -1) continue;
-			let toMsg = head + r.reply;
-			let id = await s.reply(toMsg);
-			delMsgTime && s.delMsg(id, { wait: delMsgTime });
-		}
-		resolve(void 0);
-	});
+    switch (s.param(1)) {
+        case '添加自动回复':
+            if (!(await s.isAdmin())) return s.reply('您没有权限添加自动回复。'); // 仅管理员可以添加
+            const addKeyword = s.param(2);
+            const addReply = s.param(3);
+            const autoReplies = loadAutoReplies();
 
-	return 'next';
+            autoReplies[addKeyword] = {
+                groupId: msgInfo.groupId || '非群组', // 记录群组ID或标记为非群组
+                from: msgInfo.from,
+                reply: addReply,
+            };
+
+            fs.writeFileSync(dataFilePath, JSON.stringify(autoReplies, null, 2));
+            return s.delMsg(await s.reply('添加成功'), { wait: 10 });
+
+        case '自动回复列表':
+            const autoReplyList = loadAutoReplies();
+            let logs = '';
+
+            let i = 1;
+            for (const key in autoReplyList) {
+                const r = autoReplyList[key];
+                logs += `${i}. ${r.from}:${r.groupId} => ${key} | ${r.reply}\n`;
+                i++;
+            }
+            return s.delMsg(await s.reply(logs || '空列表'), { wait: 10 });
+
+        case '删除自动回复':
+            if (!(await s.isAdmin())) return s.reply('您没有权限删除自动回复。'); // 仅管理员可以删除
+            const deleteKeyword = s.param(2);
+            const currentReplies = loadAutoReplies();
+
+            if (deleteKeyword in currentReplies) {
+                delete currentReplies[deleteKeyword];
+                fs.writeFileSync(dataFilePath, JSON.stringify(currentReplies, null, 2));
+                return s.delMsg(await s.reply(`已删除: ${deleteKeyword}`), { wait: 10 });
+            } else {
+                return s.delMsg(await s.reply('没有该关键词回复列表'), { wait: 10 });
+            }
+    }
+
+    /* 异步处理 */
+    new Promise(async resolve => {
+        const autoReplies = loadAutoReplies(); // 重新加载自动回复数据
+        for (const key in autoReplies) {
+            const r = autoReplies[key];
+            if (msgInfo.msg.trim() === key) { // 精确关键词匹配
+                const id = await s.reply(r.reply); // 发送回复
+                // 设置删除回复消息的延迟
+                setTimeout(() => {
+                    s.delMsg(id); // 删除回复的消息
+                }, delMsgTime); // 使用设置的时间
+            }
+        }
+        resolve(void 0);
+    });
+
+    return 'next';
 };
