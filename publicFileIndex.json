@@ -308,28 +308,6 @@
     "id": "fqglT/LUjxe/ftVwql910keHGs4=",
     "isChatPlugin": true
   },
-  "UR58q6IrD2eyZOCfAshyeXMWKyk=": {
-    "type": "github",
-    "name": "qbittorent操作",
-    "author": "seven",
-    "team": "xinz",
-    "version": "1.0",
-    "description": "qbittorent操作",
-    "classification": [
-      "功能插件"
-    ],
-    "filename": "qbittorent操作.js",
-    "fileDir": "/plugins/xinz/qbittorent操作.js",
-    "systemVersionRange": "",
-    "isCron": false,
-    "isAdapter": false,
-    "isMod": false,
-    "isService": false,
-    "isAuthentication": false,
-    "isEncPlugin": false,
-    "id": "UR58q6IrD2eyZOCfAshyeXMWKyk=",
-    "isChatPlugin": true
-  },
   "wG9q3Il02901rtM0rlO4hDLRrhQ=": {
     "type": "github",
     "name": "ssh",
