@@ -1,3 +1,5 @@
+###### 哪位大佬看完脚本觉得是盗用 联系我 我删库 谢谢
+
 <h1 align="center">无界 | Bncr | Xinz / XianYu </h1>
 <div align="center">
  _
