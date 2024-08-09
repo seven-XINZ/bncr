@@ -1,4 +1,4 @@
-/**
+ /**
  * @author seven
  * @name 状态查询
  * @team xinz
@@ -6,134 +6,131 @@
  * @description 本机资源查询
  * @rule ^(运行状态)$
  * @admin true
- * @public true
+ * @public false
  * @priority 9999
  * @disable false
- * @classification ["功能插件"]  
  */
 
 const os = require('os');
 const { execSync } = require('child_process');
-const si = require('systeminformation');
+const si = require('systeminformation'); // 引入 systeminformation 库
+
+const delMsgTime = 5000; // 设置删除消息的时间为 5000 毫秒
 
 /**
  * 获取系统运行时间
  */
 function getUptime() {
-  const uptimeInSeconds = os.uptime();
-  const hours = Math.floor(uptimeInSeconds / 3600);
-  const minutes = Math.floor((uptimeInSeconds % 3600) / 60);
-  return { hours, minutes };
+    const uptimeInSeconds = os.uptime();
+    const hours = Math.floor(uptimeInSeconds / 3600);
+    const minutes = Math.floor((uptimeInSeconds % 3600) / 60);
+    return { hours, minutes };
 }
 
 /**
  * 获取系统负载信息
  */
 function getLoadInfo() {
-  const load = os.loadavg();
-  return {
-    '1分钟负载': load[0].toFixed(2),
-    '5分钟负载': load[1].toFixed(2),
-    '15分钟负载': load[2].toFixed(2),
-    '最大负载': os.cpus().length,
-    '负载限制': os.cpus().length * 2,
-    '安全负载': os.cpus().length * 1.5,
-  };
+    const load = os.loadavg();
+    return {
+        '1分钟负载': load[0].toFixed(2),
+        '5分钟负载': load[1].toFixed(2),
+        '15分钟负载': load[2].toFixed(2),
+        '最大负载': os.cpus().length,
+        '负载限制': os.cpus().length * 2,
+        '安全负载': os.cpus().length * 1.5,
+    };
 }
 
 /**
  * 获取活动进程数量
  */
 function getActiveProcessesCount() {
-  const output = execSync('ps -e | wc -l').toString().trim();
-  return parseInt(output, 10); // 返回活动进程数量
+    const output = execSync('ps -e | wc -l').toString().trim();
+    return parseInt(output, 10); // 返回活动进程数量
 }
 
 /**
  * 获取CPU信息
  */
 async function getCpuInfo() {
-  const cpus = os.cpus();
-  const cpuModel = cpus[0].model;
-  const cpuUsage = await getCpuUsage();
-  return {
-    'CPU型号': cpuModel,
-    'CPU使用率': `${cpuUsage}%`,
-    'CPU具体运行状态': {
-      '用户态': `${cpus.reduce((acc, cpu) => acc + cpu.times.user, 0)}ms`,
-      '系统态': `${cpus.reduce((acc, cpu) => acc + cpu.times.sys, 0)}ms`,
-      '总进程数': process.pid,
-      '活动进程数': getActiveProcessesCount(),
-    },
-  };
+    const cpus = os.cpus();
+    const cpuModel = cpus[0].model;
+    const cpuUsage = await getCpuUsage();
+    const cpuSpeed = cpus[0].speed; // CPU速度
+    const cpuTemperature = await getCpuTemperature(); // 获取CPU温度
+    return {
+        'CPU型号': cpuModel,
+        'CPU使用率': `${cpuUsage.toFixed(2)}%`,
+        'CPU温度': cpuTemperature ? `${cpuTemperature} °C` : '未获取', // CPU温度
+        'CPU具体运行状态': {
+            '速度': cpuSpeed,
+            '总进程数': process.pid,
+            '活动进程数': getActiveProcessesCount(),
+            '核心数': cpus.length,
+        },
+    };
 }
 
 /**
  * 获取CPU使用率
  */
 function getCpuUsage() {
-  const startMeasure = cpuAverage();
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const endMeasure = cpuAverage();
-      const idleDifference = endMeasure.idle - startMeasure.idle;
-      const totalDifference = endMeasure.total - startMeasure.total;
-      const usage = 100 - Math.floor((100 * idleDifference) / totalDifference);
-      resolve(usage);
-    }, 100);
-  });
+    return new Promise((resolve) => {
+        const startMeasure = cpuAverage();
+        setTimeout(() => {
+            const endMeasure = cpuAverage();
+            const idleDifference = endMeasure.idle - startMeasure.idle;
+            const totalDifference = endMeasure.total - startMeasure.total;
+            const usage = 100 - Math.floor((100 * idleDifference) / totalDifference);
+            resolve(usage);
+        }, 100);
+    });
 }
 
 /**
  * 计算CPU使用情况
  */
 function cpuAverage() {
-  const cpus = os.cpus();
-  let idle = 0;
-  let total = 0;
+    const cpus = os.cpus();
+    let idle = 0;
+    let total = 0;
 
-  cpus.forEach(cpu => {
-    for (let type in cpu.times) {
-      total += cpu.times[type];
-    }
-    idle += cpu.times.idle;
-  });
-
-  return { idle, total };
-}
-/**
- * 获取网络信息
- */
-function getNetworkInfo() {
-  const networkInterfaces = os.networkInterfaces();
-  const networkInfo = [];
-
-  for (const interface in networkInterfaces) {
-    networkInterfaces[interface].forEach(details => {
-      if (!details.internal) {
-        networkInfo.push({
-          接口: interface,
-          上行: details.address,
-          下行: details.netmask,
-        });
-      }
+    cpus.forEach(cpu => {
+        for (let type in cpu.times) {
+            total += cpu.times[type];
+        }
+        idle += cpu.times.idle;
     });
-  }
-  return networkInfo;
+
+    return { idle, total };
+}
+
+/**
+ * 获取CPU温度
+ */
+async function getCpuTemperature() {
+    try {
+        const data = await si.cpuTemperature();
+        return data.main; // 返回主温度
+    } catch (error) {
+        console.error('获取CPU温度失败:', error);
+        return null; // 返回null表示未获取到温度
+    }
 }
 
 /**
  * 获取内存信息
  */
 function getMemoryInfo() {
-  const totalMemory = os.totalmem();
-  const freeMemory = os.freemem();
-  const usedMemory = totalMemory - freeMemory;
-  return {
-    '总内存': `${(totalMemory / (1024 ** 3)).toFixed(2)} GB`,
-    '可用内存': `${(freeMemory / (1024 ** 3)).toFixed(2)} GB`,
-    '已用内存': `${(usedMemory / (1024 ** 3)).toFixed(2)} GB`,
-  };
+    const totalMemory = os.totalmem();
+    const freeMemory = os.freemem();
+    const usedMemory = totalMemory - freeMemory;
+    return {
+        '总内存': `${(totalMemory / (1024 ** 3)).toFixed(2)} GB`,
+        '可用内存': `${(freeMemory / (1024 ** 3)).toFixed(2)} GB`,
+        '已用内存': `${(usedMemory / (1024 ** 3)).toFixed(2)} GB`,
+    };
 }
 
 /**
@@ -141,47 +138,32 @@ function getMemoryInfo() {
  */
 function getDiskInfo() {
     const diskInfo = execSync('df -h').toString();
-    const results = {};
-
-    // 解析 df -h 的输出，提取每个磁盘的信息
-    diskInfo.split('\n').slice(1).forEach(line => {
+    return diskInfo.split('\n').slice(1).map(line => {
         const parts = line.split(/\s+/);
-        // 过滤并获取所有磁盘的信息，排除 overlay、tmpfs 和 shm
-        if (parts.length >= 6 && !['overlay', 'tmpfs', 'shm'].includes(parts[0])) {
-            results[parts[0]] = {
-                '总大小': parts[1], // 总大小
-                '已用': parts[2],    // 已用空间
-                '可用': parts[3]     // 剩余空间
-            };
-        }
+        return {
+            '文件系统': parts[0],
+            '总大小': parts[1],
+            '已用': parts[2],
+            '可用': parts[3],
+            '使用率': parts[4],
+        };
     });
-
-    return results; // 返回包含磁盘信息的对象
-}
-
-/**
- * 获取 CPU 温度
- */
-async function getCpuTemperature() {
-    const data = await si.cpuTemperature();
-    return data.main; // 返回 CPU 主温度
 }
 
 /**
  * 获取系统信息并发送
  */
-async function getSystemInfo(sender) {
+async function getSystemInfo(s) {
     const uptime = getUptime();
     const loadInfo = getLoadInfo();
     const cpuInfo = await getCpuInfo();
-    const networkInfo = getNetworkInfo();
     const memoryInfo = getMemoryInfo();
     const diskInfo = getDiskInfo();
-    const cpuTemperature = await getCpuTemperature();
 
     // 格式化输出
     const systemInfo = `
 运行时间: ${uptime.hours}小时 ${uptime.minutes}分钟
+
 系统信息:
 版本: ${process.version}
 操作系统: ${os.type()} ${os.release()}
@@ -195,9 +177,9 @@ async function getSystemInfo(sender) {
 安全负载: ${loadInfo['安全负载']}
 
 CPU信息:
-CPU型号: ${cpuInfo['CPU型号']}
+CPU型号: ${cpuInfo['CPU型号']}（速度: ${cpuInfo['CPU具体运行状态']['速度']} MHz）（核心数: ${cpuInfo['CPU具体运行状态']['核心数']}）
 CPU使用率: ${cpuInfo['CPU使用率']}
-CPU温度: ${cpuTemperature} °C
+CPU温度: ${cpuInfo['CPU温度']}
 CPU具体运行状态:
 总进程数: ${cpuInfo['CPU具体运行状态']['总进程数']}
 活动进程数: ${cpuInfo['CPU具体运行状态']['活动进程数']}
@@ -208,26 +190,34 @@ CPU具体运行状态:
 已用内存: ${memoryInfo['已用内存']}
 
 磁盘信息:
-${Object.entries(diskInfo).map(([disk, info]) => `
-文件系统: ${disk}
-总大小: ${info['总大小']}
-已用: ${info['已用']}
-可用: ${info['可用']}
-`).join('')}
+文件系统: ${diskInfo[0]['文件系统']}
+总大小: ${diskInfo[0]['总大小']}
+已用: ${diskInfo[0]['已用']}
+可用: ${diskInfo[0]['可用']}
 `;
 
-    await sender.reply(systemInfo);
+    const replyid = await s.reply(systemInfo);
+    
+    // 设置删除回复消息的延迟
+    setTimeout(async () => {
+        try {
+            await s.delMsg(replyid); // 撤回刚刚发的消息
+            console.log('消息撤回成功');
+        } catch (error) {
+            console.error('撤回消息失败:', error);
+        }
+    }, delMsgTime);
 }
 
 // 插件入口，处理指令“运行状态”
-module.exports = async sender => {
+module.exports = async s => {
     // 假设用户输入的指令
     const command = '运行状态';
 
     // 检查指令是否为“运行状态”
     if (command === '运行状态') {
-        await getSystemInfo(sender);
+        await getSystemInfo(s);
     } else {
-        await sender.reply('无效指令，请发送“运行状态”以获取系统信息。');
+        await s.reply('无效指令，请发送“运行状态”以获取系统信息。');
     }
 };
