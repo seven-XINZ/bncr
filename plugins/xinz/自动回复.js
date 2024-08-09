@@ -4,6 +4,7 @@
  * @team xinz
  * @version v1.0.0
  * @name 自动回复
+ * @description 精确词回复设置  自动创建数据文件到mod 5秒后自动删除信息
  * @rule ^(删除自动回复) ([^\n]+)$
  * @rule ^(添加自动回复) ([^\n]+) ([\s\S]+)$
  * @rule ^(自动回复列表)$
