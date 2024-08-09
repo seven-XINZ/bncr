@@ -9,6 +9,7 @@
  * @rule ^(自动回复列表)$
  * @rule [\s\S]+
  * @priority 1
+ * @public true
  * @admin false
  * @disable false
  */
