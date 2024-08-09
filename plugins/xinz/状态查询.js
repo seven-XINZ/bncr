@@ -6,7 +6,7 @@
  * @description 本机资源查询
  * @rule ^(运行状态)$
  * @admin true
- * @public false
+ * @public true
  * @priority 9999
  * @disable false
  */
