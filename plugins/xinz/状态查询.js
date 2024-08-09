@@ -61,7 +61,7 @@ async function getCpuInfo() {
     const cpuTemperature = await getCpuTemperature(); // 获取CPU温度
     return {
         'CPU型号': cpuModel,
-        'CPU使用率': `${cpuUsage.toFixed(2)}%`,
+        'CPU使用率': `${cpuUsage ? cpuUsage.toFixed(2) : '未获取'}%`,
         'CPU温度': cpuTemperature ? `${cpuTemperature} °C` : '未获取', // CPU温度
         'CPU具体运行状态': {
             '速度': cpuSpeed,
@@ -75,35 +75,14 @@ async function getCpuInfo() {
 /**
  * 获取CPU使用率
  */
-function getCpuUsage() {
-    return new Promise((resolve) => {
-        const startMeasure = cpuAverage();
-        setTimeout(() => {
-            const endMeasure = cpuAverage();
-            const idleDifference = endMeasure.idle - startMeasure.idle;
-            const totalDifference = endMeasure.total - startMeasure.total;
-            const usage = 100 - Math.floor((100 * idleDifference) / totalDifference);
-            resolve(usage);
-        }, 100);
-    });
-}
-
-/**
- * 计算CPU使用情况
- */
-function cpuAverage() {
-    const cpus = os.cpus();
-    let idle = 0;
-    let total = 0;
-
-    cpus.forEach(cpu => {
-        for (let type in cpu.times) {
-            total += cpu.times[type];
-        }
-        idle += cpu.times.idle;
-    });
-
-    return { idle, total };
+async function getCpuUsage() {
+    try {
+        const cpuData = await si.currentLoad();
+        return cpuData.currentLoad; // 返回当前 CPU 使用率
+    } catch (error) {
+        console.error('获取CPU使用率失败:', error);
+        return null; // 返回null表示未获取到使用率
+    }
 }
 
 /**
@@ -221,3 +200,4 @@ module.exports = async s => {
         await s.reply('无效指令，请发送“运行状态”以获取系统信息。');
     }
 };
+
