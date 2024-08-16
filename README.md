@@ -4,7 +4,7 @@
 <div align="center">
  _
 </div>
-
+[群:619154800](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=mGKe3EyeSLivXqFhg1DRNNgBobb6c4eO&authKey=2%2FygoqVIyqm3p0yuQIzPGTb1FqVASxwD1Iq8mYlRwYOjLEqmkw7BtVxLOsbN1fJU&noverify=0&group_code=619154800)
 > **无界机器人插件以及其他的一些自己写的或者从开源项目二改转载的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置； ** 
   [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
