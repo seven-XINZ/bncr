@@ -33,7 +33,7 @@
 # ChatGpt聊天UIL
  [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce)   
  [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
- [TTS适配海豚Ai TTS-Online]([https://www.ttson.cn/?source=qDBPb2](https://www.ttson.cn/?source=falPMO))      
+ [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=falPMO)      
  
 # xinz/Bncr_ChatGPT.js   
  1. 添加对话模型引入 ✔
