@@ -308,28 +308,6 @@
     "id": "fqglT/LUjxe/ftVwql910keHGs4=",
     "isChatPlugin": true
   },
-  "wG9q3Il02901rtM0rlO4hDLRrhQ=": {
-    "type": "github",
-    "name": "ssh",
-    "author": "seven",
-    "team": "xi",
-    "version": "1.0",
-    "description": "测试",
-    "classification": [
-      "功能插件"
-    ],
-    "filename": "ssh.js",
-    "fileDir": "/plugins/xinz/ssh.js",
-    "systemVersionRange": "",
-    "isCron": false,
-    "isAdapter": false,
-    "isMod": false,
-    "isService": false,
-    "isAuthentication": false,
-    "isEncPlugin": false,
-    "id": "wG9q3Il02901rtM0rlO4hDLRrhQ=",
-    "isChatPlugin": true
-  },
   "CnSNt7HhDyxvH10xE1PZGNfv1Jo=": {
     "type": "github",
     "name": "二维码生成",
