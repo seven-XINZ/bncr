@@ -1,15 +1,13 @@
 /**作者
  * @author seven
- * @name s
- * @team xi
+ * @name ssh
+ * @team xinz
  * @version 1.0
  * @description 测试
  * @rule ^(SSH|ssh)$
  * @priority 10000
  * @admin true
- * @public true
  * @disable false
- * @classification ["功能插件"]  
  */
 
 // 引入所需的 SSH2 模块和 child_process 模块
@@ -19,8 +17,8 @@ const { exec } = require('child_process');
 
 // 定义设备列表，每个设备包含名称、主机地址、端口、用户名和密码
 const devices = [
-    { name: '设备1', host: '', port: 22, username: ' ', password: ' ' },
-    { name: '设备2', host: '', port: 22, username: ' ', password: ' ' },
+    { name: '设备1', host: '192.168.0.0', port: 0, username: 'root', password: 'password' },
+    { name: '设备2', host: '192.168.0.0', port: 0, username: 'root', password: 'password' },
     // 可以在此添加更多设备
 ];
 
@@ -36,8 +34,8 @@ module.exports = async s => {
     const deviceIndex = parseInt(deviceChoice.getMsg()) - 1;
 
     // 检查用户输入的索引是否有效
-    if (deviceIndex < 0 || deviceIndex >= devices.length) {
-        return s.reply('无效选择');
+    if (isNaN(deviceIndex) || deviceIndex < 0 || deviceIndex >= devices.length) {
+        return s.reply('无效选择，请输入正确的设备编号。');
     }
 
     // 获取所选设备的连接信息
@@ -117,3 +115,4 @@ module.exports = async s => {
         });
     }
 }
+
