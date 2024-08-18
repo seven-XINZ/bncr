@@ -296,15 +296,22 @@ const cityMapping = {
 // 风向转换映射
 const windDirectionMapping = {
     "N": "北风",
+    "NNE": "东北偏北",
     "NE": "东北风",
+    "ENE": "东南偏东",
     "E": "东风",
+    "ESE": "东南偏东",
     "SE": "东南风",
+    "SSE": "南偏东",
     "S": "南风",
+    "SSW": "南偏西",
     "SW": "西南风",
+    "WSW": "西偏南",
     "W": "西风",
+    "WNW": "西北偏西",
     "NW": "西北风",
-    "ESE": "东南偏东", // 新增翻译
-    "NNE": "东北偏北", // 新增翻译
+    "NNW": "北偏西",
+    "C": "静风", // 无风
 };
 
 // 天气状况翻译映射
@@ -318,8 +325,24 @@ const weatherConditionMapping = {
     "Thunderstorm": "雷暴",
     "Snow": "雪",
     "Fog": "雾",
-    "Patchy rain nearby": "局部降雨", // 新增翻译
+    "Patchy rain nearby": "局部降雨",
+    "Light rain": "小雨",
+    "Heavy rain": "大雨",
+    "Showers": "阵雨",
+    "Isolated thunderstorms": "局部雷暴",
+    "Sleet": "雨夹雪",
+    "Hail": "冰雹",
+    "Windy": "有风",
+    "Blizzard": "暴风雪",
+    "Tornado": "龙卷风",
+    "Dust storm": "沙尘暴",
+    "Heat wave": "热浪",
+    "Cold wave": "寒潮",
+    "Tropical storm": "热带风暴",
+    "Hurricane": "飓风",
+    "Freezing rain": "冻雨",
 };
+
 
 // 导出模块
 module.exports = async s => {
