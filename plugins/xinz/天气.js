@@ -15,7 +15,7 @@
 
 const https = require('https'); // 使用 Node.js 内置的 https 模块
 
-// 中文城市名称与英文名称的映射表  //使用英文可查全球
+// 中文城市名称与英文名称的映射表
 const cityMapping = {
     // 中国
     "北京市": {
@@ -137,7 +137,7 @@ const cityMapping = {
         }
     },
 
-    // 其他省份（部分省份示例）
+    // 其他省份
     "广东省": {
         "Guangdong": {
             "广州市": {
@@ -168,6 +168,13 @@ const cityMapping = {
                     "大鹏新区": "Dapeng New District"
                 }
             },
+            "珠海市": {
+                "Zhuhai": {
+                    "香洲区": "Xiangzhou District",
+                    "斗门区": "Doumen District",
+                    "金湾区": "Jinwan District"
+                }
+            },
             // 其他城市...
         }
     },
@@ -188,6 +195,17 @@ const cityMapping = {
                     "高淳区": "Gaochun District"
                 }
             },
+            "苏州市": {
+                "Suzhou": {
+                    "姑苏区": "Gusu District",
+                    "相城区": "Xiangcheng District",
+                    "吴中区": "Wuzhong District",
+                    "昆山市": "Kunshan City",
+                    "太仓市": "Taicang City",
+                    "常熟市": "Changshu City",
+                    "张家港市": "Zhangjiagang City"
+                }
+            },
             // 其他城市...
         }
     },
@@ -206,6 +224,18 @@ const cityMapping = {
                     "建德市": "Jiande City",
                     "富阳区": "Fuyang District",
                     "临安区": "Lin'an District"
+                }
+            },
+            "宁波市": {
+                "Ningbo": {
+                    "海曙区": "Haishu District",
+                    "江东区": "Jiangdong District",
+                    "江北区": "Jiangbei District",
+                    "鄞州区": "Yinzhou District",
+                    "镇海区": "Zhenhai District",
+                    "北仑区": "Beilun District",
+                    "余姚市": "Yuyao City",
+                    "慈溪市": "Cixi City"
                 }
             },
             // 其他城市...
@@ -234,10 +264,94 @@ const cityMapping = {
                     "崇州市": "Chongzhou City"
                 }
             },
+            "绵阳市": {
+                "Mianyang": {
+                    "涪城区": "Fucheng District",
+                    "游仙区": "Youxian District",
+                    "安州区": "Anzhou District",
+                    "三台县": "Santai County",
+                    "盐亭县": "Yanting County",
+                    "梓潼县": "Zitong County",
+                    "北川羌族自治县": "Beichuan Qiang Autonomous County",
+                    "平武县": "Pingwu County"
+                }
+            },
             // 其他城市...
         }
     },
-
+    "湖北省": {
+        "Hubei": {
+            "武汉市": {
+                "Wuhan": {
+                    "江岸区": "Jiang'an District",
+                    "江汉区": "Jianghan District",
+                    "硚口区": "Qiaokou District",
+                    "汉阳区": "Hanyang District",
+                    "武昌区": "Wuchang District",
+                    "青山区": "Qingshan District",
+                    "洪山区": "Hongshan District",
+                    "东西湖区": "Dongxihu District",
+                    "蔡甸区": "Caidian District",
+                    "江夏区": "Jiangxia District",
+                    "黄陂区": "Huangpi District",
+                    "武汉经济技术开发区": "Wuhan Economic and Technological Development Zone",
+                    "汉南区": "Hannan District",
+                    "蔡甸区": "Caidian District"
+                }
+            },
+            "宜昌市": {
+                "Yichang": {
+                    "西陵区": "Xiling District",
+                    "伍家岗区": "Wujiagang District",
+                    "点军区": "Dianjun District",
+                    "猇亭区": "Xiaoting District",
+                    "夷陵区": "Yiling District",
+                    "远安县": "Yuan'an County",
+                    "兴山县": "Xingshan County",
+                    "秭归县": "Zigui County"
+                }
+            },
+            // 其他城市...
+        }
+    },
+    "湖南省": {
+        "Hunan": {
+            "长沙市": {
+                "Changsha": {
+                    "芙蓉区": "Furong District",
+                    "天心区": "Tianxin District",
+                    "岳麓区": "Yuelu District",
+                    "开福区": "Kaifu District",
+                    "雨花区": "Yuhua District",
+                    "长沙县": "Changsha County",
+                    "望城区": "Wangcheng District",
+                    "宁乡市": "Ningxiang City"
+                }
+            },
+            // 其他城市...
+        }
+    },
+    "陕西省": {
+        "Shaanxi": {
+            "西安市": {
+                "Xi'an": {
+                    "新城区": "Xincheng District",
+                    "碑林区": "Beilin District",
+                    "莲湖区": "Lianhu District",
+                    "灞桥区": "Baqiao District",
+                    "未央区": "Weiyang District",
+                    "雁塔区": "Yanta District",
+                    "阎良区": "Yanliang District",
+                    "临潼区": "Lintong District",
+                    "长安区": "Chang'an District",
+                    "西安市未央区": "Weiyang District"
+                }
+            },
+            // 其他城市...
+        }
+    },
+    // 继续添加更多省市区...
+    
     // 其他国家（示例）
     "美国": {
         "United States": {
@@ -259,6 +373,24 @@ const cityMapping = {
                     "圣费尔南多谷": "San Fernando Valley"
                 }
             },
+            "芝加哥": {
+                "Chicago": {
+                    "市中心": "Downtown",
+                    "林肯公园": "Lincoln Park",
+                    "海德公园": "Hyde Park",
+                    "西城": "West Side",
+                    "南边": "South Side"
+                }
+            },
+            "休斯顿": {
+                "Houston": {
+                    "市中心": "Downtown",
+                    "西南": "Southwest",
+                    "东南": "Southeast",
+                    "北": "North",
+                    "东": "East"
+                }
+            },
             // 其他城市...
         }
     },
@@ -270,7 +402,18 @@ const cityMapping = {
                     "威斯敏斯特": "Westminster",
                     "南华克": "Southwark",
                     "哈克尼": "Hackney",
-                    "布伦特": "Brent"
+                    "布伦特": "Brent",
+                    "肯辛顿": "Kensington",
+                    "切尔西": "Chelsea"
+                }
+            },
+            "曼彻斯特": {
+                "Manchester": {
+                    "市中心": "City Centre",
+                    "北区": "North Quarter",
+                    "南区": "South Quarter",
+                    "东区": "East Manchester",
+                    "西区": "West Manchester"
                 }
             },
             // 其他城市...
@@ -284,14 +427,133 @@ const cityMapping = {
                     "北约克": "North York",
                     "士嘉堡": "Scarborough",
                     "密西沙加": "Mississauga",
-                    "旺市": "Vaughan"
+                    "旺市": "Vaughan",
+                    "约克": "York"
+                }
+            },
+            "温哥华": {
+                "Vancouver": {
+                    "市中心": "Downtown",
+                    "东温哥华": "East Vancouver",
+                    "西温哥华": "West Vancouver",
+                    "北温哥华": "North Vancouver",
+                    "南温哥华": "South Vancouver"
                 }
             },
             // 其他城市...
         }
     },
+
+    // 澳大利亚
+    "澳大利亚": {
+        "Australia": {
+            "悉尼": {
+                "Sydney": {
+                    "市中心": "Central Sydney",
+                    "达令港": "Darling Harbour",
+                    "北悉尼": "North Sydney",
+                    "邦迪": "Bondi",
+                    "曼利": "Manly"
+                }
+            },
+            "墨尔本": {
+                "Melbourne": {
+                    "市中心": "Central Melbourne",
+                    "南墨尔本": "South Melbourne",
+                    "东墨尔本": "East Melbourne",
+                    "西墨尔本": "West Melbourne",
+                    "菲茨罗伊": "Fitzroy"
+                }
+            },
+            // 其他城市...
+        }
+    },
+
+    // 日本
+    "日本": {
+        "Japan": {
+            "东京": {
+                "Tokyo": {
+                    "千代田区": "Chiyoda",
+                    "中央区": "Chuo",
+                    "港区": "Minato",
+                    "新宿区": "Shinjuku",
+                    "涩谷区": "Shibuya"
+                }
+            },
+            "大阪": {
+                "Osaka": {
+                    "北区": "Kita",
+                    "中央区": "Chuo",
+                    "西区": "Nishi",
+                    "浪速区": "Naniwa",
+                    "天王寺区": "Tennoji"
+                }
+            },
+            // 其他城市...
+        }
+    },
+
+    // 韩国
+    "韩国": {
+        "South Korea": {
+            "首尔": {
+                "Seoul": {
+                    "中区": "Jung-gu",
+                    "江南区": "Gangnam",
+                    "麻浦区": "Mapo",
+                    "龙山区": "Yongsan",
+                    "江东区": "Gangdong"
+                }
+            },
+            "釜山": {
+                "Busan": {
+                    "中区": "Jung-gu",
+                    "海云台区": "Haeundae",
+                    "西区": "Seo-gu",
+                    "东区": "Dong-gu",
+                    "南区": "Nam-gu"
+                }
+            },
+            // 其他城市...
+        }
+    },
+
+    // 法国
+    "法国": {
+        "France": {
+            "巴黎": {
+                "Paris": {
+                    "市中心": "Central Paris",
+                    "第一区": "1st Arrondissement",
+                    "第二区": "2nd Arrondissement",
+                    "第三区": "3rd Arrondissement",
+                    "第十一区": "11th Arrondissement"
+                }
+            },
+            // 其他城市...
+        }
+    },
+
+    // 德国
+    "德国": {
+        "Germany": {
+            "柏林": {
+                "Berlin": {
+                    "米特区": "Mitte",
+                    "弗里德里希斯海因区": "Friedrichshain",
+                    "克罗伊茨贝格区": "Kreuzberg",
+                    "夏洛滕堡区": "Charlottenburg",
+                    "潘科区": "Pankow"
+                }
+            },
+            // 其他城市...
+        }
+    },
+
     // 继续添加更多国家和城市...
 };
+
 
 // 风向转换映射
 const windDirectionMapping = {
