@@ -295,24 +295,44 @@ const cityMapping = {
 
 // 风向转换映射
 const windDirectionMapping = {
-    "N": "北风",
-    "NNE": "东北偏北",
-    "NE": "东北风",
-    "ENE": "东南偏东",
-    "E": "东风",
-    "ESE": "东南偏东",
-    "SE": "东南风",
-    "SSE": "南偏东",
-    "S": "南风",
-    "SSW": "南偏西",
-    "SW": "西南风",
-    "WSW": "西偏南",
-    "W": "西风",
-    "WNW": "西北偏西",
-    "NW": "西北风",
-    "NNW": "北偏西",
-    "C": "静风", // 无风
+    "N": "北风",          // 0°
+    "NNE": "东北偏北",    // 22.5°
+    "NE": "东北风",       // 45°
+    "ENE": "东南偏东",    // 67.5°
+    "E": "东风",          // 90°
+    "ESE": "东南偏东",    // 112.5°
+    "SE": "东南风",       // 135°
+    "SSE": "南偏东",      // 157.5°
+    "S": "南风",          // 180°
+    "SSW": "南偏西",      // 202.5°
+    "SW": "西南风",       // 225°
+    "WSW": "西偏南",      // 247.5°
+    "W": "西风",          // 270°
+    "WNW": "西北偏西",    // 292.5°
+    "NW": "西北风",       // 315°
+    "NNW": "北偏西",      // 337.5°
+    "C": "静风",          // 无风
+    "N-NNE": "北至东北偏北", // 0° - 22.5°
+    "NNE-NE": "东北偏北至东北", // 22.5° - 45°
+    "NE-ENE": "东北至东南偏东", // 45° - 67.5°
+    "ENE-E": "东南偏东至东", // 67.5° - 90°
+    "E-ESE": "东至东南偏东", // 90° - 112.5°
+    "ESE-SE": "东南偏东至东南", // 112.5° - 135°
+    "SE-SSE": "东南至南偏东", // 135° - 157.5°
+    "SSE-S": "南偏东至南", // 157.5° - 180°
+    "S-SW": "南至西南", // 180° - 225°
+    "SW-WSW": "西南至西偏南", // 225° - 247.5°
+    "WSW-W": "西偏南至西", // 247.5° - 270°
+    "W-WNW": "西至西北偏西", // 270° - 292.5°
+    "WNW-NW": "西北偏西至西北", // 292.5° - 315°
+    "NW-NNW": "西北至北偏西", // 315° - 337.5°
+    "NNW-N": "北偏西至北", // 337.5° - 360°
 };
+// 示例使用
+const windDirection = "NW";
+const translatedWindDirection = windDirectionMapping[windDirection] || "未知风向";
+console.log(`风向: ${translatedWindDirection}`); // 输出: 风向: 西北风
+
 
 // 天气状况翻译映射
 const weatherConditionMapping = {
@@ -327,6 +347,7 @@ const weatherConditionMapping = {
     "Fog": "雾",
     "Patchy rain nearby": "局部降雨",
     "Light rain": "小雨",
+    "Moderate rain": "中雨",
     "Heavy rain": "大雨",
     "Showers": "阵雨",
     "Isolated thunderstorms": "局部雷暴",
@@ -341,7 +362,65 @@ const weatherConditionMapping = {
     "Tropical storm": "热带风暴",
     "Hurricane": "飓风",
     "Freezing rain": "冻雨",
+    "Mist": "薄雾",
+    "Smoke": "烟雾",
+    "Squall": "阵风",
+    "Frost": "霜",
+    "Ice": "冰",
+    "Clear": "晴朗",
+    "Partly sunny": "局部晴朗",
+    "Light snow": "小雪",
+    "Moderate snow": "中雪",
+    "Heavy snow": "大雪",
+    "Freezing fog": "冰雾",
+    "Thundersnow": "雷雪",
+    "Sandstorm": "沙暴",
+    "Tropical depression": "热带低气压",
+    "Severe thunderstorm": "强雷暴",
+    "Rain shower": "降雨",
+    "Heavy showers": "大阵雨",
+    "Intermittent rain": "间歇性降雨",
+    "Overcast with rain": "阴天伴随降雨",
+    "Overcast with snow": "阴天伴随降雪",
+    "Overcast with thunderstorms": "阴天伴随雷暴",
+    "Flurries": "小雪花",
+    "Light rain shower": "小阵雨",
+    "Heavy rain shower": "大阵雨",
+    "Rain and snow mix": "雨雪混合",
+    "Thundery outbreaks in nearby": "附近有雷暴活动", // 新增翻译
+    "Heavy thundershowers": "强雷阵雨", // 强雷阵雨
+    "Light thundershowers": "小雷阵雨", // 小雷阵雨
+    "Overcast with light rain": "阴天伴随小雨", // 阴天伴随小雨
+    "Overcast with heavy rain": "阴天伴随大雨", // 阴天伴随大雨
+    "Overcast with light snow": "阴天伴随小雪", // 阴天伴随小雪
+    "Overcast with heavy snow": "阴天伴随大雪", // 阴天伴随大雪
+    "Torrential rain": "倾盆大雨", // 倾盆大雨
+    "Patchy fog": "局部雾", // 局部雾
+    "Freezing drizzle": "冻毛毛雨", // 冻毛毛雨
+    "Ice pellets": "冰粒", // 冰粒
+    "Smoke haze": "烟雾弥漫", // 烟雾弥漫
+    "Heavy freezing rain": "大冻雨", // 大冻雨
+    "Severe blizzard": "严重暴风雪", // 严重暴风雪
+    "Severe cold wave": "严重寒潮", // 严重寒潮
+    "Heavy dust storm": "大沙尘暴", // 大沙尘暴
+    "Light dust storm": "小沙尘暴", // 小沙尘暴
+    "Tropical cyclone": "热带气旋", // 热带气旋
+    "Severe tropical storm": "强热带风暴", // 强热带风暴
+    "Light frost": "小霜", // 小霜
+    "Heavy frost": "大霜", // 大霜
 };
+
+// 示例使用
+const weatherDescription = "Torrential rain";
+const translatedWeather = weatherConditionMapping[weatherDescription] || "未知天气状况";
+console.log(`天气状况: ${translatedWeather}`); // 输出: 天气状况: 倾盆大雨
+
+
+// 示例使用
+const weatherDescription = "Light rain";
+const translatedWeather = weatherConditionMapping[weatherDescription] || "未知天气状况";
+console.log(`天气状况: ${translatedWeather}`); // 输出: 天气状况: 小雨
+
 
 
 // 导出模块
@@ -417,4 +496,3 @@ module.exports = async s => {
     // 插件运行结束时，如果返回 'next'，则继续向下匹配插件，否则只运行当前插件
     return 'next';  // 继续向下匹配插件
 }
-
