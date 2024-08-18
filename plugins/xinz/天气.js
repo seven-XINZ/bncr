@@ -590,16 +590,11 @@ const windDirectionMapping = {
     "NW-NNW": "西北至北偏西", // 315° - 337.5°
     "NNW-N": "北偏西至北", // 337.5° - 360°
 };
-// 示例使用
-const windDirection = "NW";
-const translatedWindDirection = windDirectionMapping[windDirection] || "未知风向";
-console.log(`风向: ${translatedWindDirection}`); // 输出: 风向: 西北风
-
 
 // 天气状况翻译映射
 const weatherConditionMapping = {
     "Sunny": "晴",
-    "Partly cloudy": "局部多云",
+    "Partly Cloudy": "局部多云",
     "Cloudy": "多云",
     "Overcast": "阴天",
     "Rain": "雨",
@@ -607,83 +602,385 @@ const weatherConditionMapping = {
     "Thunderstorm": "雷暴",
     "Snow": "雪",
     "Fog": "雾",
-    "Patchy rain nearby": "局部降雨",
-    "Light rain": "小雨",
-    "Moderate rain": "中雨",
-    "Heavy rain": "大雨",
+    "Patchy Rain Nearby": "局部降雨",
+    "Light Rain": "小雨",
+    "Moderate Rain": "中雨",
+    "Heavy Rain": "大雨",
     "Showers": "阵雨",
-    "Isolated thunderstorms": "局部雷暴",
+    "Isolated Thunderstorms": "局部雷暴",
     "Sleet": "雨夹雪",
     "Hail": "冰雹",
     "Windy": "有风",
     "Blizzard": "暴风雪",
     "Tornado": "龙卷风",
-    "Dust storm": "沙尘暴",
-    "Heat wave": "热浪",
-    "Cold wave": "寒潮",
-    "Tropical storm": "热带风暴",
+    "Dust Storm": "沙尘暴",
+    "Heat Wave": "热浪",
+    "Cold Wave": "寒潮",
+    "Tropical Storm": "热带风暴",
     "Hurricane": "飓风",
-    "Freezing rain": "冻雨",
+    "Freezing Rain": "冻雨",
     "Mist": "薄雾",
     "Smoke": "烟雾",
     "Squall": "阵风",
     "Frost": "霜",
     "Ice": "冰",
     "Clear": "晴朗",
-    "Partly sunny": "局部晴朗",
-    "Light snow": "小雪",
-    "Moderate snow": "中雪",
-    "Heavy snow": "大雪",
-    "Freezing fog": "冰雾",
+    "Partly Sunny": "局部晴朗",
+    "Light Snow": "小雪",
+    "Moderate Snow": "中雪",
+    "Heavy Snow": "大雪",
+    "Freezing Fog": "冰雾",
     "Thundersnow": "雷雪",
     "Sandstorm": "沙暴",
-    "Tropical depression": "热带低气压",
-    "Severe thunderstorm": "强雷暴",
-    "Rain shower": "降雨",
-    "Heavy showers": "大阵雨",
-    "Intermittent rain": "间歇性降雨",
-    "Overcast with rain": "阴天伴随降雨",
-    "Overcast with snow": "阴天伴随降雪",
-    "Overcast with thunderstorms": "阴天伴随雷暴",
+    "Tropical Depression": "热带低气压",
+    "Severe Thunderstorm": "强雷暴",
+    "Rain Shower": "降雨",
+    "Heavy Showers": "大阵雨",
+    "Intermittent Rain": "间歇性降雨",
+    "Overcast with Rain": "阴天伴随降雨",
+    "Overcast with Snow": "阴天伴随降雪",
+    "Overcast with Thunderstorms": "阴天伴随雷暴",
     "Flurries": "小雪花",
-    "Light rain shower": "小阵雨",
-    "Heavy rain shower": "大阵雨",
-    "Rain and snow mix": "雨雪混合",
-    "Thundery outbreaks in nearby": "附近有雷暴活动", // 新增翻译
-    "Heavy thundershowers": "强雷阵雨", // 强雷阵雨
-    "Light thundershowers": "小雷阵雨", // 小雷阵雨
-    "Overcast with light rain": "阴天伴随小雨", // 阴天伴随小雨
-    "Overcast with heavy rain": "阴天伴随大雨", // 阴天伴随大雨
-    "Overcast with light snow": "阴天伴随小雪", // 阴天伴随小雪
-    "Overcast with heavy snow": "阴天伴随大雪", // 阴天伴随大雪
-    "Torrential rain": "倾盆大雨", // 倾盆大雨
-    "Patchy fog": "局部雾", // 局部雾
-    "Freezing drizzle": "冻毛毛雨", // 冻毛毛雨
-    "Ice pellets": "冰粒", // 冰粒
-    "Smoke haze": "烟雾弥漫", // 烟雾弥漫
-    "Heavy freezing rain": "大冻雨", // 大冻雨
-    "Severe blizzard": "严重暴风雪", // 严重暴风雪
-    "Severe cold wave": "严重寒潮", // 严重寒潮
-    "Heavy dust storm": "大沙尘暴", // 大沙尘暴
-    "Light dust storm": "小沙尘暴", // 小沙尘暴
-    "Tropical cyclone": "热带气旋", // 热带气旋
-    "Severe tropical storm": "强热带风暴", // 强热带风暴
-    "Light frost": "小霜", // 小霜
-    "Heavy frost": "大霜", // 大霜
+    "Light Rain Shower": "小阵雨",
+    "Heavy Rain Shower": "大阵雨",
+    "Rain and Snow Mix": "雨雪混合",
+    "Thundery Outbreaks Nearby": "附近有雷暴活动",
+    "Heavy Thundershowers": "强雷阵雨",
+    "Light Thundershowers": "小雷阵雨",
+    "Overcast with Light Rain": "阴天伴随小雨",
+    "Overcast with Heavy Rain": "阴天伴随大雨",
+    "Overcast with Light Snow": "阴天伴随小雪",
+    "Overcast with Heavy Snow": "阴天伴随大雪",
+    "Torrential Rain": "倾盆大雨",
+    "Patchy Fog": "局部雾",
+    "Freezing Drizzle": "冻毛毛雨",
+    "Ice Pellets": "冰粒",
+    "Smoke Haze": "烟雾弥漫",
+    "Heavy Freezing Rain": "大冻雨",
+    "Severe Blizzard": "严重暴风雪",
+    "Severe Cold Wave": "严重寒潮",
+    "Heavy Dust Storm": "大沙尘暴",
+    "Light Dust Storm": "小沙尘暴",
+    "Tropical Cyclone": "热带气旋",
+    "Severe Tropical Storm": "强热带风暴",
+    "Light Frost": "小霜",
+    "Heavy Frost": "大霜",
+    "Thick Fog": "浓雾",
+    "Dense Smoke": "浓烟",
+    "Chilly": "寒冷",
+    "Mild": "温和",
+    "Frost Advisory": "霜冻警告",
+    "Heat Advisory": "高温警告",
+    "Severe Weather Alert": "天气警报",
+    "Flood Warning": "洪水警报",
+    "High Wind Warning": "强风警告",
+    "Air Quality Alert": "空气质量警告",
+    "Severe Weather Watch": "天气监测",
+    "Drought Warning": "干旱警告",
+    "Cold Front": "冷锋",
+    "Warm Front": "暖锋",
+    "Stationary Front": "静止锋",
+    "Occluded Front": "闭合锋",
+    "Trough": "槽",
+    "Ridge": "脊",
+};
+
+// 完整天气状况描述
+const completeWeatherConditions = {
+    "Sunny": {
+        "中文": "晴",
+        "描述": "天空晴朗，无云，阳光明媚。"
+    },
+    "Partly Cloudy": {
+        "中文": "局部多云",
+        "描述": "天空中有部分云层，阳光透过，通常天气温暖。"
+    },
+    "Cloudy": {
+        "中文": "多云",
+        "描述": "天空中云层较多，阳光被遮挡，气温可能稍低。"
+    },
+    "Overcast": {
+        "中文": "阴天",
+        "描述": "天空完全被云层覆盖，阳光无法透出，可能会有降雨。"
+    },
+    "Rain": {
+        "中文": "雨",
+        "描述": "降水现象，雨水从天空降落，可能伴随雷电。"
+    },
+    "Drizzle": {
+        "中文": "毛毛雨",
+        "描述": "细小的雨滴，降水量较少，通常不影响活动。"
+    },
+    "Thunderstorm": {
+        "中文": "雷暴",
+        "描述": "伴随雷声和闪电的强降雨，可能有大风和冰雹。"
+    },
+    "Snow": {
+        "中文": "雪",
+        "描述": "雪花从天空降落，覆盖地面，通常导致气温降低。"
+    },
+    "Fog": {
+        "中文": "雾",
+        "描述": "能见度低，空气中水汽凝结成微小水滴，影响视线。"
+    },
+    "Patchy Rain Nearby": {
+        "中文": "局部降雨",
+        "描述": "在某些区域有降雨，其他区域可能是干燥的。"
+    },
+    "Light Rain": {
+        "中文": "小雨",
+        "描述": "降水量较少的雨，通常持续时间短。"
+    },
+    "Moderate Rain": {
+        "中文": "中雨",
+        "描述": "降水量适中，可能需要携带雨具。"
+    },
+    "Heavy Rain": {
+        "中文": "大雨",
+        "描述": "降水量大，可能导致积水和交通影响。"
+    },
+    "Showers": {
+        "中文": "阵雨",
+        "描述": "短时间内的强降雨，通常伴随云层的变化。"
+    },
+    "Isolated Thunderstorms": {
+        "中文": "局部雷暴",
+        "描述": "在某些区域可能出现雷暴，其他区域则为晴朗。"
+    },
+    "Sleet": {
+        "中文": "雨夹雪",
+        "描述": "降水形式为雨和雪的混合，可能导致路面滑。"
+    },
+    "Hail": {
+        "中文": "冰雹",
+        "描述": "降落的冰块，可能对农作物和车辆造成损害。"
+    },
+    "Windy": {
+        "中文": "有风",
+        "描述": "风速较大，可能影响户外活动。"
+    },
+    "Blizzard": {
+        "中文": "暴风雪",
+        "描述": "大雪伴随强风，能见度极低，交通受阻。"
+    },
+    "Tornado": {
+        "中文": "龙卷风",
+        "描述": "强烈的旋风，具有破坏性，通常伴随雷暴。"
+    },
+    "Dust Storm": {
+        "中文": "沙尘暴",
+        "描述": "由于强风卷起沙土，能见度极低，空气质量差。"
+    },
+    "Heat Wave": {
+        "中文": "热浪",
+        "描述": "持续高温天气，可能对健康造成影响。"
+    },
+    "Cold Wave": {
+        "中文": "寒潮",
+        "描述": "气温骤降，通常伴随强风和低温天气。"
+    },
+    "Tropical Storm": {
+        "中文": "热带风暴",
+        "描述": "强烈的热带气旋，伴随强风和降雨。"
+    },
+    "Hurricane": {
+        "中文": "飓风",
+        "描述": "强烈的热带气旋，具有毁灭性，影响范围广。"
+    },
+    "Freezing Rain": {
+        "中文": "冻雨",
+        "描述": "降水在接触地面后结冰，导致路面滑。"
+    },
+    "Mist": {
+        "中文": "薄雾",
+        "描述": "能见度降低，但比雾要好，通常在早晨出现。"
+    },
+    "Smoke": {
+        "中文": "烟雾",
+        "描述": "空气中有烟尘，通常由于火灾或工业排放。"
+    },
+    "Squall": {
+        "中文": "阵风",
+        "描述": "短时间内的强风，通常伴随降雨或降雪。"
+    },
+    "Frost": {
+        "中文": "霜",
+        "描述": "在冷空气中，水汽凝结形成的冰晶，通常在早晨出现。"
+    },
+    "Ice": {
+        "中文": "冰",
+        "描述": "水结成固体，通常在低温环境下形成。"
+    },
+    "Clear": {
+        "中文": "晴朗",
+        "描述": "天空无云，阳光直射。"
+    },
+    "Partly Sunny": {
+        "中文": "局部晴朗",
+        "描述": "天空中有些云，但阳光仍然可见。"
+    },
+    "Light Snow": {
+        "中文": "小雪",
+        "描述": "降水量少的雪，通常不会造成积雪。"
+    },
+    "Moderate Snow": {
+        "中文": "中雪",
+        "描述": "降水量适中的雪，可能导致地面覆盖白雪。"
+    },
+    "Heavy Snow": {
+        "中文": "大雪",
+        "描述": "降水量大的雪，通常会造成交通和活动影响。"
+    },
+    "Freezing Fog": {
+        "中文": "冰雾",
+        "描述": "雾在低温下凝结成冰，可能导致路面滑。"
+    },
+    "Thundersnow": {
+        "中文": "雷雪",
+        "描述": "伴随雷声的降雪，通常较为少见。"
+    },
+    "Sandstorm": {
+        "中文": "沙暴",
+        "描述": "强风卷起沙尘，能见度低，空气质量差。"
+    },
+    "Tropical Depression": {
+        "中文": "热带低气压",
+        "描述": "强度较弱的热带气旋，可能伴随降雨。"
+    },
+    "Severe Thunderstorm": {
+        "中文": "强雷暴",
+        "描述": "伴随强降雨、雷电和可能的冰雹。"
+    },
+    "Rain Shower": {
+        "中文": "降雨",
+        "描述": "短时间内的降雨，通常强度较小。"
+    },
+    "Heavy Showers": {
+        "中文": "大阵雨",
+        "描述": "短时间内的强降雨，可能导致积水。"
+    },
+    "Intermittent Rain": {
+        "中文": "间歇性降雨",
+        "描述": "降雨和干燥交替出现。"
+    },
+    "Overcast with Rain": {
+        "中文": "阴天伴随降雨",
+        "描述": "天空阴暗，伴随持续降雨。"
+    },
+    "Overcast with Snow": {
+        "中文": "阴天伴随降雪",
+        "描述": "天空阴暗，伴随持续降雪。"
+    },
+    "Overcast with Thunderstorms": {
+        "中文": "阴天伴随雷暴",
+        "描述": "天空阴暗，伴随雷暴天气。"
+    },
+    "Flurries": {
+        "中文": "小雪花",
+        "描述": "轻微的降雪，通常不会积雪。"
+    },
+    "Light Rain Shower": {
+        "中文": "小阵雨",
+        "描述": "短时间内的小雨，通常不会造成积水。"
+    },
+    "Heavy Rain Shower": {
+        "中文": "大阵雨",
+        "描述": "短时间内的强降雨，可能导致积水。"
+    },
+    "Rain and Snow Mix": {
+        "中文": "雨雪混合",
+        "描述": "降水形式为雨和雪的混合，通常在温度接近冰点时出现。"
+    },
+    "Thundery Outbreaks Nearby": {
+        "中文": "附近有雷暴活动",
+        "描述": "在某些区域可能出现雷暴，其他区域则为晴朗。"
+    },
+    "Heavy Thundershowers": {
+        "中文": "强雷阵雨",
+        "描述": "伴随强降雨和雷电的天气现象。"
+    },
+    "Light Thundershowers": {
+        "中文": "小雷阵雨",
+        "描述": "降水量较少的雷阵雨。"
+    },
+    "Overcast with Light Rain": {
+        "中文": "阴天伴随小雨",
+        "描述": "天空阴暗，伴随小雨。"
+    },
+    "Overcast with Heavy Rain": {
+        "中文": "阴天伴随大雨",
+        "描述": "天空阴暗，伴随强降雨。"
+    },
+    "Overcast with Light Snow": {
+        "中文": "阴天伴随小雪",
+        "描述": "天空阴暗，伴随小雪。"
+    },
+    "Overcast with Heavy Snow": {
+        "中文": "阴天伴随大雪",
+        "描述": "天空阴暗，伴随强降雪。"
+    },
+    "Torrential Rain": {
+        "中文": "倾盆大雨",
+        "描述": "极强的降雨，通常会导致严重的积水。"
+    },
+    "Patchy Fog": {
+        "中文": "局部雾",
+        "描述": "能见度降低的雾霭，通常在某些区域较为明显。"
+    },
+    "Freezing Drizzle": {
+        "中文": "冻毛毛雨",
+        "描述": "细雨在低温下结冰，导致路面滑。"
+    },
+    "Ice Pellets": {
+        "中文": "冰粒",
+        "描述": "小冰块降落，通常在雨夹雪的情况下出现。"
+    },
+    "Smoke Haze": {
+        "中文": "烟雾弥漫",
+        "描述": "由于火灾或其他原因，空气中有烟雾，能见度降低。"
+    },
+    "Heavy Freezing Rain": {
+        "中文": "大冻雨",
+        "描述": "大量的冻雨，导致路面和树木结冰，可能造成危险。"
+    },
+    "Severe Blizzard": {
+        "中文": "严重暴风雪",
+        "描述": "伴随强风和大雪的极端天气，能见度极低。"
+    },
+    "Severe Cold Wave": {
+        "中文": "严重寒潮",
+        "描述": "气温骤降，伴随强风和低温天气。"
+    },
+    "Heavy Dust Storm": {
+        "中文": "大沙尘暴",
+        "描述": "强风卷起大量沙尘，能见度极低。"
+    },
+    "Light Dust Storm": {
+        "中文": "小沙尘暴",
+        "描述": "较小的沙尘暴，能见度下降，但影响相对较小。"
+    },
+    "Tropical Cyclone": {
+        "中文": "热带气旋",
+        "描述": "强烈的热带风暴，伴随强风和降雨。"
+    },
+    "Severe Tropical Storm": {
+        "中文": "强热带风暴",
+        "描述": "强烈的热带风暴，可能造成严重影响。"
+    },
+    "Light Frost": {
+        "中文": "小霜",
+        "描述": "轻微的霜冻，通常在早晨出现。"
+    },
+    "Heavy Frost": {
+        "中文": "大霜",
+        "描述": "较强的霜冻，可能影响农作物。"
+    },
 };
 
 // 示例使用
-const weatherDescription = "Torrential rain";
-const translatedWeather = weatherConditionMapping[weatherDescription] || "未知天气状况";
-console.log(`天气状况: ${translatedWeather}`); // 输出: 天气状况: 倾盆大雨
-
-
-// 示例使用
-const weatherDescription = "Light rain";
-const translatedWeather = weatherConditionMapping[weatherDescription] || "未知天气状况";
-console.log(`天气状况: ${translatedWeather}`); // 输出: 天气状况: 小雨
-
-
+const weatherDescription = "Partly Cloudy";
+const translatedWeather = completeWeatherConditions[weatherDescription] ? completeWeatherConditions[weatherDescription].中文 : "未知天气状况";
+console.log(`天气状况: ${translatedWeather}`); // 输出: 天气状况: 局部多云
 
 // 导出模块
 module.exports = async s => {
@@ -691,7 +988,7 @@ module.exports = async s => {
     const cityInput = s.param(1).trim();  // 获取输入并去除多余空格
 
     // 检查是否为中文城市名称并转换为英文
-    const city = cityMapping[cityInput] || cityInput; // 如果映射表中存在则转换，否则使用原输入
+    const city = Object.keys(cityMapping).includes(cityInput) ? cityMapping[cityInput].Beijing ? "Beijing" : cityMapping[cityInput] : cityInput; // 如果映射表中存在则转换，否则使用原输入
 
     // 构造请求 URL
     const apiKey = '1d644fbd70be4c06a4c74543241905'; // 使用您提供的 WeatherAPI API 密钥
