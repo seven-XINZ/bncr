@@ -1,4 +1,4 @@
- /**
+/**
  * @author seven
  * @name 状态查询
  * @team xinz
@@ -6,7 +6,7 @@
  * @description 本机资源查询
  * @rule ^(运行状态)$
  * @admin true
- * @public true
+ * @public false
  * @priority 9999
  * @disable false
  */
@@ -200,4 +200,3 @@ module.exports = async s => {
         await s.reply('无效指令，请发送“运行状态”以获取系统信息。');
     }
 };
-
