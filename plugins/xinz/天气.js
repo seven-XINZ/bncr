@@ -15,7 +15,7 @@
 
 const https = require('https'); // 使用 Node.js 内置的 https 模块
 
-// 中文城市名称与英文名称的映射表
+// 中文城市名称与英文名称的映射表  //使用英文可查全球
 const cityMapping = {
     // 中国
     "北京市": {
