@@ -3,14 +3,14 @@
  * @description 自动回复
  * @team xinz
  * @version v1.0.0
- * @name 自动回复
- * @description 精确词回复设置  自动创建数据文件到mod 5秒后自动删除信息
+ * @name 自动回复 修改为菜单项的变更版本  可发送菜单指令 获取用户设置的关键词列表 仅管理员添加或删除关键词  
+ 关键词添加识别错误请到mod目录查看关键词信息自己更改
  * @rule ^(删除自动回复) ([^\n]+)$
  * @rule ^(添加自动回复) ([^\n]+) ([\s\S]+)$
  * @rule ^(自动回复列表)$
+ * @rule ^(菜单)$
  * @rule [\s\S]+
  * @priority 1
- * @public true
  * @admin false
  * @disable false
  */
@@ -25,7 +25,7 @@ if (!fs.existsSync(dataFilePath)) {
     fs.writeFileSync(dataFilePath, JSON.stringify({}));
 }
 
-const delMsgTime = 5000; // 设置删除消息的时间为 5000 毫秒
+const delMsgTime = 10000; // 设置删除消息的时间为 10000 毫秒
 
 /* main */
 module.exports = async s => {
@@ -54,11 +54,9 @@ module.exports = async s => {
             const autoReplyList = loadAutoReplies();
             let logs = '';
 
-            let i = 1;
             for (const key in autoReplyList) {
                 const r = autoReplyList[key];
-                logs += `${i}. ${r.from}:${r.groupId} => ${key} | ${r.reply}\n`;
-                i++;
+                logs += `${r.from}:${r.groupId} => ${key} | ${r.reply}\n`;
             }
             return s.delMsg(await s.reply(logs || '空列表'), { wait: 10 });
 
@@ -74,6 +72,24 @@ module.exports = async s => {
             } else {
                 return s.delMsg(await s.reply('没有该关键词回复列表'), { wait: 10 });
             }
+
+        case '菜单': // 修改菜单命令
+            const replyKeywords = loadAutoReplies();
+            const keywordList = Object.keys(replyKeywords).map(key => `${key}`).join('\n');
+
+            const menuMessage = ` ——功能列表——\n` +
+                                `——发送关键字——\n` +
+                (keywordList || '当前没有自动回复关键词。\n') +
+                                `\n——作者 xinz——`;
+
+            const replyId = await s.reply(menuMessage); // 发送菜单消息
+            // 设置定时删除消息
+            setTimeout(() => {
+                s.delMsg(replyId); // 20秒后删除菜单消息
+            }, 20000); // 20000毫秒 = 20秒
+
+            return; // 结束处理
+
     }
 
     /* 异步处理 */
