@@ -3,9 +3,10 @@
 <h1 align="center">无界 | Bncr |作者: Xinz & 咸鱼
  </h1>
 <div align="center">
- 
+  
  _
- </div>
+
+ 
 > **无界机器人插件以及其他的一些自己写的或者从开源项目二改转载的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置； ** 
   [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
@@ -16,7 +17,7 @@
  [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
  [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=falPMO)   
  [人机交互对话QChatGPT](https://qchatgpt.rockchin.top)
- _
+ 
 # *详情文档
 * 鑫仔[Github](https://github.com/seven-XINZ/bncr)
 * [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
