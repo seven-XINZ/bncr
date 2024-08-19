@@ -402,7 +402,7 @@
     "author": "seven",
     "team": "xinz",
     "version": "1.0.9",
-    "description": "星座运势插件，通过自定义API接口获取星座运势并自动匹配",
+    "description": "星座运势插件，通过自定义API接口获取星座运势并自动匹配   自用接口https://api.vvhan.com/api/horoscope",
     "classification": [
       "工具"
     ],
