@@ -12,56 +12,20 @@
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
 > [ChatAI大聪明交流群](https://qm.qq.com/q/6BqfPZ7vXO)
 > 作者:[Xinz](https://www.xinz.fun) & [咸鱼](http://blog.咸鱼.top)
-# xinz/ChatGPT.js   完美版 2.0版本移除tts功能 并修复报错 
- ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt 。
-  ApiBaseUrl： 必填项，一般为"域名/v1" 
- https://chatai.master-jsx.top/v1 
-  ApiKey：必填项 sk-64---------------------------------------edf7d 
-  HumanTG是否开启编辑模式： 关闭则逐条回复，不编辑消息 
- 选择预设角色： 请根据需要选择 猫娘 
-  选择GPT模型：请根据需要选择web-gpt-4o-mini 
-  请输入自定义Prompt： 输入自定义Prompt会使预设角色失 请输入 
-  请输入画图的ApiBaseUrl：启用画图功能必填，一般为"域名/v1" 
- https://chatai.master-jsx.top/v1 
-  画图的模型：启用画图功能必填，根据自己的API支持情况填写 dall-e-3 
- 画图的ApiKey：启用画图功能必填，根据自己的API支持情况填写 
- sk-64---------------------------------------edf7d 
-  启用TTS功能： 开启后将使用TTS功能 TTS ApiBaseUrl： 启用TTS功能必填，一般为"域名/v1" 
- https://chatai.master-jsx.top/v1 
-  TTS ApiKey：启用TTS功能必填，根据自己的API支持情况填写 
- sk-64---------------------------------------edf7d 
-  自定义TTS模型： 可根据需要输入自定义的TTS模型名称 
- zh-CN-XiaoyiNeural 
-
-# ChatGpt聊天URL
+> # ChatGpt聊天URL
  [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce)   
  [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
  [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=falPMO)   
  [人机交互对话QChatGPT](https://qchatgpt.rockchin.top) 
+# xinz/ChatGPT.js   完美版 2.0版本移除tts功能 并修复报错 
+
 # xinz/Gemini.js
- gemini聊天 来自谷歌的ai
- v1.0.1 优化代码，增加单问答模式，修改触发命令，界面增加Max Tokens选项
- v1.0.0 基于sumuen大佬的插件修改，本人仅修复bug和适配2.0界面
- v1.0.2 适配3.0
 
 # xinz/IKUN.js 
- 发送IKUN语录和表情包
 
 # xinz/ping.js
- ping/web测速插件
- ping www.xinz.fun
- dns: 154.37.152.17
- 地区: Los Angeles, California, US
- ip: 154.37.152.17
- 延迟: 190.059 ms
- 访问 https://www.xinz.fun 成功，用时: 2275 ms
- 发包: 4
- 接收: 4
- 丢包率: 0%
- 成功率: 0.00%
 
 # xinz/qbittorent操作.js
- 请发送磁力连接(发送'q'退出'u'返回
 
 无界项目官网：https://anmours.github.io/Bncr/#/
 无界tg群：https://t.me/BncrJSChat
