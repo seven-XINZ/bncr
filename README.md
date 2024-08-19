@@ -16,7 +16,7 @@
  [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
  [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=falPMO)   
  [人机交互对话QChatGPT](https://qchatgpt.rockchin.top)
- 
+ _
 # *详情文档
 * 鑫仔[Github](https://github.com/seven-XINZ/bncr)
 * [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
