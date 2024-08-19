@@ -15,16 +15,19 @@
  [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce)   
  [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
  [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=falPMO)   
- [人机交互对话QChatGPT](https://qchatgpt.rockchin.top) 
-# xinz/ChatGPT.js   完美版 2.0版本移除tts功能 并修复报错 
-
-# xinz/Gemini.js
-
-# xinz/IKUN.js 
-
-# xinz/ping.js
-
-# xinz/qbittorent操作.js
+ [人机交互对话QChatGPT](https://qchatgpt.rockchin.top)
+ 
+# *详情文档
+* 鑫仔[Github](https://github.com/seven-XINZ/bncr)
+* [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
+* 官方 [Github](https://github.com/Anmours/Bncr) 
+* [TG频道](https://t.me/BncrJS)
+* [TG群组](https://t.me/BncrJSChat)
+* 安装
+> [安装文档](/docs/md/init.md)
+* 开发
+> [开发文档](https://anmours.github.io/Bncr)
+* 如果是手机端浏览开发文档，请点击开发文档左下角的按钮手动打开侧边栏目录
 
 无界项目官网：https://anmours.github.io/Bncr/#/
 无界tg群：https://t.me/BncrJSChat
@@ -38,18 +41,6 @@
 * 异步同步执行自由控制 ： 基于nodejs async/await/Promise特性，你可以自由控制异步同步（阻塞非阻塞运行）；
 * 不仅仅是Chat RoBot ： 原生支持npm/yarn，开发潜力无穷大，如果你愿意，可以在本框架上搭建网站、图片服务器、资源共享平台、并发请求等服务，在JavaScript上能做到的事情在这里都将被实现.
 
-# *详情文档
-* 鑫仔[Github](https://github.com/seven-XINZ/bncr)
-* [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
-* 官方 [Github](https://github.com/Anmours/Bncr) 
-* [TG频道](https://t.me/BncrJS)
-* [TG群组](https://t.me/BncrJSChat)
-* 安装
-> [安装文档](/docs/md/init.md)
-* 开发
-> [开发文档](https://anmours.github.io/Bncr)
-* 如果是手机端浏览开发文档，请点击开发文档左下角的按钮手动打开侧边栏目录
-_
 ## 免责声明
 > 任何用户在使用由 xinz/xianyu（以下简称「本团队」）研发的 Nodejs （js脚本）代码（以下简称「xinz.js」）前，请您仔细阅读并透彻理解本声明。您可以选择不使用xinz.js，若您一旦使用xinz.js，您的使用行为即被视为对本声明全部内容的认可和接受。  
 1. 本框架内使用的部分包括但不限于字体、npm库等资源来源于互联网，如果出现侵权可联系本框架移除。  
