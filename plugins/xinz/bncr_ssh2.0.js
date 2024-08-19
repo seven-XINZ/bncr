@@ -6,7 +6,7 @@
  *  @authentication true
  *  @classification ["ssh","更新docker容器"]
  *  @version 1.2.1
- *  @description 最好用的ssh连接，内置docker容器更新命令(如：更新 bncr)；触发词：ssh或ssh 序号
+ *  @description 最好用的ssh连接，内置docker容器更新命令(如：更新 bncr)；触发词：ssh或ssh 序号 这个是大佬加密插件 可使用也可不使用
  *  @rule ^(ssh)$
  *  @rule ^(Ssh)$
  *  @rule ^(ssh)([^\n]+)
