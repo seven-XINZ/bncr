@@ -36,21 +36,8 @@
 # ChatGpt聊天UIL
  [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce)   
  [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
- [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=falPMO)      
- 
-# xinz/Bncr_ChatGPT.js   
- 1. 添加对话模型引入 ✔
- 2. 添加对话模型选择 gpt3.5 gpt4 gpts(联网能力) ✔
- 3. initPrompt,发起会话调用数据库内prompt，数据库内无数据则生成，prompt为默认，修改handleUserActions，添加当前使用模型xx
- 4. gpt 4 mobile 的连续对话中对于img的传递 ✔
- 5. handleInput对于用户输入的img的处理,如何修改ntqq适配器使其接收图片的输出为[CQ:image,file=xxx] ✔
- 6. 取消模型的选择，加入命令ai model ,并在第一条输出中提示当前使用模型
- 12.17 添加画图功能 ✔
- 12.19 添加backendUrl，用于调用pandoraToV1Api ✔
- 12.21 优化请求格式，实现连续对话中对于img的传递
- 2024.2.8 取消画图 backendurl  * @rule ^(画图) ([\s\S]+)$ ✔
- 2024.4.10 添加tts功能* @rule ^(yy) ([\s\S]+)$ ✔,重写调用chatgpt模块，got发送请求
-
+ [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=falPMO)   
+  [QChatGPT] (https://qchatgpt.rockchin.top) 
 # xinz/Gemini.js
  gemini聊天 来自谷歌的ai
  v1.0.1 优化代码，增加单问答模式，修改触发命令，界面增加Max Tokens选项
