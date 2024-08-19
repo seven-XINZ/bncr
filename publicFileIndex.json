@@ -396,6 +396,28 @@
     "id": "9rT6GpPCLzYeLk9a71i/XTUUMuI=",
     "isChatPlugin": true
   },
+  "Amd5jY4yUSjYtta0SIZTW1/ky0k=": {
+    "type": "github",
+    "name": "星座运势",
+    "author": "seven",
+    "team": "xinz",
+    "version": "1.0.9",
+    "description": "星座运势插件，通过自定义API接口获取星座运势并自动匹配",
+    "classification": [
+      "工具"
+    ],
+    "filename": "星座运势.js",
+    "fileDir": "/plugins/xinz/星座运势.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "Amd5jY4yUSjYtta0SIZTW1/ky0k=",
+    "isChatPlugin": true
+  },
   "UosC73daLJcJvkCXq/D+1MCvl+w=": {
     "type": "github",
     "name": "每天60s",
