@@ -37,7 +37,7 @@
  [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce)   
  [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
  [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=falPMO)   
-  [QChatGPT] (https://qchatgpt.rockchin.top) 
+ [人机交互对话QChatGPT](https://qchatgpt.rockchin.top) 
 # xinz/Gemini.js
  gemini聊天 来自谷歌的ai
  v1.0.1 优化代码，增加单问答模式，修改触发命令，界面增加Max Tokens选项
