@@ -1,6 +1,6 @@
 # 哪位大佬看完脚本觉得是盗用 联系我 我删库 谢谢 [鑫仔TG](https://t.me/xinzfun)
 # 本库脚本一律不含非法行为 不涉及任何CK仓库  本仓库插件仅供娱乐使用 用户使用一切后果自负
-<h1 align="center">无界 | Bncr |作者: [Xinz](https://www.xinz.fun/archives/1717170773466) & [咸鱼](blog.咸鱼.top)
+<h1 align="center">无界 | Bncr |作者: [Xinz](https://www.xinz.fun) & [咸鱼](blog.咸鱼.top)
  </h1>
 <div align="center">
  _
