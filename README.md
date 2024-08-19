@@ -6,11 +6,12 @@
   
  _
  </div
-  
+ 
 ## **无界机器人插件以及其他的一些自己写的或者从开源项目二改转载的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置； ** 
   [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
   [ChatAI大聪明交流群](https://qm.qq.com/q/6BqfPZ7vXO)
+  
 #  作者:[Xinz](https://www.xinz.fun) & [咸鱼](http://blog.咸鱼.top)
  # ChatGpt聊天URL
    [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce)   
