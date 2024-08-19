@@ -1,9 +1,10 @@
 /**
  * @name pixiv
- * @author 啊屁
+ * @author seven&啊屁
  * @team xinz
- * @version 1.0.7
- * @description 随机获取一组涩涩纸片人
+ * @version 2.0
+ * @description 完善版随机获取一组涩涩纸片人 首次使用请自行到web插件配置配置插件  机器自动科学可使用直连模式 
+ 需要存储图片则打开存储开关 图片自动存放到mod目录下
  * @rule ^zpr(18)?$
  * @admin true
  * @public false
