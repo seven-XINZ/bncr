@@ -4,7 +4,7 @@
  * @name qbittorent操作
  * @team xinz
  * @version 2.0
- * @description qbittorent操作
+ * @description qbittorent操作 还在完善中
  * @rule ^(qb操作)$
  * @priority 10000
  * @admin true
