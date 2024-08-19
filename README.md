@@ -76,31 +76,17 @@ _
 * 不仅仅是Chat RoBot ： 原生支持npm/yarn，开发潜力无穷大，如果你愿意，可以在本框架上搭建网站、图片服务器、资源共享平台、并发请求等服务，在JavaScript上能做到的事情在这里都将被实现.
 
 # 安装
-参见 [安装文档](/docs/md/init.md)
-
+> 参见 [安装文档](/docs/md/init.md)
 # 开发
-
-[开发文档](https://anmours.github.io/Bncr)
+> [开发文档](https://anmours.github.io/Bncr)
 > 如果是手机端浏览开发文档，请点击开发文档左下角的按钮手动打开侧边栏目录
-
 # 其他
-
-
- 鑫仔
- [Github](https://github.com/seven-XINZ/bncr)
- [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466) 
- 官方
- [Github](https://github.com/Anmours/Bncr)   
- [TG频道](https://t.me/BncrJS)  
- [TG群组](https://t.me/BncrJSChat)  
-
-
-## 请喝茶 ?
- [联系到我]([https://www.xinz.fun])  
-您的支持是我更新的动力,Thank~
-
+> 鑫仔[Github](https://github.com/seven-XINZ/bncr)
+> [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466) 
+> 官方 [Github](https://github.com/Anmours/Bncr)   
+> [TG频道](https://t.me/BncrJS)
+> [TG群组](https://t.me/BncrJSChat)  
 ## 免责声明
-
 > 任何用户在使用由 xinz/xianyu（以下简称「本团队」）研发的 Nodejs （js脚本）代码（以下简称「xinz.js」）前，请您仔细阅读并透彻理解本声明。您可以选择不使用xinz.js，若您一旦使用xinz.js，您的使用行为即被视为对本声明全部内容的认可和接受。  
 1. 本框架内使用的部分包括但不限于字体、npm库等资源来源于互联网，如果出现侵权可联系本框架移除。  
 2. 由于使用本仓库脚本产生的包括由于本协议或由于使用或无法使用本仓库脚本而引起的任何性质的任何直接、间接、特殊、偶然或结果性损害（包括但不限于因商誉损失、停工、计算机故障或故障引起的损害赔偿，或任何及所有其他商业损害或损失）由使用者负责。   
