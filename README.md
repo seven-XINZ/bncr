@@ -5,6 +5,7 @@
 <div align="center">
  
  _
+ </div>
 > **无界机器人插件以及其他的一些自己写的或者从开源项目二改转载的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置； ** 
   [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
@@ -28,7 +29,7 @@
 无界项目官网：https://anmours.github.io/Bncr/#/
 无界tg群：https://t.me/BncrJSChat
 无界插件商城订阅:https://github.com/seven-XINZ/bncr  XINZ
-</div>
+
 > **Bncr 是一个开箱即用的Nodejs Chat RoBot（会话式机器人）框架。它基于OOP函数响应式编程，具有占用小、响应快、开发易等特点，允许开发者创建高度可测试、可扩展、松散耦合且易于维护的应用程序。本项目架构深受Koishi与sillyGirl的启发；**
 # 特性
 * 多平台多账户接入系统 ： 2个qq/3个wx/4个tg? so easy!；
