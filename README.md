@@ -19,15 +19,15 @@
    [人机交互对话QChatGPT](https://qchatgpt.rockchin.top)
  
 # *详情文档
-* 鑫仔[Github](https://github.com/seven-XINZ/bncr)
+* [鑫仔Github](https://github.com/seven-XINZ/bncr)
 * [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
-* 官方 [Github](https://github.com/Anmours/Bncr) 
-* [TG频道](https://t.me/BncrJS)
-* [TG群组](https://t.me/BncrJSChat)
+* [官方Github](https://github.com/Anmours/Bncr) 
+* [官方TG频道](https://t.me/BncrJS)
+* [官方TG群组](https://t.me/BncrJSChat)
 * 安装
-> [安装文档](/docs/md/init.md)
+> [官方安装文档](/docs/md/init.md)
 * 开发
-> [开发文档](https://anmours.github.io/Bncr)
+> [官方开发文档](https://anmours.github.io/Bncr)
 * 如果是手机端浏览开发文档，请点击开发文档左下角的按钮手动打开侧边栏目录
 
 无界项目官网：https://anmours.github.io/Bncr/#/
