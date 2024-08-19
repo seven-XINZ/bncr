@@ -3,10 +3,9 @@
 <h1 align="center">无界 | Bncr |作者: Xinz & 咸鱼
  </h1>
 <div align="center">
-#   作者: [Xinz](https://www.xinz.fun) & [咸鱼](blog.咸鱼.top)
  _
 </div>
-
+# 作者: [Xinz](https://www.xinz.fun) & [咸鱼](blog.咸鱼.top)
 > **无界机器人插件以及其他的一些自己写的或者从开源项目二改转载的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置； ** 
   [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
