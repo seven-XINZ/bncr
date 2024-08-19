@@ -1,7 +1,6 @@
 # 哪位大佬看完脚本觉得是盗用 联系我 我删库 谢谢 [鑫仔TG](https://t.me/xinzfun) 
 # 本库脚本一律不含非法行为 不涉及任何CK仓库  本仓库插件仅供娱乐使用 用户使用一切后果自负
 <h1 align="center">无界 | Bncr |作者: Xinz & 咸鱼
-    作者:[Xinz](https://www.xinz.fun) & [咸鱼](http://blog.咸鱼.top)
  </h1>
 <div align="center">
  
@@ -12,7 +11,7 @@
   [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
 > [ChatAI大聪明交流群](https://qm.qq.com/q/6BqfPZ7vXO)
-> [Xinz](https://www.xinz.fun) & [咸鱼](blog.咸鱼.top)
+> 作者:[Xinz](https://www.xinz.fun) & [咸鱼](http://blog.咸鱼.top)
 # xinz/ChatGPT.js   完美版 2.0版本移除tts功能 并修复报错 
  ChatGpt聊天，适配无界3.0，增加  ai   画图  TTS 功能  请先到WEB界面完成插件首次配置 无界web插件配置  配置ChatGpt 。
   ApiBaseUrl： 必填项，一般为"域名/v1" 
