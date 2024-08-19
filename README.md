@@ -38,7 +38,7 @@
 * 异步同步执行自由控制 ： 基于nodejs async/await/Promise特性，你可以自由控制异步同步（阻塞非阻塞运行）；
 * 不仅仅是Chat RoBot ： 原生支持npm/yarn，开发潜力无穷大，如果你愿意，可以在本框架上搭建网站、图片服务器、资源共享平台、并发请求等服务，在JavaScript上能做到的事情在这里都将被实现.
 
-# *其他
+# *详情文档
 * 鑫仔[Github](https://github.com/seven-XINZ/bncr)
 * [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
 * 官方 [Github](https://github.com/Anmours/Bncr) 
