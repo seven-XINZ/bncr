@@ -45,11 +45,11 @@ _
 > [开发文档](https://anmours.github.io/Bncr)
 > 如果是手机端浏览开发文档，请点击开发文档左下角的按钮手动打开侧边栏目录
 # 其他
-> 鑫仔[Github](https://github.com/seven-XINZ/bncr)
-> [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466) 
-> 官方 [Github](https://github.com/Anmours/Bncr)   
-> [TG频道](https://t.me/BncrJS)
-> [TG群组](https://t.me/BncrJSChat)  
+> **鑫仔[Github](https://github.com/seven-XINZ/bncr)
+>  [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466) 
+>  官方 [Github](https://github.com/Anmours/Bncr)   
+>  [TG频道](https://t.me/BncrJS)
+>  [TG群组](https://t.me/BncrJSChat)  
 ## 免责声明
 > 任何用户在使用由 xinz/xianyu（以下简称「本团队」）研发的 Nodejs （js脚本）代码（以下简称「xinz.js」）前，请您仔细阅读并透彻理解本声明。您可以选择不使用xinz.js，若您一旦使用xinz.js，您的使用行为即被视为对本声明全部内容的认可和接受。  
 1. 本框架内使用的部分包括但不限于字体、npm库等资源来源于互联网，如果出现侵权可联系本框架移除。  
