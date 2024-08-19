@@ -3,7 +3,7 @@
  * @name 星座运势
  * @team xinz
  * @version 1.0.9
- * @description 星座运势插件，通过自定义API接口获取星座运势并自动匹配
+ * @description 星座运势插件，通过自定义API接口获取星座运势并自动匹配   自用接口https://api.vvhan.com/api/horoscope
  * @rule ^(星座) (.+) (今日运势|明日运势|一周运势|月运势)$
  * @rule ^(今日运势|明日运势|一周运势|月运势) (.+)$
  * @priority 99999
