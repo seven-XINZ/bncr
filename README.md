@@ -33,7 +33,7 @@
   自定义TTS模型： 可根据需要输入自定义的TTS模型名称 
  zh-CN-XiaoyiNeural 
 
-# ChatGpt聊天UIL
+# ChatGpt聊天URL
  [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce)   
  [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
  [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=falPMO)   
