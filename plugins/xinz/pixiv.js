@@ -6,7 +6,7 @@
  * @description 完善版随机获取一组涩涩纸片人 首次使用请自行到web插件配置配置插件  机器自动科学可使用直连模式 
  需要存储图片则打开存储开关 图片自动存放到mod目录下
  * @rule ^zpr(18)?$
- * @admin true
+ * @admin false
  * @public false
  * @priority 50
  */
