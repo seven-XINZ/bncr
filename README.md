@@ -3,6 +3,7 @@
 <h1 align="center">无界 | Bncr |> 作者: [Xinz](https://www.xinz.fun) & [咸鱼](blog.咸鱼.top)
  </h1>
 <div align="center">
+   作者: [Xinz](https://www.xinz.fun) & [咸鱼](blog.咸鱼.top)
  _
 </div>
 
