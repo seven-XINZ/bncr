@@ -1,104 +1,77 @@
-/**作者
+/**
  * @author xinz&咸鱼
- * @name 联系管理
+ * @name 通知管理员
  * @team xinz&咸鱼
- * @version 1.0
- * @description 联系管理并转发消息
- * @rule ^(联系管理|洗白)$
- * @priority 10000
+ * @version v1.0.1
+ * @description 处理用户联系请求并提供倒计时提示手动到web数据库删除屏蔽用户或者等待倒计时结束 数据库 contactmanagement
+ * @rule ^(联系管理)$
+ * @priority 10
  * @admin false
  * @disable false
  */
-
-// 创建一个系统数据库实例
-const sysdb = new BncrDB('system');
-const MAX_USAGE = 5; // 最大使用次数
-const BLOCK_TIME = 86400; // 屏蔽时间（秒），1天
-
-// 手动维护用户列表
-const userListKey = 'user_list'; // 存储用户 ID 列表的键
-
 module.exports = async s => {
-    const userId = s.getUserId(); // 获取当前用户 ID
-    const command = s.getMsg(); // 获取用户输入的命令
-    const usageKey = `usage_${userId}`; // 用于存储使用次数的键
-    const blockKey = `blocked_${userId}`; // 用于存储屏蔽状态的键
+    const db = new BncrDB('contactmanagement');
+    const id = s.getFrom() + ":" + s.getUserId();
+    const currentDate = new Date();
+    const futureDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
 
-    // 处理“洗白”命令
-    if (command === '洗白') {
-        // 检查用户是否为管理员（假设有一个 isAdmin 方法）
-        if (!s.isAdmin()) {
-            return s.reply('您没有权限执行此命令。');
-        }
-
-        // 获取用户列表
-        const userList = await sysdb.get(userListKey) || [];
-        console.log("当前用户列表:", userList); // 调试信息
-
-        for (const user of userList) {
-            await sysdb.set(`blocked_${user}`, false); // 解除屏蔽
-            await sysdb.set(`usage_${user}`, 0); // 重置使用次数
-            console.log(`用户 ${user} 的限制已被移除`); // 调试信息
-        }
-        return s.reply('所有用户的限制已被移除。'); // 提示管理员移除成功
+    // 检查数据库中是否存在该用户的记录
+    if (await db.get(id) == undefined) {
+        // 如果不存在，初始化用户的记录为 0
+        await db.set(id, "0");
     }
 
-    // 检查用户是否被屏蔽
-    const isBlocked = await sysdb.get(blockKey);
-    if (isBlocked) {
-        return s.reply(`您已被屏蔽，请 ${BLOCK_TIME / 3600} 小时后再联系吧。`);
-    }
+    // 获取上次提交的时间
+    const lastContactTime = await db.get(id);
+    
+    // 检查当前时间是否大于等于用户上次提交的时间
+    if (currentDate.getTime() >= lastContactTime) {
+        // 如果可以提交信息，回复用户欢迎信息
+        await s.reply("欢迎提问━(*｀∀´*)ノ亻! 请问是有什么问题吗 如果没事也可以调戏管理的哦 记得留下电子邮箱哦(发送'q'退出)");
+        
+        // 等待用户输入
+        let userInput = await s.waitInput(async (s) => {
+            // 获取用户发送的消息
+            const message = s.getMsg();
+            
+            // 如果用户输入 'q'，则退出
+            if (message === 'q') {
+                await s.reply('已退出');
+            } else {
+                // 向管理员推送用户信息
+                sysMethod.pushAdmin({
+                    platform: [],
+                    msg: `来自${s.getFrom()}平台${s.getGroupId()}群${s.getUserId()}用户的信息\n${message}`,
+                });
+                
+                // 更新数据库，将用户的下一次提交时间设置为未来时间
+                await db.set(id, futureDate.getTime());
+                
+                // 回复用户信息发送完成的消息
+                const replyMessage = await s.reply("发送信息完成");
+                
+                // 删除回复消息，等待 10 秒后执行
+                await s.delMsg(replyMessage, {
+                    wait: 10
+                });
+            }
+        }, 60); // 等待用户输入的最大时间为 60 秒
 
-    // 获取用户的使用次数
-    let usageCount = await sysdb.get(usageKey) || 0;
-    usageCount++;
-
-    // 检查使用次数是否超过限制
-    if (usageCount >= MAX_USAGE) {
-        // 设置用户为屏蔽状态，并设置屏蔽时间
-        await sysdb.set(blockKey, true); // 设置为屏蔽状态
-        await sysdb.set(usageKey, usageCount); // 更新使用次数
-
-        // 添加用户到用户列表（如果还未添加）
-        let userList = await sysdb.get(userListKey) || [];
-        if (!userList.includes(userId)) {
-            userList.push(userId);
-            await sysdb.set(userListKey, userList); // 更新用户列表
-            console.log(`用户 ${userId} 已添加到用户列表`); // 调试信息
-        }
-
-        // 设置定时器，86400秒后解除屏蔽
-        setTimeout(async () => {
-            await sysdb.set(blockKey, false); // 解除屏蔽
-            await sysdb.set(usageKey, 0); // 重置使用次数
-            console.log(`用户 ${userId} 的屏蔽已解除`); // 调试信息
-        }, BLOCK_TIME * 1000); // 转换为毫秒
-
-        return s.reply(`您已达到最大使用次数，请 ${BLOCK_TIME / 3600} 小时后再联系吧。`);
-    }
-
-    // 更新使用次数
-    await sysdb.set(usageKey, usageCount);
-    console.log(`用户 ${userId} 的使用次数已更新为 ${usageCount}`); // 调试信息
-
-    await s.reply("欢迎提问━(*｀∀´*)ノ亻! 请问是有什么问题吗？如果没事也可以调戏管理的哦，记得留下电子邮箱哦(发送'q'退出)");
-
-    let YOU = await s.waitInput(async (s) => {
-        let num = s.getMsg();
-        if (num === 'q') {
-            await s.reply('已退出联系管理。');
-        } else {
-            // 将用户信息与消息整合
-            sysMethod.pushAdmin({
-                platform: [], // 您可以在这里添加实际的平台信息
-                msg: `来自 ${s.getFrom()} 平台 ${s.getGroupId()} 群 ${s.getUserId()} 用户的信息\n${num}`,
-            });
-            await s.reply("发送信息完成，感谢您的联系！");
-        }
-    }, 60); // 等待用户输入，超时时间为60秒
-
-    // 检查是否超时
-    if (YOU === null) {
-        return s.reply('超时退出联系管理。');
+        // 如果用户输入超时，则回复超时信息
+        if (userInput === null) return s.reply('超时退出');
+    } else {
+        // 计算距离下次联系的剩余时间
+        const remainingTime = lastContactTime - currentDate.getTime();
+        const remainingHours = Math.floor(remainingTime / (1000 * 60 * 60));
+        const remainingMinutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        const remainingSeconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+        
+        // 提示用户还有多久可以再次联系管理
+        const replyMessage = await s.reply(`别呼啦！别呼啦！您还有 ${remainingHours} 小时 ${remainingMinutes} 分钟 ${remainingSeconds} 秒才能再次联系管理。`);
+        
+        // 删除回复消息，等待 10 秒后执行
+        await s.delMsg(replyMessage, {
+            wait: 10
+        });
     }
 }
