@@ -16,7 +16,7 @@
  # ChatGpt聊天URL
    [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce)   
    [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
-   [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=falPMO)   
+   [TTS适配海豚Ai TTS-Online](https://www.ttson.cn/?source=6GunVW)   
    [人机交互对话QChatGPT](https://qchatgpt.rockchin.top)
  
 # *详情文档
