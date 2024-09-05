@@ -3,7 +3,7 @@
  * @name ssh
  * @team xinz
  * @version 1.0
- * @description 自定义多个主机sshel操作 预告下一个版本会增加回执使用图片打印 解决sshel语法查看问题
+ * @description 自定义多个主机sshel操作 预告下一个版本会增加回执使用图片打印 解决sshel语法查看问题 需配合本仓库 qq.js 使用
  * @rule ^(SSH|ssh)$
  * @priority 10000
  * @admin true
