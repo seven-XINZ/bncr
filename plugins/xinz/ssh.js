@@ -17,8 +17,8 @@ const { exec } = require('child_process');
 
 // 定义设备列表，每个设备包含名称、主机地址、端口、用户名和密码
 const devices = [
-    { name: '设备1', host: '192.168.0.0', port: 0, username: 'root', password: 'password' },
-    { name: '设备2', host: '192.168.0.0', port: 0, username: 'root', password: 'password' },
+    { name: '设备1', host: '192.168.3.20', port: 22, username: 'seven', password: 'sevenchen' },
+    { name: '设备2', host: '192.168.0.0', port: 22, username: 'root', password: 'password' },
     // 可以在此添加更多设备
 ];
 
@@ -52,18 +52,27 @@ module.exports = async s => {
         return s.reply(`用户名或密码错误，请检查并重试。`);
     }
 
-    await s.reply("请输入ssh命令(发送'q'退出)");
+    // 进入命令输入循环
+    while (true) {
+        // 提示用户输入 SSH 命令
+        await s.reply("请输入ssh命令(发送'q'退出)");
 
-    // 等待用户输入 SSH 命令
-    let command_id = await s.waitInput(async (s) => { }, 30);
-    if (command_id === null) return s.reply('超时退出');
-    command_id = command_id.getMsg();
-    if (command_id === 'q') return s.reply('已退出');
+        // 等待用户输入 SSH 命令
+        let command_id = await s.waitInput(async (s) => { }, 30);
+        if (command_id === null) return s.reply('超时退出');
 
-    // 执行 SSH 命令并获取输出
-    const output = await sshExecCommand(host, port, username, password, command_id);
-    const formattedOutput = output.replace(/\n/g, "").replace(/Done/g, "成功");
-    await s.reply("操作结果:\n" + formattedOutput);
+        command_id = command_id.getMsg();
+        if (command_id === 'q') return s.reply('已退出');
+
+        // 执行 SSH 命令并获取输出
+        try {
+            const output = await sshExecCommand(host, port, username, password, command_id);
+            const formattedOutput = output.replace(/\n/g, "\n").replace(/Done/g, "成功").replace(/\s*\|\s*/g, "\n");
+            await s.reply("操作结果:\n" + formattedOutput);
+        } catch (error) {
+            await s.reply(`执行命令时发生错误: ${error.message}`);
+        }
+    }
 
     // 定义 SSH 命令执行的函数
     async function sshExecCommand(host, port, username, password, command) {
@@ -115,4 +124,3 @@ module.exports = async s => {
         });
     }
 }
-
