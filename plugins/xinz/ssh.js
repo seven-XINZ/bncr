@@ -3,7 +3,7 @@
  * @name ssh
  * @team xinz
  * @version 1.0
- * @description 自定义多个主机sshel操作 预告下一个版本会增加回执使用图片打印 解决sshel语法查看问题 需搭配本仓库 qq.js
+ * @description 自定义多个主机sshel操作 预告下一个版本会增加回执使用图片打印 解决sshel语法查看问题
  * @rule ^(SSH|ssh)$
  * @priority 10000
  * @admin true
@@ -17,7 +17,7 @@ const { exec } = require('child_process');
 
 // 定义设备列表，每个设备包含名称、主机地址、端口、用户名和密码
 const devices = [
-    { name: '设备1', host: '192.168.3.20', port: 22, username: 'seven', password: 'sevenchen' },
+    { name: '设备1', host: '192.168.0.0', port: 22, username: 'root', password: 'password' },
     { name: '设备2', host: '192.168.0.0', port: 22, username: 'root', password: 'password' },
     // 可以在此添加更多设备
 ];
