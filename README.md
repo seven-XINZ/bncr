@@ -15,7 +15,7 @@
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
   [ChatAI大聪明交流群](https://qm.qq.com/q/6BqfPZ7vXO)
   
-#  作者:[Xinz](https://www.xinz.fun) & [咸鱼](http://blog.咸鱼.top)
+# 作者们的博客:[Xinz](https://www.xinz.fun) & [咸鱼](http://blog.咸鱼.top)
  # ChatGpt聊天URL
    [大聪明gpt对接教程](https://www.master-jsx.top/docs/ChatNio/introduce)   
    [大聪明各种模型中转站](https://chatai.master-jsx.top/)   
