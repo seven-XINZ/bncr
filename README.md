@@ -1,6 +1,6 @@
 ![6bb2a486b967a89bf6727173296f2ce4_720](https://github.com/user-attachments/assets/c2a16144-58d8-4caf-a33c-19a427cb029b)
 
-# 哪位大佬看完脚本觉得是盗用 联系我 我删库 谢谢 [鑫仔TG](https://t.me/xinzfun) 
+# [鑫仔TG](https://t.me/xinzfun) 
 # 本库脚本一律不含非法行为 不涉及任何CK仓库  本仓库插件鑫仔和咸鱼大佬一起维护仅供娱乐使用 用户使用一切后果自负
 <h1 align="center">无界 | Bncr |作者: Xinz & 咸鱼
  </h1>
@@ -8,7 +8,7 @@
   
  _
  </div
- 
+    哪位大佬看完脚本觉得是盗用 联系我 我删库 谢谢
 ## **无界机器人插件以及其他的一些自己写的或者从开源项目二改转载的脚本 也是自己的备份 请勿乱用谢谢 尽量做到开源 可以自己修改 尽量做到web配置； ** 
   [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
   [鑫仔Github](https://github.com/seven-XINZ/bncr)
