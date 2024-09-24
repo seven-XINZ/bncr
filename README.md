@@ -1,3 +1,5 @@
+![6bb2a486b967a89bf6727173296f2ce4_720](https://github.com/user-attachments/assets/c2a16144-58d8-4caf-a33c-19a427cb029b)
+
 # 哪位大佬看完脚本觉得是盗用 联系我 我删库 谢谢 [鑫仔TG](https://t.me/xinzfun) 
 # 本库脚本一律不含非法行为 不涉及任何CK仓库  本仓库插件鑫仔和咸鱼大佬一起维护仅供娱乐使用 用户使用一切后果自负
 <h1 align="center">无界 | Bncr |作者: Xinz & 咸鱼
