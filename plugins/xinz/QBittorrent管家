@@ -1,0 +1,145 @@
+/**
+ * @author seven & xianyu
+ * @name QBittorrent管家
+ * @team xinz
+ * @version 2.1
+ * @description QBittorrent全功能管理｜可视化操作｜智能缓存
+ * @rule ^(qb操作)$
+ * @priority 10000
+ * @admin true
+ * @disable false
+ */
+sysMethod.testModule(['@ctrl/qbittorrent'], { install: true });
+
+module.exports = async s => {
+    const { QBittorrent } = await import('@ctrl/qbittorrent');
+    const qb = new QBittorrent({
+        baseUrl: `http://ip:端口/`,
+        username: "ssh",
+        password: "ssh密码",
+    });
+
+    // 缓存系统
+    let torrentCache = null;
+    let lastRefresh = 0;
+    const CACHE_TTL = 60 * 1000; // 1分钟缓存
+
+    try {
+        while (true) {
+            await showMainMenu(s);
+            const command = await getInput(s, 60);
+            
+            if (!command) return exitWithTimeout(s);
+            if (command === 'q') return exitGracefully(s);
+            
+            await handleCommand(s, qb, command);
+        }
+    } catch (err) {
+        handleGlobalError(s, err);
+    }
+
+    // ======== 核心功能模块 ========
+    async function showMainMenu(s) {
+        await s.reply([
+            "🛠️ QBittorrent 控制中心",
+            "────────────────",
+            "0. 添加磁力链接",
+            "1. 查看做种列表",
+            "2. 全部任务列表",
+            "3. 管理指定任务",
+            "────────────────",
+            "📝 输入数字选择操作 (q退出)"
+        ].join('\n'));
+    }
+
+    async function handleCommand(s, qb, command) {
+        const handlers = {
+            '0': handleAddMagnet,
+            '1': () => handleList(s, qb, 'seeding'),
+            '2': () => handleList(s, qb, 'all'),
+            '3': handleTaskManagement
+        };
+
+        return handlers[command]?.(s, qb) || invalidCommand(s);
+    }
+
+    // ======== 功能处理模块 ========
+    async function handleAddMagnet(s, qb) {
+        const magnet = await getInputWithPrompt(s, [
+            "🧲 添加磁力链接",
+            "────────────────",
+            "请输入磁力链接或返回(u)"
+        ].join('\n'), 180);
+
+        if (magnet === 'u') return;
+        if (!magnet.startsWith('magnet:')) return s.reply("❌ 无效的磁力链接格式");
+
+        try {
+            const result = await qb.addMagnet(magnet);
+            await s.reply([
+                "✅ 添加成功",
+                "────────────────",
+                `跟踪哈希：${result}`,
+                "自动跳转至任务列表..."
+            ].join('\n'));
+            torrentCache = null; // 清除缓存
+        } catch (err) {
+            await s.reply([
+                "⚠️ 添加失败",
+                "────────────────",
+                `错误信息：${err.message}`
+            ].join('\n'));
+        }
+    }
+
+    async function handleList(s, qb, type) {
+        try {
+            const { torrents } = await refreshCache(qb);
+            const filtered = type === 'seeding' 
+                ? torrents.filter(t => t.state === 'uploading') 
+                : torrents;
+
+            await s.reply(buildListMessage(filtered, type));
+        } catch (err) {
+            await s.reply(buildErrorMessage('列表获取失败', err));
+        }
+    }
+
+    // ======== 工具函数模块 ========
+    async function refreshCache(qb) {
+        if (!torrentCache || Date.now() - lastRefresh > CACHE_TTL) {
+            torrentCache = await qb.getAllData();
+            lastRefresh = Date.now();
+        }
+        return torrentCache;
+    }
+
+    function buildListMessage(torrents, type) {
+        if (torrents.length === 0) {
+            return `📭 当前没有${type === 'seeding' ? '做种' : ''}任务`;
+        }
+
+        const header = `📋 ${type === 'seeding' ? '做种' : '全部'}任务 (${torrents.length}个)`;
+        const list = torrents.map((t, i) => 
+            `${i+1}. ${truncate(t.name, 30)}\n   ▸ 状态: ${stateIcon(t.state)} 进度: ${t.progress}%`
+        ).join('\n\n');
+
+        return [
+            header,
+            "────────────────",
+            list,
+            "────────────────",
+            "输入序号查看详情 (q返回)"
+        ].join('\n');
+    }
+
+    function stateIcon(state) {
+        const icons = {
+            uploading: '🚀',
+            downloading: '⏬',
+            paused: '⏸',
+            error: '❌'
+        };
+        return `${icons[state] || 'ℹ️'} ${state}`;
+    }
+};
