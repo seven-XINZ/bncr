@@ -1,126 +1,205 @@
-/**作者
+/**
  * @author seven
- * @name ssh
+ * @name SSH终端管家
  * @team xinz
- * @version 1.0
- * @description 自定义多个主机sshel操作 预告下一个版本会增加回执使用图片打印 解决sshel语法查看问题 需配合本仓库 qq.js 使用
+ * @version 1.1
+ * @description 多主机SSH管理｜智能连接检测｜可视化操作
  * @rule ^(SSH|ssh)$
  * @priority 10000
  * @admin true
  * @disable false
  */
 
-// 引入所需的 SSH2 模块和 child_process 模块
 sysMethod.testModule(['ssh2'], { install: true });
 const Client = require('ssh2').Client;
 const { exec } = require('child_process');
 
-// 定义设备列表，每个设备包含名称、主机地址、端口、用户名和密码
-const devices = [
-    { name: '设备1', host: '192.168.0.0', port: 22, username: 'root', password: 'password' },
-    { name: '设备2', host: '192.168.0.0', port: 22, username: 'root', password: 'password' },
-    // 可以在此添加更多设备
+// 设备配置中心
+const DEVICES = [
+    { 
+        name: '🏠 家庭NAS', 
+        host: '192.168.0.0', 
+        port: 22, 
+        username: 'admin', 
+        password: 'securePass123',
+        icon: '🖥️'
+    },
+    {
+        name: '☁️ 云服务器',
+        host: '103.107.198.12',
+        port: 58222,
+        username: 'root',
+        password: 'Cloud@2023',
+        icon: '🌐'
+    }
 ];
 
+// 超时配置
+const TIMEOUTS = {
+    selection: 30,    // 选择超时(秒)
+    command: 60,      // 命令输入超时
+    connect: 10000    // SSH连接超时(毫秒)
+};
+
 module.exports = async s => {
-    // 显示设备选择菜单
-    await s.reply("请选择设备:\n" + devices.map((d, index) => `${index + 1}: ${d.name}`).join('\n'));
+    try {
+        // 显示设备菜单
+        const device = await selectDevice(s);
+        if (!device) return;
 
-    // 等待用户输入设备选择
-    let deviceChoice = await s.waitInput(async (s) => { }, 30);
-    if (deviceChoice === null) return s.reply('超时退出');
-
-    // 解析用户输入的设备索引
-    const deviceIndex = parseInt(deviceChoice.getMsg()) - 1;
-
-    // 检查用户输入的索引是否有效
-    if (isNaN(deviceIndex) || deviceIndex < 0 || deviceIndex >= devices.length) {
-        return s.reply('无效选择，请输入正确的设备编号。');
+        // 连接验证流程
+        await verifyConnection(device);
+        
+        // 进入命令循环
+        await commandLoop(s, device);
+        
+    } catch (error) {
+        handleError(s, error);
     }
+};
 
-    // 获取所选设备的连接信息
-    const { host, port, username, password } = devices[deviceIndex];
+// ========== 核心功能模块 ==========
+async function selectDevice(s) {
+    const menu = [
+        "🔧 可用设备列表",
+        "────────────────",
+        ...DEVICES.map((d, i) => `${i+1}. ${d.icon} ${d.name}\n   ▸ ${d.host}:${d.port}`),
+        "────────────────",
+        "输入序号选择设备 (q退出)"
+    ].join('\n');
 
-    // 验证主机是否在线
-    if (!(await isHostOnline(host))) {
-        return s.reply(`主机 ${host} 不可达，请检查网络连接。`);
+    const choice = await getInput(s, menu, TIMEOUTS.selection);
+    const index = parseInt(choice) - 1;
+    
+    if (isNaN(index) || index < 0 || index >= DEVICES.length) {
+        throw new Error('INVALID_DEVICE', `无效设备序号: ${choice}`);
     }
-
-    // 验证用户名和密码是否正确
-    const isValidCredentials = await validateCredentials(host, port, username, password);
-    if (!isValidCredentials) {
-        return s.reply(`用户名或密码错误，请检查并重试。`);
-    }
-
-    // 进入命令输入循环
-    while (true) {
-        // 提示用户输入 SSH 命令
-        await s.reply("请输入ssh命令(发送'q'退出)");
-
-        // 等待用户输入 SSH 命令
-        let command_id = await s.waitInput(async (s) => { }, 30);
-        if (command_id === null) return s.reply('超时退出');
-
-        command_id = command_id.getMsg();
-        if (command_id === 'q') return s.reply('已退出');
-
-        // 执行 SSH 命令并获取输出
-        try {
-            const output = await sshExecCommand(host, port, username, password, command_id);
-            const formattedOutput = output.replace(/\n/g, "\n").replace(/Done/g, "成功").replace(/\s*\|\s*/g, "\n");
-            await s.reply("操作结果:\n" + formattedOutput);
-        } catch (error) {
-            await s.reply(`执行命令时发生错误: ${error.message}`);
-        }
-    }
-
-    // 定义 SSH 命令执行的函数
-    async function sshExecCommand(host, port, username, password, command) {
-        return new Promise((resolve, reject) => {
-            const conn = new Client();
-            conn.on('ready', () => {
-                // 当连接准备好后，执行命令
-                conn.exec(command, (err, stream) => {
-                    if (err) {
-                        reject(err); // 如果有错误，拒绝 Promise
-                        return;
-                    }
-                    let output = '';
-                    stream.on('close', (code, signal) => {
-                        conn.end(); // 关闭连接
-                        resolve(output); // 解析 Promise，返回输出
-                    }).on('data', (data) => {
-                        output += data.toString().trim(); // 收集输出数据
-                    }).stderr.on('data', (data) => {
-                        console.error('STDERR: ' + data); // 处理错误输出
-                    });
-                });
-            }).connect({ host, port, username, password }); // 连接到 SSH 服务器
-        });
-    }
-
-    // 检查主机是否在线
-    async function isHostOnline(host) {
-        return new Promise((resolve) => {
-            exec(`ping -c 1 ${host}`, (error) => {
-                resolve(!error); // 如果没有错误，主机在线
-            });
-        });
-    }
-
-    // 验证用户名和密码是否正确
-    async function validateCredentials(host, port, username, password) {
-        return new Promise((resolve) => {
-            const conn = new Client();
-            conn.on('ready', () => {
-                conn.exec('whoami', (err) => {
-                    conn.end(); // 关闭连接
-                    resolve(!err); // 如果没有错误，凭据有效
-                });
-            }).connect({ host, port, username, password });
-            conn.on('error', () => {
-                resolve(false); // 如果连接错误，凭据无效
-            });
-        });
-    }
+    
+    return DEVICES[index];
 }
+
+async function verifyConnection(device) {
+    const checks = {
+        host: await pingHost(device.host),
+        auth: await testCredentials(device)
+    };
+
+    if (!checks.host) throw new Error('HOST_OFFLINE', `${device.host} 无法访问`);
+    if (!checks.auth) throw new Error('AUTH_FAILED', '认证失败');
+}
+
+async function commandLoop(s, device) {
+    const conn = await createConnection(device);
+    
+    while (true) {
+        const command = await getInput(s, [
+            `🚀 ${device.name} 终端就绪`,
+            "────────────────",
+            "输入 Linux 命令执行",
+            "支持多命令用 ; 分隔",
+            "────────────────",
+            "▸ 输入 'q' 退出会话",
+            "▸ 输入 'menu' 返回主菜单"
+        ].join('\n'), TIMEOUTS.command);
+
+        if (command.toLowerCase() === 'q') break;
+        if (command === 'menu') throw new Error('RETURN_MENU');
+
+        const output = await executeSSH(conn, command);
+        await formatOutput(s, output);
+    }
+    
+    conn.end();
+}
+
+// ========== SSH 核心服务 ==========
+function createConnection(device) {
+    return new Promise((resolve, reject) => {
+        const conn = new Client();
+        const timer = setTimeout(() => 
+            reject(new Error('CONNECT_TIMEOUT', '连接超时')), 
+            TIMEOUTS.connect
+        );
+
+        conn.on('ready', () => {
+            clearTimeout(timer);
+            resolve(conn);
+        }).on('error', err => {
+            clearTimeout(timer);
+            reject(new Error('CONNECTION_FAILED', err.message));
+        }).connect(device);
+    });
+}
+
+function executeSSH(conn, command) {
+    return new Promise((resolve, reject) => {
+        conn.exec(command, (err, stream) => {
+            if (err) return reject(new Error('EXEC_FAILED', err.message));
+            
+            let output = '';
+            stream.on('data', data => output += data)
+                  .on('close', () => resolve(output))
+                  .stderr.on('data', data => output += `\n[ERROR] ${data}`);
+        });
+    });
+}
+
+// ========== 工具函数模块 ==========
+async function getInput(s, prompt, timeout) {
+    const reply = await s.reply(prompt);
+    const response = await s.waitInput(() => {}, timeout * 1000);
+    
+    if (!response) throw new Error('INPUT_TIMEOUT');
+    return response.getMsg().trim();
+}
+
+async function formatOutput(s, output) {
+    const MAX_LENGTH = 800;
+    const truncated = output.length > MAX_LENGTH 
+        ? output.slice(0, MAX_LENGTH) + '\n...（输出已截断）' 
+        : output;
+
+    await s.reply([
+        "📋 执行结果",
+        "────────────────",
+        truncated,
+        "────────────────",
+        `字符数: ${output.length} | 状态: ${output.includes('[ERROR]') ? '❌' : '✅'}`
+    ].join('\n'));
+}
+
+async function pingHost(host) {
+    return new Promise(resolve => {
+        exec(`ping -c 1 -W 1 ${host}`, err => resolve(!err));
+    });
+}
+
+async function testCredentials(device) {
+    return new Promise(resolve => {
+        const conn = new Client();
+        conn.on('ready', () => {
+            conn.end();
+            resolve(true);
+        }).on('error', () => resolve(false))
+          .connect(device);
+    });
+}
+
+function handleError(s, error) {
+    const errorMap = {
+        'HOST_OFFLINE': `🛑 主机不可达\n${error.message}`,
+        'AUTH_FAILED': '🔑 认证失败\n请检查用户名/密码',
+        'CONNECT_TIMEOUT': '⏰ 连接超时\n请检查网络或端口配置',
+        'INPUT_TIMEOUT': '⏰ 操作超时\n自动返回主菜单'
+    };
+
+    const message = errorMap[error.type] || `⚠️ 未知错误\n${error.message}`;
+    s.reply([
+        "❌ 操作异常",
+        "────────────────",
+        message,
+        "────────────────",
+        "错误代码: " + error.type
+    ].join('\n'));
+}
+
