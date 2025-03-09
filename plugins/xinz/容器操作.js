@@ -1,7 +1,7 @@
 /**作者
- * @author xinz
+ * @author xinz&咸鱼
  * @name 容器操作
- * @team xinz
+ * @team xinz&咸鱼
  * @version 1.2
  * @description 增强版容器操作，包含状态显示、资源占用等信息
  * @rule ^(容器操作)$
