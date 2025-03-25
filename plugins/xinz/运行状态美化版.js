@@ -3,7 +3,7 @@
  * @name 运行状态
  * @team xinz
  * @version 1.2.0
- * @description 本机资源查询 - 美化版
+ * @description 本机资源少量bug版本    多硬盘 请将硬盘挂载映射进 bncr  示例:/sata:/sata  /sata1:/sata1  /sata2:/sata2
  * @rule ^(运行状态)$
  * @admin true
  * @public false
