@@ -66,6 +66,28 @@
     "id": "IxmdixsmKwTuMOl9hQjyBBk6Oqc=",
     "isChatPlugin": false
   },
+  "7pS6h6sD/BQNrfnkbAbVkPYU9DE=": {
+    "type": "github",
+    "name": "wechatFerry",
+    "author": "3zang",
+    "team": "3zang",
+    "version": "1.0.2",
+    "description": "wechatFerry适配器 wcf微信地址:https://github.com/lich0821/WeChatFerry/releases/tag/v39.0.14",
+    "classification": [
+      "娱乐"
+    ],
+    "filename": "wechatFerry.js",
+    "fileDir": "/Adapter/wechatFerry.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": true,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "7pS6h6sD/BQNrfnkbAbVkPYU9DE=",
+    "isChatPlugin": false
+  },
   "vgi94FtwpjHpVNpQrC9Fb3Q8BIA=": {
     "type": "github",
     "name": "wxKeAImao",
