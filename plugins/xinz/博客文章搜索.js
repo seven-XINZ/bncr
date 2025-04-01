@@ -3,10 +3,10 @@
  * @name 博客文章搜索
  * @team xinz
  * @version 1.3.1 // Version bump for new rule
- * @description 根据关键词在配置的 RSS Feed 中搜索文章。
+ * @description 根据关键词在配置的 RSS Feed 中搜索文章。 我是halo博客rss测试 rss开启摘要即可 内容输出条数 * 尽量大 比如 10000或者 99999 尽量比你文章条数大
  * @rule ^博客\s+(.+)$
  * @rule ^[bB][kK]\s+(.+)$
- * @admin false
+ * @admin false 
  * @public false
  * @priority 1000
  * @disable false
