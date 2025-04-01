@@ -6,6 +6,7 @@
  * @description 根据关键词在配置的 RSS Feed 中搜索文章。
  * @rule ^博客\s+(.+)$
  * @rule ^[bB][kK]\s+(.+)$ 
+ * @admin false
  * @public false
  * @priority 1000
  * @disable false
