@@ -3,9 +3,9 @@
  * @name SSH终端管家Pro
  * @team xinz
  * @version 2.4 // Version bump for simplified messages & timing
- * @description 智能SSH管理 (简化提示, 结果不截断, 5s/60s删除)
+ * @description 智能SSH管理 (简化提示, 结果不截断, 5s/60s删除) 插件UI界面支持多主机设置
  * @rule ^(ssh|SSH)$
- * @priority 10000
+ * @priority 1000
  * @admin true
  * @disable false
  * @service false
