@@ -8,7 +8,7 @@
  * @rule ^[bB][kK]\s+(.+)$
  * @admin false 
  * @public false
- * @priority 1000
+ * @priority 100
  * @disable false
  * @service false
  */
