@@ -7,7 +7,7 @@
  * @rule ^[aA] ([\s\S]+)$
  * @rule ^[aA]$
  * @admin false
- * @public true
+ * @public false
  * @priority 99990
  * @classification ["AI"]
  * @disable false
