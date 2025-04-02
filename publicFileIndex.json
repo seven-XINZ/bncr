@@ -242,28 +242,6 @@
     "id": "cUAH+l5tCi24vPAuJndteWullJY=",
     "isChatPlugin": true
   },
-  "frTVtHbD9bkfrfuE4CrgffyP9cc=": {
-    "type": "github",
-    "name": "dify",
-    "author": "seven (adapted by xinz for Dify)",
-    "team": "xinz",
-    "version": "2.3.0 // Version bump for custom prompt setting",
-    "description": "通过 Dify API 进行聊天对话，可自定义参考用模型信息和系统提示。",
-    "classification": [
-      "AI"
-    ],
-    "filename": "dify.js",
-    "fileDir": "/plugins/xinz/dify.js",
-    "systemVersionRange": "",
-    "isCron": false,
-    "isAdapter": false,
-    "isMod": false,
-    "isService": false,
-    "isAuthentication": false,
-    "isEncPlugin": true,
-    "id": "frTVtHbD9bkfrfuE4CrgffyP9cc=",
-    "isChatPlugin": true
-  },
   "QlcN9vH0oBUdgkJvjZQEeXOICxQ=": {
     "type": "github",
     "name": "USER_AGENTS",
