@@ -3,7 +3,7 @@
  * @name 懒人菜单
  * @team xinz
  * @origin Utility
- * @version 2.6.2 // Incremented version for log change
+ * @version 2.6.2 // 日志输出xinz原创 防君子不妨小人
  * @description 
  * @rule ^(菜单|menu)$
  * @platform
