@@ -506,6 +506,28 @@
     "id": "sWb/rfa2xGDUiFD3+SXS+BiF8uk=",
     "isChatPlugin": true
   },
+  "RTg9f8lCgGG/MIl7UsKL5c5Yw8Q=": {
+    "type": "github",
+    "name": "自定义通知人",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.1.1 // Version bump for export fix",
+    "description": "允许用户通过命令向配置的指定用户发送消息。",
+    "classification": [
+      "工具"
+    ],
+    "filename": "自定义通知人.js",
+    "fileDir": "/plugins/xinz/自定义通知人.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": true,
+    "id": "RTg9f8lCgGG/MIl7UsKL5c5Yw8Q=",
+    "isChatPlugin": true
+  },
   "oqntx40MX++gA/ZFucquO6DKebU=": {
     "type": "github",
     "name": "舔狗日记",
