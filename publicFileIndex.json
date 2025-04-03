@@ -484,6 +484,28 @@
     "id": "HhXF/FXEqzOYxpPt9IAV9NRVWjc=",
     "isChatPlugin": true
   },
+  "sWb/rfa2xGDUiFD3+SXS+BiF8uk=": {
+    "type": "github",
+    "name": "联系管理员助手",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.1 // Version bump for improved prompt",
+    "description": "允许用户向所有管理员发送消息。",
+    "classification": [
+      "工具"
+    ],
+    "filename": "联系管理员助手.js",
+    "fileDir": "/plugins/xinz/联系管理员助手.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": true,
+    "id": "sWb/rfa2xGDUiFD3+SXS+BiF8uk=",
+    "isChatPlugin": true
+  },
   "oqntx40MX++gA/ZFucquO6DKebU=": {
     "type": "github",
     "name": "舔狗日记",
