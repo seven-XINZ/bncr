@@ -1,6 +1,6 @@
 /**
  * 插件作者
-// ... rest of the code
+//
 /**
  * 插件作者
  * @author xinz
