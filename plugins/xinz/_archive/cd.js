@@ -2,7 +2,7 @@
  * @author 咸鱼
  * @name cd
  * @team xinz
- * @version v1.0.0
+ * @version 1.0.0
  * @description 菜单功能
  * @rule ^(菜单)$
  * @priority 10

@@ -5,7 +5,7 @@
  * @version 1.1.0
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty
  * @description 60秒读懂世界（定时推送目标平台/群/用户在插件配置中填写）
- * @rule ^(60s)$
+ * @rule ^(60s|每日60)$
  * @admin false
  * @public true
  * @priority 99999

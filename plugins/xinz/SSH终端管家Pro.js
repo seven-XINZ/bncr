@@ -260,4 +260,3 @@ async function executeCommand(conn, command, Client) { /* ...不变... */
 
 // --- 导出 ---
 module.exports = main;
-if (jsonSchema && ConfigDB) { module.exports.jsonSchema = jsonSchema; }

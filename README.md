@@ -12,6 +12,7 @@
 Adapter/                  # 多平台接入适配器（Bncr 框架官方/二改适配器）
 plugins/xinz/             # 自用插件集合
 plugins/xinz/mod/         # 插件共用工具模块（CryptoJS、提示词 prompts、UA、公共方法、菜单/自动回复数据）
+plugins/xinz/_archive/    # 旧版/重复插件归档（三级目录，框架不加载，仅留档可恢复）
 plugins/娱乐/             # 娱乐类第三方插件
 plugins/实用工具/         # 实用工具类第三方插件
 plugins/效率工具/         # 效率工具类第三方插件
@@ -41,9 +42,9 @@ README.md
 ## 自用插件（plugins/xinz/）
 
 - **AI 对话**：`ChatGPT.js`、`Bncr_ChatGPT.js`、`dify.js`、`Gemini.js`、`智能AI聊天.js`
-- **查询与工具**：`天气.js`、`星座运势.js`、`每天60s.js`、`每天60秒读懂世界.js`、`二维码生成.js`、`博客文章搜索.js`、`命令大全.js`、`菜单.js`、`懒人菜单.js`、`自定义菜单.js`、`状态查询.js`、`运行状态.js`、`运行状态美化版.js`、`ping.js`、`cd.js`、`热点趋势.js`、`网抑云.js`
-- **媒体资源**：`pixiv.js`、`pixiv1.js`、`pixiv完整版.js`、`各种小姐姐视频.js`、`黑丝_白丝.js`、`tgstickstoqq.js`、`全网影视.js`、`ACGNTTSon.js`
-- **下载器与容器**：`qbittorent操作.js`、`QBittorrent管家`、`容器操作.js`、`Aria2 push.js`、`BT种子搜索.js`
+- **查询与工具**：`天气.js`、`星座运势.js`、`每天60s.js`、`二维码生成.js`、`博客文章搜索.js`、`命令大全.js`、`菜单.js`、`懒人菜单.js`、`状态查询.js`、`运行状态.js`、`运行状态美化版.js`、`ping.js`、`热点趋势.js`、`网抑云.js`
+- **媒体资源**：`pixiv完整版.js`、`各种小姐姐视频.js`、`黑丝_白丝.js`、`tgstickstoqq.js`、`全网影视.js`、`ACGNTTSon.js`
+- **下载器与容器**：`qbittorent操作.js`、`容器操作.js`、`Aria2 push.js`、`BT种子搜索.js`
 - **通知与消息**：`定时消息推送.js`、`消息转发.js`、`自定义通知人.js`、`微信好友申请、拉群.js`、`自动回复.js`、`联系管理员助手.js`、`疯狂星期四.js`、`舔狗日记.js`
 - **网络与设备**：`SSH终端管家Pro.js`、`bncr_ssh2.0.js`、`爱快重拨.js`
 - **趣味**：`IKUN.js`、`摸鱼.js`、`手动黑名单.js`
@@ -53,7 +54,7 @@ README.md
 ## 第三方分类插件（plugins/）
 
 - **娱乐**：`猜歌游戏.js`、`表情包管理.js`、`音乐播放器.js`
-- **实用工具**：`图片转文字.js`、`天气查询.js`、`定时任务.js`、`智能搜索.js`、`聊天记录备份.js`
+- **实用工具**：`图片转文字.js`、`定时任务.js`、`智能搜索.js`、`聊天记录备份.js`
 - **效率工具**：`便签笔记.js`、`待办事项.js`
 - **数据统计**：`群数据统计.js`
 - **群管理**：`群管理助手.js`

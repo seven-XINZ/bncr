@@ -328,8 +328,4 @@ const main = async (sender) => {
 
 // --- 导出 ---
 module.exports = main; // 导出主函数
-// 如果 Schema 和 ConfigDB 成功初始化，则导出 Schema
-if (jsonSchema && ConfigDB) {
-    module.exports.jsonSchema = jsonSchema;
-}
 

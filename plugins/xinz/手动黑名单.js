@@ -2,7 +2,7 @@
  * @author 咸鱼&xinz
  * @name 手动黑名单
  * @team xinz
- * @version v1.1.0
+ * @version 1.1.0
  * @description 用户黑白名单管理系统｜支持操作备注
  * @rule ^(拉黑|拉白) (\S+)$
  * @priority 10

@@ -562,5 +562,3 @@ async function showContainerLogs(s, containerName) {
         if (browser) { try { await browser.close(); } catch (closeErr) { xinzLog.warn("在顶层错误处理中关闭浏览器实例时出错:", closeErr); } }
     }
 }
-
-if (jsonSchema && ConfigDB) { module.exports.jsonSchema = jsonSchema; }

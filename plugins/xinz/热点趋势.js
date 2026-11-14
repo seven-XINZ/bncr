@@ -1,7 +1,7 @@
 /**
  * @author Dswang
  * @name 热点趋势
- * @team xinz & SmartAI
+ * @team xinz
  * @version 1.0.1
  * @description 获取网络热点
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty

@@ -193,4 +193,3 @@ const main = async (sender) => {
 
 // --- 导出 ---
 module.exports = main;
-if (jsonSchema && ConfigDB) { module.exports.jsonSchema = jsonSchema; }

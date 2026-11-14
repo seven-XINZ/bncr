@@ -2,7 +2,7 @@
  * @author seven
  * @name 运行状态美化版
  * @team xinz
- * @version 1.6.1  // Version updated
+ * @version 1.6.1
  * @description 本机资源查询 - 美化版 (自动过滤磁盘, 无网络信息)
  * @rule ^(运行状态)$
  * @admin false

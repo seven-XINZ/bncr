@@ -3,7 +3,7 @@
  * @team xinz
  * @author seven
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty
- * @version v2.0.0
+ * @version 2.0.0
  * @name 消息转发
  * @rule [\s\S]+
  * @priority 100000

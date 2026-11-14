@@ -103,10 +103,5 @@ const main = async (sender) => {
 };
 
 // --- 导出 ---
-// *** FIX: Export the main function FIRST ***
+// *** Export the main function FIRST ***
 module.exports = main;
-
-// If Schema and ConfigDB successfully initialized, THEN add jsonSchema property
-if (jsonSchema && ConfigDB) {
-    module.exports.jsonSchema = jsonSchema;
-}

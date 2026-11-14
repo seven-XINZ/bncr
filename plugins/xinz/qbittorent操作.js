@@ -516,5 +516,3 @@ module.exports = async s => {
         }
     }
 };
-
-if (jsonSchema && ConfigDB) { module.exports.jsonSchema = jsonSchema; }

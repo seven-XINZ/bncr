@@ -176,7 +176,8 @@ module.exports = async () => {
     // --- Load Configuration and Register Cron Jobs ---
     let config;
     try {
-        config = await ConfigDB.get() || { tasks: [] };
+        await ConfigDB.get();
+        config = ConfigDB.userConfig || { tasks: [] };
         if (!config.tasks || !Array.isArray(config.tasks)) {
             console.warn(`${PLUGIN_NAME_FOR_LOG} Loaded configuration invalid or empty. No tasks scheduled.`);
             config.tasks = [];
