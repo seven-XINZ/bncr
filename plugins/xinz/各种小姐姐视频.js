@@ -111,7 +111,7 @@ module.exports = async s => {
             url = "http://api.yujn.cn/api/rewu.php"
             break;
     }
-    opt = {
+    let opt = {
         url,
         headers:{
             "User-Agent":USER_AGENT_Browser[Math.floor(Math.random() * USER_AGENT_Browser.length)]

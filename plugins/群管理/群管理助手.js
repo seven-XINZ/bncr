@@ -14,6 +14,7 @@
  * @admin true
  * @priority 110
  * @disable false
+ * @public false
  */
 
 module.exports = async sender => {

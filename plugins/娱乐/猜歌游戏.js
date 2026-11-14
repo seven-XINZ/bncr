@@ -10,6 +10,8 @@
  * @rule ^(猜歌排行 | 猜歌排名)$
  * @priority 100
  * @disable false
+ * @admin false
+ * @public false
  */
 
 const currentGame = new Map(); // 存储各群的游戏状态

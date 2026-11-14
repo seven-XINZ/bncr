@@ -9,6 +9,7 @@
  * @admin false
  * @public true
  * @disable false
+ * @priority 50
  * @classification ["功能插件"]  
  */
 
@@ -44,7 +45,7 @@ async function writeToJpg(url) {
 };
 
 function ikun_yvlu() {
-    msg = [
+    const msg = [
         //0
         "向阳花木易为春，听说你爱蔡徐坤。",
         //1
@@ -198,9 +199,8 @@ function ikun_yvlu() {
         //73
         "最近我发现有好多幼儿园小朋友想要尝试老干妈，却又怕辣。于是我模拟老干妈发明了一款爱护幼儿的辣酱，我决定称其为拟干妈 爱幼",
     ]
-    num = Math.floor(Math.random() * msg.length)
-    msg = msg[num]
+    const num = Math.floor(Math.random() * msg.length)
+    return msg[num]
     // console.log(`NUM：${num}\nMSG：${msg}`)
     // console.log(`NUM：${Math.random()}*${msg.length}=${num}\nMSG：${msg}`)
-    return msg
 };

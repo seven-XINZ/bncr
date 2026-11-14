@@ -8,6 +8,7 @@
  * @priority 10
  * @admin true
  * @disable false
+ * @public false
  */
 
 module.exports = async s => {

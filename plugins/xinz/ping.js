@@ -13,6 +13,7 @@
  */
 
 const { exec } = require('child_process');
+sysMethod.testModule(['got'], { install: true });
 const got = require('got');
 const dns = require('dns');
 

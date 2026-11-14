@@ -46,6 +46,7 @@ const ConfigDB = new BncrPluginConfig(jsonSchema);
 const fs = require('fs');
 const { randomUUID } = require("crypto");
 const path = require('path');
+sysMethod.testModule(['@google/generative-ai', 'got'], { install: true });
 
 // 主函数入口
 module.exports = async s => {

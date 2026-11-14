@@ -9,6 +9,8 @@
  * @rule ^(百度 | 谷歌 | 必应|B 站 | 知乎 | 微博 | 抖音) 搜索 (.+)$
  * @priority 100
  * @disable false
+ * @admin false
+ * @public false
  */
 
 module.exports = async sender => {

@@ -11,6 +11,8 @@
  * @rule ^(便签分类 | 笔记分类)$
  * @priority 100
  * @disable false
+ * @admin false
+ * @public false
  */
 
 module.exports = async sender => {

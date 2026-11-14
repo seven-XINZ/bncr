@@ -195,7 +195,12 @@ class ACGNTTSon {
         let preferences = {};
 
         if (fs.existsSync(userPreferencesFile)) {
-            preferences = JSON.parse(fs.readFileSync(userPreferencesFile, { encoding: 'utf-8' }));
+            try {
+                preferences = JSON.parse(fs.readFileSync(userPreferencesFile, { encoding: 'utf-8' }));
+            } catch (e) {
+                console.error('偏好文件解析失败，已重置:', e.message);
+                preferences = {};
+            }
         }
 
         preferences.acgn_ttson = {

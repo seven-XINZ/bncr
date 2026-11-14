@@ -271,7 +271,7 @@ module.exports = async s => {
                 return;
             }
             index = index.getMsg();
-            delPrompt = ownPrompts[index];
+            const delPrompt = ownPrompts[index];
             let exist = false;
             //find delPrompt in prompts
             prompts.forEach((item, index) => {

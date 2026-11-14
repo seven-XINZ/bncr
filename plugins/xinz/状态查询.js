@@ -13,6 +13,7 @@
 
 const os = require('os');
 const { execSync } = require('child_process');
+sysMethod.testModule(['systeminformation'], { install: true });
 const si = require('systeminformation'); // 引入 systeminformation 库
 
 const delMsgTime = 5000; // 设置删除消息的时间为 5000 毫秒

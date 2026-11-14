@@ -8,13 +8,16 @@
  * @rule ^(vip|VIP|动漫|电影|影视)(.*)$
  * @admin false
  * @disable false
+ * @public false
+ * @priority 50
  */
 
 const mo = require('./mod/subassembly')      // 此脚本依赖仓库模块，请拉取全部文件
 const sysdb = new BncrDB('API')
 
 module.exports = async s => {
-    if (key = await sysdb.get('yaohu')) {
+    let key;
+    if ((key = await sysdb.get('yaohu'))) {
         main(s, key)
     } else {
         set(s)
@@ -22,7 +25,7 @@ module.exports = async s => {
 }
 
 async function set(s) {
-    set_json = {
+    let set_json = {
         "TIP": [
             "",
         ],
@@ -31,7 +34,8 @@ async function set(s) {
         }
     }
     for (let i = 0; i < set_json.TIP.length; i++) {
-        if (api_key = await mo.again(s, set_json.TIP[i])) {
+        let api_key;
+        if ((api_key = await mo.again(s, set_json.TIP[i]))) {
             set_json.param.KEY = api_key
             s.delMsg(await s.reply(await sysdb.set('yaohu', set_json.param, { def: '设置成功' })), { wait: 2 })
             main(s, set_json.param)
@@ -44,6 +48,7 @@ async function set(s) {
 async function main(s, key) {
     s.delMsg(s.getMsgId())
     let url = 'https://api.yaohud.cn/api/v5/yingshi'
+    let params, data, image, msg, num;
     params = {
         key: key.KEY,
         msg: s.param(2),

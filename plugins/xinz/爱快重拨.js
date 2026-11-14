@@ -9,6 +9,7 @@
  * @admin true
  * @public true
  * @disable false
+ * @priority 50
  * @classification ["功能插件"]  
  */
 

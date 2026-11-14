@@ -12,6 +12,7 @@
  * @priority 1
  * @admin false
  * @disable false
+ * @public false
  * @classification ["功能插件"]
  */
 

@@ -8,6 +8,8 @@
  * @rule ^(识别图片 | OCR|图片转文字)$
  * @priority 100
  * @disable false
+ * @admin false
+ * @public false
  */
 
 module.exports = async sender => {

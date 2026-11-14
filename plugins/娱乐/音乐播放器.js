@@ -9,6 +9,8 @@
  * @rule ^(暂停 | 停止 | 下一首 | 上一首|音量)$
  * @priority 100
  * @disable false
+ * @admin false
+ * @public false
  */
 
 const currentPlaying = new Map(); // 存储每个群的播放状态

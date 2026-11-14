@@ -8,6 +8,8 @@
  * @rule ^(天气 | 气温 | 天气情况) (.+)$
  * @priority 100
  * @disable false
+ * @admin false
+ * @public false
  */
 
 module.exports = async sender => {

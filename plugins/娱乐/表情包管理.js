@@ -11,6 +11,8 @@
  * @rule ^(发送表情 | 发个表情) (.+)$
  * @priority 100
  * @disable false
+ * @admin false
+ * @public false
  */
 
 module.exports = async sender => {
