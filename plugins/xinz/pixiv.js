@@ -9,6 +9,7 @@
  * @admin false
  * @public false
  * @priority 50
+ @disable false
  */
 
 // 常量定义

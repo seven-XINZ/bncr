@@ -21,7 +21,7 @@ const jsonSchema = BncrCreateSchema.object({
     sendUrl: BncrCreateSchema.string()
         .setTitle('http交互发送地址')
         .setDescription(`如果是http模式，则需要设置 sendUrl，改地址为远端qq机器人的监听地址:端口\n,无界接受地址为:http://bncrip:9090/api/bot/qqHttp`)
-        .setDefault('http://192.168.31.192:9696'),
+        .setDefault('http://bncrip:9696'),
 });
 
 /* 配置管理器 */
@@ -47,7 +47,7 @@ async function ws(qq) {
     const eventS = new events.EventEmitter();
     const { randomUUID } = require('crypto');
     const listArr = [];
-    /* ws监听地址  ws://192.168.31.192:9090/api/qq/qqws */
+    /* ws监听地址  ws://bncrip:9090/api/qq/qqws */
     router.ws('/api/bot/qqws', ws => {
         ws.on('message', msg => {
             const body = JSON.parse(msg);

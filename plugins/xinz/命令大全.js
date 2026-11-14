@@ -8,6 +8,7 @@
  * @admin true
  * @public true
  * @priority 1000
+ @disable false
  * @classification ["功能插件"]  
  */
 

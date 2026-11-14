@@ -9,6 +9,7 @@
  * @public true
  
  * @priority 101
+ * @disable false
  * @Copyright ©2023 Aming and Anmours. All rights reserved
  * @classification ["官方适配器"]
  * Unauthorized copying of this file, via any medium is strictly prohibited

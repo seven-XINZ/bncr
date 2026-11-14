@@ -1,0 +1,72 @@
+{
+  "热点": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "发送(抖音|微博|知乎|bilibili|bili|哔哩|哔哩哔哩)热搜"
+  },
+  "天气": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "发送 北京市天气"
+  },
+  "星座": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "发送(星座) (.+) (今日运势|明日运势|一周运势|月运势)$(今日运势|明日运势|一周运势|月运势) (.+)"
+  },
+  "影视": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "发送(vip|VIP|动漫|电影|影视)(.*)"
+  },
+  "坤": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "发送(鸡你太美|坤坤|ikun|IKUN|小黑子|小黑粉|真爱粉|你干嘛|纯路人|人民网)(.*)"
+  },
+  "moonlightwiki": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "https://flowus.cn/lecheng/share/3a591f93-f48b-4164-9028-bade2c35ef58"
+  },
+  "最终幻想14": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "https://ff14.huijiwiki.com/wiki/%E9%A6%96%E9%A1%B5"
+  },
+  "gpt": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "PS: ai|画图|yy+内容召唤aigpt4Omini"
+  },
+  "下载地址": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "https://lidrive.vip/"
+  },
+  "Gemi": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "ps:gems是单问答模式gemc是聊天模式gemp是识图模式目前只能识别图片链接命令+内容就可以触发 "
+  },
+  "落幕": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "https://lmu5.com/"
+  },
+  "困困鱼": {
+    "groupId": "",
+    "from": "wechaty",
+    "reply": "https://kunkunyu.com"
+  },
+  "ncqq": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "https://lmu5.com/ncqq.html"
+  },
+  "ntqq": {
+    "groupId": "",
+    "from": "qq",
+    "reply": "NTQQ/NCQQ 镜像及教程链接请在面板配置后自行填写"
+  }
+}

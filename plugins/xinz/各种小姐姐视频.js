@@ -10,7 +10,7 @@
  * @disable false
  * @priority 100
  * @create_at 2023-08-06 16:42:58
- * @Description 暂无描述
+ * @description 小姐姐视频聚合，按关键词返回对应分类视频接口结果
  * @LastEditTime 2023-08-06 20:02:55
  * @Copyright Copyright (c) 2023 by zhu, All Rights Reserved.
  */

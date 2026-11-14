@@ -17,8 +17,8 @@
 /* 配置构造器 */
 const jsonSchema = BncrCreateSchema.object({
   enable: BncrCreateSchema.boolean().setTitle('是否开启适配器').setDescription(`设置为关则不加载该适配器`).setDefault(false),
-  sendUrl: BncrCreateSchema.string().setTitle('上报地址').setDescription(`wechatFerry的地址`).setDefault('http://192.168.0.134:10010/'),
-  fileServer: BncrCreateSchema.string().setTitle('文件服务器地址').setDescription(`和微信在同一机器的文件服务器地址,需单独部署`).setDefault('http://192.168.0.134:3000/'),
+  sendUrl: BncrCreateSchema.string().setTitle('上报地址').setDescription(`wechatFerry的地址`).setDefault('http://127.0.0.1:10010/'),
+  fileServer: BncrCreateSchema.string().setTitle('文件服务器地址').setDescription(`和微信在同一机器的文件服务器地址,需单独部署`).setDefault('http://127.0.0.1:3000/'),
 });
 /* 配置管理器 */
 const ConfigDB = new BncrPluginConfig(jsonSchema);

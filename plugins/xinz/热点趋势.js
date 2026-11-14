@@ -9,6 +9,7 @@
  * @admin false
  * @public true
  * @priority 9999
+ @disable false
  * @classification ["工具"]
  */
 

@@ -1,0 +1,427 @@
+[
+  {
+    "rules": [
+      "^(生成音频|获取角色列表|检查token) ([^ \\n]+)$"
+    ],
+    "name": "ACGNTTSon",
+    "origin": null,
+    "description": "A plugin for handling ACGN TTS functionalities.",
+    "admin": true,
+    "priority": 1,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(magnet:\\?xt=urn:btih:[a-zA-Z0-9]+)",
+      "^(下载中|等待中|已完成|暂停任务|恢复任务|删除任务)$"
+    ],
+    "name": "Aria2 push",
+    "origin": null,
+    "description": "管理Aria2下载任务",
+    "admin": true,
+    "priority": 50,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^bt (.+)$"
+    ],
+    "name": "BT种子搜索",
+    "origin": null,
+    "description": "自动在Jackett模糊搜索BT种子并输出结果",
+    "admin": true,
+    "priority": 99,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(ai|画图) ([\\s\\S]+)$",
+      "^(ai|画图)$"
+    ],
+    "name": "ChatGPT",
+    "origin": null,
+    "description": "ChatGpt聊天，适配无界3.0，删除了tts避免部分不支持tts",
+    "admin": false,
+    "priority": 99999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(gems|gemc|gemp)([\\s\\S]+)$"
+    ],
+    "name": "Gemini",
+    "origin": null,
+    "description": "gemini聊天, 支持自定义模型",
+    "admin": true,
+    "priority": 9999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(鸡你太美|坤坤|ikun|IKUN|小黑子|小黑粉|真爱粉|你干嘛|纯路人|人民网)(. )$"
+    ],
+    "name": "IKUN",
+    "origin": null,
+    "description": "发送IKUN语录和表情包",
+    "admin": false,
+    "priority": 0,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(ssh|SSH)$"
+    ],
+    "name": "SSH终端管家Pro",
+    "origin": null,
+    "description": "智能SSH管理 (简化提示, 结果不截断, 5s/60s删除)",
+    "admin": true,
+    "priority": 10000,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^[aA] ([\\s\\S]+)$",
+      "^[aA]$"
+    ],
+    "name": "dify",
+    "origin": null,
+    "description": "通过 Dify API 进行聊天对话，可自定义参考用模型信息和系统提示。",
+    "admin": false,
+    "priority": 99990,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^zpr(18)? (all|illustration|manga|novel|animation|game|original|doujinshi)?$|^pp$|^zpr (.+)$"
+    ],
+    "name": "pixiv1",
+    "origin": null,
+    "description": "更具分类搜索随机获取一组涩涩纸片人 也可自定义搜索 并且设置了代理或者直连模式直连速度视你的科学网速而定 图片可以存到本地分类存放",
+    "admin": false,
+    "priority": 50,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(qb操作)$"
+    ],
+    "name": "qbittorent操作",
+    "origin": null,
+    "description": "qbittorent操作",
+    "admin": true,
+    "priority": 10000,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(二维码生成) (.+)$"
+    ],
+    "name": "二维码生成",
+    "origin": null,
+    "description": "二维码生成插件，通过自定义的API接口生成二维码",
+    "admin": false,
+    "priority": 99999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(vip|VIP|动漫|电影|影视)(. )$"
+    ],
+    "name": "全网影视",
+    "origin": null,
+    "description": "全网免费影视动漫（数据来源：妖狐数据开放API接口：https://api.yaohud.cn）",
+    "admin": false,
+    "priority": 0,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^博客\\s+(.+)$",
+      "^[bB][kK]\\s+(.+)$"
+    ],
+    "name": "博客文章搜索",
+    "origin": null,
+    "description": "根据关键词在配置的 RSS Feed 中搜索文章。根据关键词在配置的 RSS Feed 中搜索文章。 我是halo博客rss测试 rss开启摘要即可 内容输出条数 尽量大 比如 10000或者 99999 尽量比你文章条数大",
+    "admin": false,
+    "priority": 100,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(吊带|丝滑舞蹈|小姐姐|美女穿搭|鞠婧祎|完美身材|杀猪饲料|章若楠|古风|玉足|慢摇|清纯|COS|纯情女高|萝莉|欲梦|甜妹|jk|热舞)$"
+    ],
+    "name": "各种小姐姐视频",
+    "origin": null,
+    "description": "暂无描述",
+    "admin": false,
+    "priority": 100,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(命令)$"
+    ],
+    "name": "命令大全",
+    "origin": null,
+    "description": "无界命令大全",
+    "admin": true,
+    "priority": 1000,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^天气([\\s\\S]+)$",
+      "^([\\s\\S]+)(天气)$"
+    ],
+    "name": "天气",
+    "origin": null,
+    "description": "中文城市自动转英文查询天气",
+    "admin": false,
+    "priority": 9999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(容器操作)$"
+    ],
+    "name": "容器操作",
+    "origin": null,
+    "description": "增强版容器操作，包含状态显示、资源占用等信息",
+    "admin": true,
+    "priority": 10000,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "收到好友添加请求",
+      "^(加|进)(. )群$"
+    ],
+    "name": "微信好友申请、拉群",
+    "origin": null,
+    "description": "下方加群关键词可自定义",
+    "admin": false,
+    "priority": 99999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(拉黑|拉白) (\\S+)$"
+    ],
+    "name": "手动黑名单",
+    "origin": null,
+    "description": "用户黑白名单管理系统｜支持操作备注",
+    "admin": true,
+    "priority": 10,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(摸鱼)$"
+    ],
+    "name": "摸鱼",
+    "origin": null,
+    "description": "摸鱼人日历，可以自定义接口",
+    "admin": false,
+    "priority": 99999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(星座) (.+) (今日运势|明日运势|一周运势|月运势)$",
+      "^(今日运势|明日运势|一周运势|月运势) (.+)$"
+    ],
+    "name": "星座运势",
+    "origin": null,
+    "description": "星座运势插件，通过自定义API接口获取星座运势并自动匹配",
+    "admin": false,
+    "priority": 99999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^聊天 (.+)$"
+    ],
+    "name": "智能AI聊天",
+    "origin": null,
+    "description": "通过API进行智能AI聊天，支持用户输入问题并将AI回复转换为语音",
+    "admin": true,
+    "priority": 1,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(60s|每日60)$"
+    ],
+    "name": "每天60秒读懂世界",
+    "origin": null,
+    "description": "每天60秒读懂世界 => 兼顾多个平台包括无界",
+    "admin": false,
+    "priority": 999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^((抖音|微博|知乎|bilibili|bili|哔哩|哔哩哔哩)热搜)$"
+    ],
+    "name": "热点趋势",
+    "origin": null,
+    "description": "获取网络热点",
+    "admin": false,
+    "priority": 9999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(爱快|ikuai|iKuai)(重拨|重播)([0-9]+)$",
+      "^(爱快|ikuai|iKuai)(查询|重拨|重播|重启|重置)$"
+    ],
+    "name": "爱快重拨",
+    "origin": null,
+    "description": "控制iKuai重新拨号",
+    "admin": true,
+    "priority": 0,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(疯狂星期四)$"
+    ],
+    "name": "疯狂星期四",
+    "origin": null,
+    "description": "lsp",
+    "admin": false,
+    "priority": 99999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^网抑云$"
+    ],
+    "name": "网抑云",
+    "origin": null,
+    "description": "网抑云插件",
+    "admin": false,
+    "priority": 1,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^联系管理员$"
+    ],
+    "name": "联系管理员助手",
+    "origin": null,
+    "description": "允许用户向所有管理员发送消息。",
+    "admin": false,
+    "priority": 500,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^通知$"
+    ],
+    "name": "自定义通知人",
+    "origin": null,
+    "description": "允许用户通过命令向配置的指定用户发送消息。",
+    "admin": false,
+    "priority": 500,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(菜单|menu)$"
+    ],
+    "name": "菜单",
+    "origin": "Utility",
+    "description": "Generates a command menu by scanning plugin files once and caching the result. Appearance is configurable via settings (Requires BCS/BncrPluginConfig access).",
+    "admin": false,
+    "priority": 100,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^(运行状态)$"
+    ],
+    "name": "运行状态",
+    "origin": null,
+    "description": "本机资源查询 - 美化版 (自动过滤磁盘, 无网络信息)",
+    "admin": false,
+    "priority": 9999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  },
+  {
+    "rules": [
+      "^([\\s\\S]+)丝$",
+      "^([\\s\\S]+)丝$"
+    ],
+    "name": "黑丝_白丝",
+    "origin": "Masato",
+    "description": "黑丝白丝图片",
+    "admin": false,
+    "priority": 9999,
+    "disable": false,
+    "service": false,
+    "adapter": false
+  }
+]

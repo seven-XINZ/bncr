@@ -382,7 +382,8 @@ module.exports = async s => {
                 return;
             }
         });
-        let url = `http://172.17.0.4:9090/public/${fileId}`;
+        const publicBaseUrl = (await chatGPTStorage.get('publicBaseUrl')) || 'http://127.0.0.1:9090';
+        let url = `${publicBaseUrl}/public/${fileId}`;
         console.log(audioPath, url);
 
         return url;

@@ -2,7 +2,7 @@
 
 # 无界 Bncr 插件与自用脚本备份
 
-作者：Xinz & 咸鱼 ｜ QQ 群：849427892
+作者：Xinz & 咸鱼
 
 > 本库脚本一律不含非法行为、不涉及任何 CK 仓库；插件由 Xinz 与咸鱼共同维护，仅供娱乐学习使用，使用者一切后果自负。哪位大佬看完脚本觉得是盗用，联系我删除即可，谢谢。
 
@@ -11,7 +11,12 @@
 ```
 Adapter/                  # 多平台接入适配器（Bncr 框架官方/二改适配器）
 plugins/xinz/             # 自用插件集合
-plugins/xinz/mod/         # 插件共用工具模块（CryptoJS、提示词 prompts、UA）
+plugins/xinz/mod/         # 插件共用工具模块（CryptoJS、提示词 prompts、UA、公共方法、菜单/自动回复数据）
+plugins/娱乐/             # 娱乐类第三方插件
+plugins/实用工具/         # 实用工具类第三方插件
+plugins/效率工具/         # 效率工具类第三方插件
+plugins/数据统计/         # 数据统计类第三方插件
+plugins/群管理/           # 群管理类第三方插件
 publicFileIndex.json      # 插件市场索引（系统自动生成，请勿手动编辑）
 quantumult_xinz.conf      # Quantumult 配置
 README.md
@@ -35,21 +40,29 @@ README.md
 
 ## 自用插件（plugins/xinz/）
 
-- **AI 对话**：`ChatGPT.js`、`Bncr_ChatGPT.js`、`dify.js`、`Gemini.js`
-- **查询与工具**：`天气.js`、`星座运势.js`、`每天60s.js`、`二维码生成.js`、`博客文章搜索.js`、`命令大全.js`、`菜单.js`、`懒人菜单.js`、`自定义菜单.js`、`状态查询.js`、`运行状态美化版.js`、`ping.js`、`cd.js`
-- **媒体资源**：`pixiv.js`、`pixiv完整版.js`、`各种小姐姐视频.js`、`tgstickstoqq.js`
-- **下载器与容器**：`qbittorent操作.js`、`QBittorrent管家/`、`容器操作.js`
-- **通知与消息**：`定时消息推送.js`、`消息转发.js`、`自定义通知人.js`、`微信好友申请、拉群.js`、`自动回复.js`、`联系管理员助手.js`
-- **网络与设备**：`SSH终端管家Pro.js`、`bncr_ssh2.0.js`、`爱快重拨.js`、`热点趋势.js`
-- **趣味**：`IKUN.js`、`摸鱼.js`、`疯狂星期四.js`、`舔狗日记.js`、`手动黑名单.js`
+- **AI 对话**：`ChatGPT.js`、`Bncr_ChatGPT.js`、`dify.js`、`Gemini.js`、`智能AI聊天.js`
+- **查询与工具**：`天气.js`、`星座运势.js`、`每天60s.js`、`每天60秒读懂世界.js`、`二维码生成.js`、`博客文章搜索.js`、`命令大全.js`、`菜单.js`、`懒人菜单.js`、`自定义菜单.js`、`状态查询.js`、`运行状态.js`、`运行状态美化版.js`、`ping.js`、`cd.js`、`热点趋势.js`、`网抑云.js`
+- **媒体资源**：`pixiv.js`、`pixiv1.js`、`pixiv完整版.js`、`各种小姐姐视频.js`、`黑丝_白丝.js`、`tgstickstoqq.js`、`全网影视.js`、`ACGNTTSon.js`
+- **下载器与容器**：`qbittorent操作.js`、`QBittorrent管家`、`容器操作.js`、`Aria2 push.js`、`BT种子搜索.js`
+- **通知与消息**：`定时消息推送.js`、`消息转发.js`、`自定义通知人.js`、`微信好友申请、拉群.js`、`自动回复.js`、`联系管理员助手.js`、`疯狂星期四.js`、`舔狗日记.js`
+- **网络与设备**：`SSH终端管家Pro.js`、`bncr_ssh2.0.js`、`爱快重拨.js`
+- **趣味**：`IKUN.js`、`摸鱼.js`、`手动黑名单.js`
 
-`plugins/xinz/mod/` 内为插件共用模块：`CryptoJS.js`（加密）、`prompts.json`（提示词）、`USER_AGENTS.js`（UA 池）。
+`plugins/xinz/mod/` 内为插件共用模块：`CryptoJS.js`（加密）、`prompts.json`（提示词）、`USER_AGENTS.js`（UA 池）、`subassembly.js`（公共下载/请求/回复方法）、`caidan.json`（菜单数据）、`autoReplyData.json`（关键词自动回复数据）。
+
+## 第三方分类插件（plugins/）
+
+- **娱乐**：`猜歌游戏.js`、`表情包管理.js`、`音乐播放器.js`
+- **实用工具**：`图片转文字.js`、`天气查询.js`、`定时任务.js`、`智能搜索.js`、`聊天记录备份.js`
+- **效率工具**：`便签笔记.js`、`待办事项.js`
+- **数据统计**：`群数据统计.js`
+- **群管理**：`群管理助手.js`
+
+> 涉及接口密钥、内网地址、群号、用户 ID 等均通过插件配置项（BncrPluginConfig / BncrDB）在面板填写，源码内不留明文。
 
 ## 相关链接
 
-- [鑫仔博客教程](https://www.xinz.fun/archives/1717170773466)
-- [鑫仔 TG](https://t.me/xinzfun) ｜ [鑫仔博客](https://www.xinz.fun) ｜ [咸鱼博客](http://blog.咸鱼.top)
-- [ChatAI 大聪明交流群](https://qm.qq.com/q/6BqfPZ7vXO) ｜ [企鹅交流群](https://qm.qq.com/q/s8AdqbBMyW)
+- [鑫仔 TG](https://t.me/xinzfun) ｜ [咸鱼博客](http://blog.咸鱼.top)
 - [Bncr 官方 GitHub](https://github.com/Anmours/Bncr) ｜ [官方开发文档](https://anmours.github.io/Bncr)
 - [Bncr 官方 TG 频道](https://t.me/BncrJS) ｜ [官方 TG 群组](https://t.me/BncrJSChat)
 

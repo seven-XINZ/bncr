@@ -70,7 +70,7 @@ const jsonSchema = BCS.object({
 	Mode: BCS.string().setTitle('邀请进群模式',).setDescription('请选择模式').setEnum(['InviteInGroup','InviteInGroupByLink']).setEnumNames(['直接拉群','发送卡片']).setDefault('InviteInGroupByLink'),
 	Agree_keyword: BCS.string().setTitle('关键词同意').setDescription('空则全部同意').setDefault(''),
 	AutoReply_keyword: BCS.string().setTitle('自动回复词').setDescription('空则不回复').setDefault(''),
-	GroupId_keyword: BCS.array(BCS.string()).setTitle('关键词和群ID').setDescription('关键词和群ID用@隔开').setDefault(['交流@25214210457']),
+	GroupId_keyword: BCS.array(BCS.string()).setTitle('关键词和群ID').setDescription('关键词和群ID用@隔开，例如：交流@123456789').setDefault([]),
 	});
 
 const ConfigDB = new BncrPluginConfig(jsonSchema);

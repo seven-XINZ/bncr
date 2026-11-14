@@ -1,53 +1,50 @@
-/**作者
+/**
  * @author seven
- * 插件名
  * @name 舔狗日记
- * 组织名  预留字段，未来发布插件会用到
  * @team xinz
- * 版本号
- * @version 1.0.5
- * 说明
- * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty
- * @description 舔狗日记
- * 触发正则   在bncr 所有的rule都被视为正则
+ * @version 1.1.0
+ * @description 舔狗日记，天行 API 密钥在插件配置中填写
  * @rule ^(舔狗|舔狗日记|我舔)$
- * // 是否管理员才能触发命令
- * @admin flase
- * // 是否发布插件，预留字段，可忽略
+ * @admin false
  * @public true
- * // 插件优先级，越大优先级越高  如果两个插件正则一样，则优先级高的先被匹配
  * @priority 9999
- * // 是否禁用插件
  * @disable false
- * // 是否服务模块，true不会作为插件加载，会在系统启动时执行该插件内容
- * @service false
- * @classification ["功能插件"]  
+ * @classification ["功能插件"]
  */
 
-const request = require('request');
+const axios = require('axios');
 
-const apiKey = "62f7df1333f54e1b3a1f406b6c8d160e";
+/* 配置：天行 API 密钥由用户在面板填写，源码不留明文 */
+const jsonSchema = BncrCreateSchema.object({
+    tianapiKey: BncrCreateSchema.string()
+        .setTitle('天行 API Key')
+        .setDescription('天行数据（tianapi）舔狗日记接口的密钥')
+        .setDefault('')
+});
+
+const ConfigDB = new BncrPluginConfig(jsonSchema);
 
 module.exports = async s => {
-    code = s.param(1);
-    //you code
-    request.post({
-        url: 'https://apis.tianapi.com/tiangou/index',
-        form: {
-            key: apiKey
-        }
-    },async function (err, response, tianapi_data) {
-        if (err) {
-            console.log(err);
+    await ConfigDB.get();
+
+    const tianapiKey = ConfigDB.userConfig.tianapiKey;
+    if (!tianapiKey) {
+        return await s.reply('请先在插件配置中填写天行 API Key。');
+    }
+
+    try {
+        const res = await axios.post(
+            'https://apis.tianapi.com/tiangou/index',
+            new URLSearchParams({ key: tianapiKey })
+        );
+        const data = res.data;
+        if (data && data.result && data.result.content) {
+            await s.reply(data.result.content);
         } else {
-            var data = JSON.parse(tianapi_data);
-            var list = data.result;
-            data =
-            list.content
+            await s.reply('未获取到舔狗日记内容，请稍后再试。');
         }
-        await s.reply(data);
-        //console.log(data);
-    })
-    //插件运行结束时 如果返回 'next' ，则继续向下匹配插件 否则只运行当前插件
-    return 'next'  //继续向下匹配插件
-}
+    } catch (err) {
+        console.error('舔狗日记获取失败:', err.message);
+        await s.reply('获取舔狗日记失败，请稍后再试。');
+    }
+};
