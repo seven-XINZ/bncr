@@ -12,8 +12,17 @@
  * @disable false
  * @service false
  */
-// https://api.weatherapi.com 自己去这个地址注册获取api秘钥并填入下面这段代码 apiKey = 'api秘钥'; // 使用您提供的 WeatherAPI API 密钥 在下文中找566行
+// https://api.weatherapi.com 注册获取 WeatherAPI 密钥，在前端"插件配置"中填写，源码不留明文
 const https = require('https'); // 使用 Node.js 内置的 https 模块
+
+// 配置：WeatherAPI 密钥在面板填写
+const jsonSchema = BncrCreateSchema.object({
+    apiKey: BncrCreateSchema.string()
+        .setTitle('WeatherAPI 密钥')
+        .setDescription('前往 https://api.weatherapi.com 注册获取后填入此处')
+        .setDefault(''),
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
 
 // 中文城市名称与英文名称的映射表
 const cityMapping = {
@@ -556,6 +565,12 @@ console.log(`天气描述: ${weatherDetail}`); // 输出: 天气描述: 在某�
 
 // 导出模块
 module.exports = async s => {
+    await ConfigDB.get();
+    const apiKey = (ConfigDB.userConfig && ConfigDB.userConfig.apiKey) || '';
+    if (!apiKey) {
+        return await s.reply('天气插件未配置 WeatherAPI 密钥，请前往前端"插件配置"填写。');
+    }
+
     // 获取用户输入的城市名
     const cityInput = s.param(1).trim();  // 获取输入并去除多余空格
 
@@ -563,7 +578,6 @@ module.exports = async s => {
     const city = Object.keys(cityMapping).includes(cityInput) ? Object.keys(cityMapping[cityInput])[0] : cityInput; // 如果映射表中存在则转换，否则使用原输入
 
     // 构造请求 URL
-    const apiKey = 'api秘钥'; // 使用您提供的 WeatherAPI API 密钥
     const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(city)}&aqi=no`;
     console.log("请求的 URL:", url); // 打印请求的 URL
     console.log("查询的城市名称:", city); // 打印查询的城市名称
