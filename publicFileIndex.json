@@ -242,6 +242,28 @@
     "id": "cUAH+l5tCi24vPAuJndteWullJY=",
     "isChatPlugin": true
   },
+  "frTVtHbD9bkfrfuE4CrgffyP9cc=": {
+    "type": "github",
+    "name": "dify",
+    "author": "seven (adapted by xinz for Dify)",
+    "team": "xinz",
+    "version": "2.3.0",
+    "description": "通过 Dify API 进行聊天对话，可自定义参考用模型信息和系统提示。",
+    "classification": [
+      "AI"
+    ],
+    "filename": "dify.js",
+    "fileDir": "/plugins/xinz/dify.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "frTVtHbD9bkfrfuE4CrgffyP9cc=",
+    "isChatPlugin": true
+  },
   "QlcN9vH0oBUdgkJvjZQEeXOICxQ=": {
     "type": "github",
     "name": "USER_AGENTS",
@@ -489,7 +511,7 @@
     "name": "联系管理员助手",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.1 // Version bump for improved prompt",
+    "version": "1.0.1",
     "description": "允许用户向所有管理员发送消息。",
     "classification": [
       "工具"
@@ -502,7 +524,7 @@
     "isMod": false,
     "isService": false,
     "isAuthentication": false,
-    "isEncPlugin": true,
+    "isEncPlugin": false,
     "id": "sWb/rfa2xGDUiFD3+SXS+BiF8uk=",
     "isChatPlugin": true
   },
@@ -511,7 +533,7 @@
     "name": "自定义通知人",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.1.1 // Version bump for export fix",
+    "version": "1.1.1",
     "description": "允许用户通过命令向配置的指定用户发送消息。",
     "classification": [
       "工具"
@@ -524,7 +546,7 @@
     "isMod": false,
     "isService": false,
     "isAuthentication": false,
-    "isEncPlugin": true,
+    "isEncPlugin": false,
     "id": "RTg9f8lCgGG/MIl7UsKL5c5Yw8Q=",
     "isChatPlugin": true
   },
