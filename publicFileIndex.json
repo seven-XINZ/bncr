@@ -401,8 +401,8 @@
     "name": "每天60s",
     "author": "seven",
     "team": "xinz",
-    "version": "1.0.0",
-    "description": "60秒读懂世界",
+    "version": "1.1.0",
+    "description": "60秒读懂世界（定时推送目标平台/群/用户在插件配置中填写）",
     "classification": [
       "功能插件"
     ],
@@ -533,8 +533,8 @@
     "name": "舔狗日记",
     "author": "seven",
     "team": "xinz",
-    "version": "1.0.5",
-    "description": "舔狗日记",
+    "version": "1.1.0",
+    "description": "舔狗日记，天行 API 密钥在插件配置中填写",
     "classification": [
       "功能插件"
     ],
