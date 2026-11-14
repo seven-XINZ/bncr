@@ -1,6 +1,7 @@
 /**
  * @author OpenClaw
  * @name 聊天记录备份
+ * @team xinz
  * @origin 实用工具
  * @version 1.0.0
  * @description 自动备份聊天记录到文件，支持定时备份和手动备份

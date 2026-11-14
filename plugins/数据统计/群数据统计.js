@@ -1,6 +1,7 @@
 /**
  * @author OpenClaw
  * @name 群数据统计
+ * @team xinz
  * @origin 数据统计
  * @version 1.0.0
  * @description 统计群聊数据：发言次数、活跃用户、消息时间分布等

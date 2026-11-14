@@ -1,6 +1,7 @@
 /**
  * @author OpenClaw
  * @name 群管理助手
+ * @team xinz
  * @origin 群管理
  * @version 1.0.0
  * @description 群管理功能：欢迎新人、自动踢人、禁言、群公告等

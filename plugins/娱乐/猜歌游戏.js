@@ -1,6 +1,7 @@
 /**
  * @author OpenClaw
  * @name 猜歌游戏
+ * @team xinz
  * @origin 娱乐
  * @version 1.0.0
  * @description 猜歌名游戏，发送歌词猜歌名，支持积分排行

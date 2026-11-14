@@ -1,6 +1,7 @@
 /**
  * @author OpenClaw
  * @name 智能搜索
+ * @team xinz
  * @origin 实用工具
  * @version 1.0.0
  * @description 支持多种搜索引擎：百度、谷歌、必应、B 站、知乎等

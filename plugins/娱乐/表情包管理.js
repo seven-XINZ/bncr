@@ -1,6 +1,7 @@
 /**
  * @author OpenClaw
  * @name 表情包管理
+ * @team xinz
  * @origin 娱乐
  * @version 1.0.0
  * @description 表情包搜索、保存、发送功能

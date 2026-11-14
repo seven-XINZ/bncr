@@ -1,6 +1,7 @@
 /**
  * @author OpenClaw
  * @name 便签笔记
+ * @team xinz
  * @origin 效率工具
  * @version 1.0.0
  * @description 快速记录便签和笔记，支持分类和标签

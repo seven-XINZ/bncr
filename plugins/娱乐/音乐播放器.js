@@ -1,6 +1,7 @@
 /**
  * @author OpenClaw
  * @name 音乐播放器
+ * @team xinz
  * @origin 娱乐
  * @version 1.0.0
  * @description 音乐播放功能：搜索、播放、暂停、下一首等

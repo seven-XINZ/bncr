@@ -1,6 +1,7 @@
 /**
  * @author OpenClaw
  * @name 图片转文字
+ * @team xinz
  * @origin 实用工具
  * @version 1.0.0
  * @description 图片 OCR 识别，支持多种语言

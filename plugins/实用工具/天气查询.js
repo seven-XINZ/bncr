@@ -1,6 +1,7 @@
 /**
  * @author OpenClaw
  * @name 天气查询
+ * @team xinz
  * @origin 实用工具
  * @version 1.0.0
  * @description 查询天气信息，支持城市名查询
