@@ -220,18 +220,18 @@
     "id": "Vz+9Ew7UNoaiqCCbEh2PF2j7VJA=",
     "isChatPlugin": true
   },
-  "cUAH+l5tCi24vPAuJndteWullJY=": {
+  "PVdN8eL4keWgGAOQ12eDrGQYPB0=": {
     "type": "github",
     "name": "cd",
     "author": "咸鱼",
     "team": "xinz",
-    "version": "v1.0.0",
+    "version": "1.0.0",
     "description": "菜单功能",
     "classification": [
       "功能插件"
     ],
     "filename": "cd.js",
-    "fileDir": "/plugins/xinz/cd.js",
+    "fileDir": "/plugins/xinz/_archive/cd.js",
     "systemVersionRange": "",
     "isCron": false,
     "isAdapter": false,
@@ -239,7 +239,7 @@
     "isService": false,
     "isAuthentication": false,
     "isEncPlugin": false,
-    "id": "cUAH+l5tCi24vPAuJndteWullJY=",
+    "id": "PVdN8eL4keWgGAOQ12eDrGQYPB0=",
     "isChatPlugin": true
   },
   "frTVtHbD9bkfrfuE4CrgffyP9cc=": {
@@ -445,7 +445,7 @@
     "name": "消息转发",
     "author": "seven",
     "team": "xinz",
-    "version": "v2.0.0",
+    "version": "2.0.0",
     "description": "监听某个人或群,当触发关键字,转发到指定目的地",
     "classification": [
       "功能插件"
@@ -462,11 +462,11 @@
     "id": "uIMWFYu8xQk+7/v2U84rUE9evWU=",
     "isChatPlugin": true
   },
-  "EEdkb1ElSNir3XDk+Xss4Vv7eGU=": {
+  "+IJ23UP53AZ+wRaocdNwwQb6yJs=": {
     "type": "github",
     "name": "热点趋势",
     "author": "Dswang",
-    "team": "xinz & SmartAI",
+    "team": "xinz",
     "version": "1.0.1",
     "description": "获取网络热点",
     "classification": [
@@ -481,7 +481,7 @@
     "isService": false,
     "isAuthentication": false,
     "isEncPlugin": false,
-    "id": "EEdkb1ElSNir3XDk+Xss4Vv7eGU=",
+    "id": "+IJ23UP53AZ+wRaocdNwwQb6yJs=",
     "isChatPlugin": true
   },
   "HhXF/FXEqzOYxpPt9IAV9NRVWjc=": {
