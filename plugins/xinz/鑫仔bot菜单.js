@@ -1,9 +1,9 @@
 /**
  * @author xinz
- * @name 懒人菜单
+ * @name 鑫仔bot菜单
  * @team xinz
  * @origin Utility
- * @version 3.0.0
+ * @version 3.0.1
  * @description 实时扫描插件，按分类分页生成命令菜单，支持关键词筛选、命令精简与自动撤回。
  * @rule ^(#菜单|menu)(?:\s+([\s\S]+))?$
  * @admin false
@@ -19,13 +19,13 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const SELF_PLUGIN_NAME = '懒人菜单';
-const LOG_PREFIX = '[懒人菜单]';
+const SELF_PLUGIN_NAME = '鑫仔bot菜单';
+const LOG_PREFIX = '[鑫仔bot菜单]';
 const DEFAULT_PLUGIN_DIR = '/bncr/BncrData/plugins';
 
 // 默认配置，同时作为面板 Schema 的默认值
 const MENU_CONFIG = {
-    menuHeader: '✨ Bncr 命令菜单 ✨\n┄┅┄┅┄┅┄┅┄┅┄┅┄',
+    menuHeader: '✨ 鑫仔bot菜单 ✨\n┄┅┄┅┄┅┄┅┄┅┄┅┄',
     menuFooter: '┄┅┄┅┄┅┄┅┄┅┄┅┄\n{{stats}}\n{{pageInfo}}\n{{adminNote}}',
     adminCommandNote: '提示：带 [管理员] 标记的命令仅管理员可用。',
     categoryOrder: 'xinz,实用工具,效率工具,群管理,娱乐,数据统计,官方插件',
@@ -209,7 +209,7 @@ async function scanPluginsRealtime() {
             const metadata = parsePluginMetadata(content);
             if (!metadata) return;
             if (metadata.disable || metadata.service || metadata.adapter) return;
-            if (metadata.name === SELF_PLUGIN_NAME || path.basename(filePath) === '懒人菜单.js') return;
+            if (metadata.name === SELF_PLUGIN_NAME || path.basename(filePath) === '鑫仔bot菜单.js') return;
 
             plugins.push({
                 ...metadata,
@@ -422,6 +422,8 @@ async function replyAndDelete(sender, text, delaySeconds) {
 
     if (typeof timer.unref === 'function') timer.unref();
 }
+
+console.info(`${LOG_PREFIX} 插件已启用，触发命令： #菜单 | menu`);
 
 module.exports = async (sender) => {
     try {

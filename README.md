@@ -42,7 +42,7 @@ README.md
 ## 自用插件（plugins/xinz/）
 
 - **AI 对话**：`ChatGPT.js`、`Bncr_ChatGPT.js`、`dify.js`、`Gemini.js`、`智能AI聊天.js`
-- **查询与工具**：`天气.js`、`星座运势.js`、`每天60s.js`、`二维码生成.js`、`博客文章搜索.js`、`命令大全.js`、`菜单.js`、`懒人菜单.js`、`状态查询.js`、`运行状态.js`、`运行状态美化版.js`、`ping.js`、`热点趋势.js`、`网抑云.js`
+- **查询与工具**：`天气.js`、`星座运势.js`、`每天60s.js`、`二维码生成.js`、`博客文章搜索.js`、`命令大全.js`、`菜单.js`、`鑫仔bot菜单.js`、`状态查询.js`、`运行状态.js`、`运行状态美化版.js`、`ping.js`、`热点趋势.js`、`网抑云.js`
 - **媒体资源**：`pixiv完整版.js`、`各种小姐姐视频.js`、`黑丝_白丝.js`、`tgstickstoqq.js`、`全网影视.js`、`ACGNTTSon.js`
 - **下载器与容器**：`qbittorent操作.js`、`容器操作.js`、`Aria2 push.js`、`BT种子搜索.js`
 - **通知与消息**：`定时消息推送.js`、`消息转发.js`、`自定义通知人.js`、`微信好友申请、拉群.js`、`自动回复.js`、`联系管理员助手.js`、`疯狂星期四.js`、`舔狗日记.js`
