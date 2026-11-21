@@ -92,6 +92,16 @@ module.exports = async () => {
 
     router.post('/api/bot/wxMP', async (req, res) => {
         try {
+            const { signature, timestamp, nonce } = req.query;
+            const list = [mpToken, timestamp, nonce];
+            list.sort();
+            const sha1 = crypto.createHash('sha1');
+            sha1.update(list.join(''));
+            const hashcode = sha1.digest('hex');
+            if (!signature || hashcode !== signature) {
+                console.error('wxMP回调签名验证失败，拒绝该请求');
+                return res.send('');
+            }
             const body = req.body.xml;
             const {
                 tousername: [mpId],
