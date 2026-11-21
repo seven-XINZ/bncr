@@ -3,7 +3,7 @@
  * @name 便签笔记
  * @team xinz
  * @origin 效率工具
- * @version 1.0.0
+ * @version 1.0.1
  * @description 快速记录便签和笔记，支持分类和标签
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(便签 | 笔记 | 记录) (.+)$
@@ -16,7 +16,16 @@
  * @public false
  */
 
+
+const jsonSchema = BncrCreateSchema.object({
+    maxNotes: BncrCreateSchema.number().setTitle('每人最大笔记数').setDefault(200)
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
 module.exports = async sender => {
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    const maxNotes = Number(cfg.maxNotes) || 200;
     const cmd = sender.getMsg();
     const db = new BncrDB('notes');
     const userId = sender.getUserId();
@@ -55,6 +64,10 @@ module.exports = async sender => {
             createdAt: new Date().toISOString()
         };
         
+        if (notes.length >= maxNotes) {
+            await sender.reply(`❌ 笔记数量已达上限（${maxNotes} 条），请先删除部分笔记`);
+            return;
+        }
         notes.push(newNote);
         await db.set(`notes_${userId}`, notes);
         

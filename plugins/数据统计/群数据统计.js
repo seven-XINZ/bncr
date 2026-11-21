@@ -3,7 +3,7 @@
  * @name 群数据统计
  * @team xinz
  * @origin 数据统计
- * @version 1.0.0
+ * @version 1.0.1
  * @description 统计群聊数据：发言次数、活跃用户、消息时间分布等
  * @platform qqBot wxKeAImao wxQianxun
  * @rule ^(群统计 | 群数据 | 活跃排行)$
@@ -15,7 +15,18 @@
  * @public false
  */
 
+
+const jsonSchema = BncrCreateSchema.object({
+    topLimit: BncrCreateSchema.number().setTitle('排行榜人数').setDefault(10),
+    barLength: BncrCreateSchema.number().setTitle('时段柱状长度').setDefault(20)
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
 module.exports = async sender => {
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    const topLimit = Number(cfg.topLimit) || 10;
+    const barLength = Math.max(5, Number(cfg.barLength) || 20);
     const cmd = sender.getMsg();
     const groupId = sender.getGroupId();
     const db = new BncrDB('stats');
@@ -54,7 +65,7 @@ module.exports = async sender => {
         }
         
         let reply = '🏆 发言排行榜 🏆\n\n';
-        stats.topUsers.slice(0, 10).forEach((user, index) => {
+        stats.topUsers.slice(0, topLimit).forEach((user, index) => {
             const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
             reply += `${medal} ${user.name}: ${user.count}条消息\n`;
         });
@@ -77,7 +88,7 @@ module.exports = async sender => {
         let reply = '📈 活跃时段分布\n\n';
         for (let hour = 0; hour < 24; hour++) {
             const count = stats.hourlyDist[hour] || 0;
-            const barLength = Math.round((count / maxCount) * 20);
+            const barLength = Math.round((count / maxCount) * barLength);
             const bar = '█'.repeat(barLength);
             const timeStr = `${hour.toString().padStart(2, '0')}:00`;
             

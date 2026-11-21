@@ -6,7 +6,7 @@
  * @author zhu
  * @team xinz
  * @Github https://github.com/Mrzqd
- * @version 1.0.0
+ * @version 1.0.1
  * @disable false
  * @priority 100
  * @create_at 2023-08-06 16:42:58
@@ -14,9 +14,14 @@
  * @LastEditTime 2023-08-06 20:02:55
  * @Copyright Copyright (c) 2023 by zhu, All Rights Reserved.
  */
-const request = require('util').promisify(require('request'));
+const jsonSchema = BncrCreateSchema.object({
+    apiBase: BncrCreateSchema.string().setTitle('接口地址').setDefault('http://api.yujn.cn/api'),
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
 
 module.exports = async s => {
+    await ConfigDB.get();
+    const apiBase = (ConfigDB.userConfig && ConfigDB.userConfig.apiBase) || 'http://api.yujn.cn/api';
     var USER_AGENT_Browser = [
         'Mozilla/5.0 (Linux; U; Android 7.1.1; zh-cn; OPPO A73 Build/N6F26Q) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/70.0.3538.80 Mobile Safari/537.36 HeyTapBrowser/10.7.29.2',
         'Mozilla/5.0 (Linux; Android 7.1.1; vivo X20Plus A Build/NMF26X; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/87.0.4280.141 Mobile Safari/537.36 VivoBrowser/10.2.10.0',
@@ -111,18 +116,19 @@ module.exports = async s => {
             url = "http://api.yujn.cn/api/rewu.php"
             break;
     }
-    let opt = {
-        url,
-        headers:{
-            "User-Agent":USER_AGENT_Browser[Math.floor(Math.random() * USER_AGENT_Browser.length)]
-        },
-        followRedirect:false
+    try {
+        const resp = await fetch(url.replace('http://api.yujn.cn/api', apiBase), {
+            headers: { 'User-Agent': USER_AGENT_Browser[Math.floor(Math.random() * USER_AGENT_Browser.length)] },
+            redirect: 'manual',
+            signal: AbortSignal.timeout(15000),
+        });
+        const location = resp.headers.get('location');
+        if (!location) {
+            return s.reply('接口暂时没有返回内容，请稍后再试');
+        }
+        await s.reply({ type: 'video', path: location });
+    } catch (e) {
+        console.error('[各种小姐姐视频] 请求失败:', e.message);
+        await s.reply('接口请求失败，请稍后再试');
     }
-    const r = await request(opt)
-    // console.log(r.headers)
-    s.reply({
-        type:"video",
-        path:r.headers.location
-    })
-    
 }

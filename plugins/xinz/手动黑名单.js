@@ -2,7 +2,7 @@
  * @author 咸鱼&xinz
  * @name 手动黑名单
  * @team xinz
- * @version 1.1.0
+ * @version 1.1.1
  * @description 用户黑白名单管理系统｜支持操作备注
  * @rule ^(拉黑|拉白) (\S+)$
  * @priority 10
@@ -11,7 +11,15 @@
  * @public false
  */
 
+const jsonSchema = BncrCreateSchema.object({
+    defaultRemark: BncrCreateSchema.string().setTitle('默认备注').setDefault('通过插件手动拉黑'),
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
 module.exports = async s => {
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    const defaultRemark = cfg.defaultRemark || '通过插件手动拉黑';
     const [command, target] = [s.param(1), s.param(2)];
     const platform = s.getFrom();
     const userKey = `${platform}:${target}`;
@@ -26,7 +34,7 @@ module.exports = async s => {
             '拉黑': async () => {
                 await Promise.all([
                     blacklistDB.set(userKey, true),
-                    remarksDB.set(userKey, '通过插件手动拉黑')
+                    remarksDB.set(userKey, defaultRemark)
                 ]);
                 return `✅ 已封禁用户 [${target}]\n▸ 平台：${platform}\n▸ 备注：管理手动操作`;
             },

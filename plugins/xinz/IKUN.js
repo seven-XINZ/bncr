@@ -2,7 +2,7 @@
  * @author seven
  * @name IKUN
  * @team xinz
- * @version 1.0.2
+ * @version 1.0.3
  * @description 发送IKUN语录和表情包支持所有平台
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty
  * @rule ^(鸡你太美|坤坤|ikun|IKUN|小黑子|小黑粉|真爱粉|你干嘛|纯路人|人民网)(.*)$
@@ -13,36 +13,46 @@
  * @classification ["功能插件"]  
  */
 
-const request = require('request');
 const path = require('path');
 const fs = require('fs');
 const { randomUUID } = require('crypto');
 
+const jsonSchema = BncrCreateSchema.object({
+    apiUrl: BncrCreateSchema.string().setTitle('表情图片接口').setDefault('http://api.caonm.net/api/kun/k.php'),
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
 module.exports = async s => {
-    let jpgURL = `http://api.caonm.net/api/kun/k.php`,
-        open = false;
-    ["tgBot", "HumanTG"].includes(s.getFrom()) && (jpgURL = await writeToJpg(jpgURL)), open = true;   /* 存储图片 */
-    await s.delMsg(s.getMsgId())
-    await s.reply({
-        type: 'image',
-        path: jpgURL,
-        msg: ikun_yvlu(),
-    });
-    !['tgBot', 'HumanTG'].includes(s.getFrom()) && s.reply(ikun_yvlu());
-    open && fs.unlinkSync(jpgURL);
+    await ConfigDB.get();
+    const apiUrl = (ConfigDB.userConfig && ConfigDB.userConfig.apiUrl) || 'http://api.caonm.net/api/kun/k.php';
+    let imagePath = apiUrl;
+    let localFile = '';
+    try {
+        if (['tgBot', 'HumanTG'].includes(s.getFrom())) {
+            localFile = await writeToJpg(apiUrl);
+            imagePath = localFile;
+        }
+        await s.delMsg(s.getMsgId());
+        await s.reply({ type: 'image', path: imagePath, msg: ikun_yvlu() });
+    } catch (e) {
+        console.error('[IKUN] 发送失败:', e.message);
+        await s.reply(`IKUN 语录：${ikun_yvlu()}`);
+    } finally {
+        if (localFile) {
+            try { fs.unlinkSync(localFile); } catch (e) { /* ignore */ }
+        }
+    }
 };
 
 async function writeToJpg(url) {
-    const paths = path.join(process.cwd(), `BncrData/public/${randomUUID().split('-').join('') + '.png'}`);
-    return new Promise((resolve, reject) => {
-        let stream = request(url).pipe(
-            fs.createWriteStream(paths)
-        );
-        stream.on('finish', () => {
-            resolve(paths);
-        });
-    });
-};
+    const dir = path.join(process.cwd(), 'BncrData/public');
+    await fs.promises.mkdir(dir, { recursive: true });
+    const filePath = path.join(dir, `${randomUUID().split('-').join('')}.png`);
+    const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
+    if (!resp.ok) throw new Error(`图片下载失败 HTTP ${resp.status}`);
+    await fs.promises.writeFile(filePath, Buffer.from(await resp.arrayBuffer()));
+    return filePath;
+}
 
 function ikun_yvlu() {
     const msg = [

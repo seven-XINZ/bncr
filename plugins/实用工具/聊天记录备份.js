@@ -3,8 +3,8 @@
  * @name 聊天记录备份
  * @team xinz
  * @origin 实用工具
- * @version 1.0.0
- * @description 自动备份聊天记录到文件，支持定时备份和手动备份
+ * @version 1.1.0
+ * @description 将 BncrDB 数据导出为 JSON 文件，支持手动备份与定时备份
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(备份记录 | 导出聊天 | 保存聊天)$
  * @rule ^(备份配置 | 备份设置)$
@@ -15,87 +15,85 @@
  * @cron 0 0 3 * * *
  */
 
+const fs = require('fs').promises;
+const path = require('path');
+
+const jsonSchema = BncrCreateSchema.object({
+    backupPath: BncrCreateSchema.string().setTitle('备份目录').setDescription('容器内可写目录').setDefault('/bncr/BncrData/backups'),
+    keepDays: BncrCreateSchema.number().setTitle('保留天数').setDescription('0 表示不自动清理').setDefault(30),
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
 module.exports = async sender => {
-    const db = new BncrDB('backup');
     const cmd = sender.getMsg();
-    
-    // 定时自动备份（通过 cron 触发）
     if (cmd === '备份配置' && sender.getFrom() === 'system') {
         await performBackup(sender);
         return;
     }
-    
-    // 手动触发备份
     if (cmd.match(/^(备份记录 | 导出聊天 | 保存聊天)$/)) {
-        await sender.reply('🔄 正在备份聊天记录，请稍候...');
+        await sender.reply('🔄 正在导出数据，请稍候...');
         await performBackup(sender);
         return;
     }
-    
-    // 查看备份配置
     if (cmd === '备份配置' || cmd === '备份设置') {
-        const config = await db.get('backup_config', {
-            autoBackup: true,
-            backupTime: '03:00',
-            keepDays: 30,
-            backupPath: '/backups'
-        });
-        
-        await sender.reply(`⚙️ 备份配置：\n• 自动备份：${config.autoBackup ? '✅ 开启' : '❌ 关闭'}\n• 备份时间：${config.backupTime}\n• 保留天数：${config.keepDays}天\n• 备份路径：${config.backupPath}`);
+        await ConfigDB.get();
+        const cfg = ConfigDB.userConfig || {};
+        await sender.reply(`⚙️ 备份配置：\n• 备份目录：${cfg.backupPath || '/bncr/BncrData/backups'}\n• 保留天数：${cfg.keepDays ?? 30} 天\n• 定时任务：每天 03:00\n\n修改请到后台「插件配置编辑器」`);
         return;
     }
 };
 
 async function performBackup(sender) {
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    const backupDir = cfg.backupPath || '/bncr/BncrData/backups';
+    const keepDays = Number(cfg.keepDays ?? 30);
     const db = new BncrDB('backup');
     const now = new Date();
-    const dateStr = now.toISOString().split('T')[0];
-    const timestamp = now.getTime();
-    
+    const timestamp = now.toISOString().replace(/[:.]/g, '-');
+    const backupFile = path.join(backupDir, `backup_${timestamp}.json`);
+
     try {
-        // 获取所有数据库表
-        const forms = await db.getAllForm();
+        await fs.mkdir(backupDir, { recursive: true });
+
+        let forms = [];
+        try { forms = await db.getAllForm(); } catch (e) { /* 兼容旧版 BncrDB */ }
+        if (!Array.isArray(forms) || forms.length === 0) {
+            const entries = await fs.readdir('/bncr/BncrData/db', { withFileTypes: true }).catch(() => []);
+            forms = entries.filter(e => e.isDirectory()).map(e => e.name);
+        }
         const backupData = {};
-        
         for (const form of forms) {
-            const keys = await db.keys();
+            const formDb = new BncrDB(form);
+            const keys = await formDb.keys();
             backupData[form] = {};
-            
             for (const key of keys) {
-                const data = await db.get(key, null, true);
-                if (data) {
-                    backupData[form][key] = data.value;
-                }
+                const item = await formDb.get(key, null, true);
+                backupData[form][key] = item && typeof item === 'object' && 'value' in item ? item.value : item;
             }
         }
-        
-        // 创建备份文件
-        const backupFile = `backup_${dateStr}_${timestamp}.json`;
-        
-        // 这里需要写入文件，Bncr 没有直接的写文件 API
-        // 需要使用 sysMethod 或自定义方法
-        console.log('备份数据:', JSON.stringify(backupData, null, 2));
-        
-        // 保存备份记录
-        const backups = await db.get('backup_history', []);
-        backups.unshift({
-            file: backupFile,
-            time: now.toISOString(),
-            size: Buffer.byteLength(JSON.stringify(backupData)),
-            forms: forms.length
-        });
-        
-        // 只保留最近的 100 条记录
-        if (backups.length > 100) {
-            backups.splice(100);
+
+        await fs.writeFile(backupFile, JSON.stringify(backupData, null, 2), { mode: 0o600 });
+
+        // 清理过期备份
+        if (keepDays > 0) {
+            const cutoff = Date.now() - keepDays * 86400000;
+            for (const name of await fs.readdir(backupDir)) {
+                if (!/^backup_.*\.json$/.test(name)) continue;
+                const full = path.join(backupDir, name);
+                const stat = await fs.stat(full);
+                if (stat.mtimeMs < cutoff) await fs.unlink(full).catch(() => {});
+            }
         }
-        
-        await db.set('backup_history', backups);
-        
-        await sender.reply(`✅ 备份完成！\n• 文件名：${backupFile}\n• 包含 ${forms.length} 个数据表\n• 备份时间：${now.toLocaleString()}\n\n💡 提示：备份文件已保存到系统，需要手动导出到宿主机`);
-        
+
+        const stat = await fs.stat(backupFile);
+        const records = await db.get('backup_history', []);
+        records.unshift({ file: backupFile, time: now.toISOString(), size: stat.size, forms: forms.length });
+        await db.set('backup_history', records.slice(0, 100));
+
+        await sender.reply(`✅ 备份完成\n• 文件：${backupFile}\n• 数据表：${forms.length} 个\n• 大小：${(stat.size / 1024).toFixed(1)} KB\n• 时间：${now.toLocaleString()}`);
     } catch (error) {
-        console.error('备份失败:', error);
+        console.error('[聊天记录备份] 失败:', error);
         await sender.reply(`❌ 备份失败：${error.message}`);
     }
 }

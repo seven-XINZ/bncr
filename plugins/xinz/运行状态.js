@@ -2,7 +2,7 @@
  * @author seven
  * @name 运行状态
  * @team xinz
- * @version 1.6.1
+ * @version 1.6.2
  * @description 本机资源查询 - 美化版 (自动过滤磁盘, 无网络信息)
  * @rule ^(运行状态)$
  * @admin false
@@ -24,6 +24,14 @@ const CONFIG = {
     // df 命令的回退方案，如果 systeminformation 获取失败，则尝试获取这些挂载点的信息
     majorMountPointsForFallback: ['/', '/home'],
 };
+
+/* 配置：显示参数可在面板调整 */
+const jsonSchema = BncrCreateSchema.object({
+    delMsgTime: BncrCreateSchema.number().setTitle('消息保留毫秒').setDescription('到时自动撤回，0 表示不撤回').setDefault(90000),
+    progressBarLength: BncrCreateSchema.number().setTitle('进度条长度').setDefault(15),
+    refreshInterval: BncrCreateSchema.number().setTitle('刷新间隔毫秒').setDescription('0 表示不自动刷新').setDefault(0),
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
 
 // *** FIX: Define sysMethod directly here ***
 const sysMethod = { name: '运行状态' }; // Provide a default name for logging
@@ -333,5 +341,10 @@ module.exports = async s => {
         console.error(`[${sysMethod.name}] 无效的输入对象 's', 无法执行.`);
         return;
     }
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    if (cfg.delMsgTime !== undefined) CONFIG.delMsgTime = Number(cfg.delMsgTime) || 0;
+    if (cfg.progressBarLength !== undefined) CONFIG.progressBarLength = Math.max(5, Number(cfg.progressBarLength) || 15);
+    CONFIG.refreshInterval = cfg.refreshInterval ? Number(cfg.refreshInterval) : null;
     await getSystemInfo(s);
 };

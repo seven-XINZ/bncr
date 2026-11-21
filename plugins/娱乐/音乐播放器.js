@@ -3,8 +3,8 @@
  * @name 音乐播放器
  * @team xinz
  * @origin 娱乐
- * @version 1.0.0
- * @description 音乐播放功能：搜索、播放、暂停、下一首等
+ * @version 1.1.0
+ * @description 搜索并发送网易云音乐音频，受版权限制的歌曲改为返回试听链接
  * @platform qqBot wxKeAImao wxQianxun
  * @rule ^(播放 | 来首) (.+)$
  * @rule ^(暂停 | 停止 | 下一首 | 上一首|音量)$
@@ -14,122 +14,86 @@
  * @public false
  */
 
-const currentPlaying = new Map(); // 存储每个群的播放状态
+const jsonSchema = BncrCreateSchema.object({
+    searchApi: BncrCreateSchema.string().setTitle('搜索接口').setDefault('https://music.163.com/api/search/get/web'),
+    outerApi: BncrCreateSchema.string().setTitle('音频外链接口').setDefault('https://music.163.com/song/media/outer/url'),
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
+
+async function searchMusic(keywords, api) {
+    const url = `${api}?csrf_token=&s=${encodeURIComponent(keywords)}&type=1&offset=0&total=true&limit=5`;
+    const resp = await fetch(url, {
+        headers: { 'Referer': 'https://music.163.com/', 'User-Agent': UA },
+        signal: AbortSignal.timeout(10000),
+    });
+    if (!resp.ok) throw new Error(`搜索接口 HTTP ${resp.status}`);
+    const data = await resp.json();
+    const songs = data?.result?.songs || [];
+    return songs.map(song => ({
+        id: song.id,
+        name: song.name,
+        artist: (song.artists || song.ar || []).map(a => a.name).join('/'),
+        album: (song.album || song.al || {}).name || '',
+        duration: Math.round((song.duration || song.dt || 0) / 1000),
+    }));
+}
+
+async function resolveAudioUrl(song, api) {
+    const url = `${api}?id=${song.id}.mp3`;
+    const resp = await fetch(url, {
+        headers: { 'Referer': 'https://music.163.com/', 'User-Agent': UA },
+        redirect: 'manual',
+        signal: AbortSignal.timeout(10000),
+    });
+    const location = resp.headers.get('location');
+    if (!location || /\/404|music\.163\.com\/404/.test(location)) return null;
+    return location;
+}
 
 module.exports = async sender => {
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
     const cmd = sender.getMsg();
-    const groupId = sender.getGroupId() || 'private';
-    const db = new BncrDB('music');
-    
-    // 播放音乐
+    const songName = sender.param(2);
+
     if (cmd.match(/^(播放 | 来首)/)) {
-        const songName = sender.param(2);
-        
         if (!songName) {
             await sender.reply('❌ 请输入要播放的歌曲名\n例如：播放 周杰伦 青花瓷');
             return;
         }
-        
         await sender.reply(`🎵 正在搜索 ${songName}...`);
-        
         try {
-            // 这里需要调用音乐 API
-            // 可以使用网易云音乐、QQ 音乐等的第三方 API
-            const musicInfo = await searchMusic(songName);
-            
-            if (!musicInfo || musicInfo.length === 0) {
+            const songs = await searchMusic(songName, cfg.searchApi || 'https://music.163.com/api/search/get/web');
+            if (songs.length === 0) {
                 await sender.reply(`❌ 未找到歌曲：${songName}`);
                 return;
             }
-            
-            const song = musicInfo[0];
-            
-            // 保存播放状态
-            currentPlaying.set(groupId, {
-                song: song,
-                playing: true,
-                paused: false
-            });
-            
-            await sender.reply(`▶️ 正在播放：${song.name}\n歌手：${song.artist}\n专辑：${song.album}`);
-            
-            // 这里需要实际调用音频播放功能
-            // 不同平台实现不同（QQ 音乐、微信音乐等）
-            
+            const song = songs[0];
+            const audioUrl = await resolveAudioUrl(song, cfg.outerApi || 'https://music.163.com/song/media/outer/url');
+            if (audioUrl) {
+                await sender.reply({
+                    type: 'record',
+                    path: audioUrl,
+                    msg: `${song.name} - ${song.artist}`,
+                });
+            } else {
+                await sender.reply(`🎵 ${song.name}\n歌手：${song.artist}\n专辑：${song.album}\n\n该歌曲受版权限制无法直接发送音频，请点击试听：\nhttps://music.163.com/#/song?id=${song.id}`);
+            }
         } catch (error) {
+            console.error('[音乐播放器] 搜索失败:', error.message);
             await sender.reply(`❌ 播放失败：${error.message}`);
         }
         return;
     }
-    
-    // 暂停
-    if (cmd === '暂停') {
-        const state = currentPlaying.get(groupId);
-        if (!state) {
-            await sender.reply('⏸️ 当前没有正在播放的音乐');
-            return;
-        }
-        
-        state.paused = true;
-        await sender.reply(`⏸️ 已暂停：${state.song.name}`);
+
+    if (cmd === '暂停' || cmd === '停止') {
+        await sender.reply('⏹️ 本插件按单曲发送，不维护播放队列；发送「播放 歌名」可点播下一首');
         return;
     }
-    
-    // 停止
-    if (cmd === '停止') {
-        const state = currentPlaying.get(groupId);
-        if (!state) {
-            await sender.reply('⏹️ 当前没有正在播放的音乐');
-            return;
-        }
-        
-        currentPlaying.delete(groupId);
-        await sender.reply(`⏹️ 已停止播放：${state.song.name}`);
-        return;
-    }
-    
-    // 下一首/上一首
-    if (cmd === '下一首' || cmd === '上一首') {
-        const state = currentPlaying.get(groupId);
-        if (!state) {
-            await sender.reply('⏭️ 当前没有正在播放的音乐');
-            return;
-        }
-        
-        await sender.reply('🎵 切换到下一首功能需要播放列表支持\n当前功能：播放指定歌曲');
-        return;
-    }
-    
-    // 音量
-    if (cmd.match(/^音量/)) {
-        await sender.reply('🔊 音量调节功能需要平台支持\n不同平台实现方式不同');
+    if (cmd === '下一首' || cmd === '上一首' || cmd.match(/^音量/)) {
+        await sender.reply('ℹ️ 当前为单曲点播模式，暂不支持播放队列和音量控制');
         return;
     }
 };
-
-async function searchMusic(keywords) {
-    // 示例：使用网易云音乐搜索 API（第三方）
-    // 实际使用时需要配置 API 或更换为其他音乐 API
-    
-    try {
-        const response = await fetch(
-            `https://music.163.com/api/search/get?keywords=${encodeURIComponent(keywords)}&type=1&s=0`
-        );
-        
-        // 注意：网易云音乐 API 可能需要代理或特殊处理
-        // 这里返回模拟数据
-        
-        return [
-            {
-                name: keywords,
-                artist: '未知歌手',
-                album: '未知专辑',
-                url: '',
-                cover: ''
-            }
-        ];
-    } catch (error) {
-        console.error('音乐搜索失败:', error);
-        return [];
-    }
-}

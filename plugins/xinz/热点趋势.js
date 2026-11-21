@@ -2,7 +2,7 @@
  * @author Dswang
  * @name 热点趋势
  * @team xinz
- * @version 1.0.1
+ * @version 1.0.2
  * @description 获取网络热点
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty
  * @rule ^((抖音|微博|知乎|bilibili|bili|哔哩|哔哩哔哩)热搜)$
@@ -15,17 +15,23 @@
 
 const axios = require('axios');
 
+const jsonSchema = BncrCreateSchema.object({
+    apiBase: BncrCreateSchema.string().setTitle('热搜接口地址').setDefault('https://tenapi.cn/v2'),
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
 module.exports = async s => {
-  await sysMethod.testModule(['axios', 'input'], { install: true });
+  await ConfigDB.get();
+  const apiBase = (ConfigDB.userConfig && ConfigDB.userConfig.apiBase) || 'https://tenapi.cn/v2';
 
   const apiEndpoints = {
-    '抖音热搜': 'https://tenapi.cn/v2/douyinhot',
-    '微博热搜': 'https://tenapi.cn/v2/weibohot',
-    '知乎热搜': 'https://tenapi.cn/v2/zhihuhot',
-    'bilibili热搜': 'https://tenapi.cn/v2/bilihot',
-    'bili热搜': 'https://tenapi.cn/v2/bilihot',
-    '哔哩热搜': 'https://tenapi.cn/v2/bilihot',
-    '哔哩哔哩热搜': 'https://tenapi.cn/v2/bilihot'
+    '抖音热搜': `${apiBase}/douyinhot`,
+    '微博热搜': `${apiBase}/weibohot`,
+    '知乎热搜': `${apiBase}/zhihuhot`,
+    'bilibili热搜': `${apiBase}/bilihot`,
+    'bili热搜': `${apiBase}/bilihot`,
+    '哔哩热搜': `${apiBase}/bilihot`,
+    '哔哩哔哩热搜': `${apiBase}/bilihot`
   };
 
   const platform = s.getMsg().match(/(抖音|微博|知乎|bilibili|bili|哔哩|哔哩哔哩)热搜/)[0];
@@ -38,7 +44,7 @@ module.exports = async s => {
 
   try {
     // 调用接口获取热搜数据
-    const response = await axios.get(apiUrl);
+    const response = await axios.get(apiUrl, { timeout: 10000 });
 
     // 检查响应数据是否有效
     if (response.data.code !== 200 || !response.data.data) {

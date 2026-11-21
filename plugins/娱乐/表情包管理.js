@@ -3,7 +3,7 @@
  * @name 表情包管理
  * @team xinz
  * @origin 娱乐
- * @version 1.0.0
+ * @version 1.1.0
  * @description 表情包搜索、保存、发送功能
  * @platform qqBot wxKeAImao wxQianxun
  * @rule ^(搜表情 | 找表情) (.+)$
@@ -16,7 +16,17 @@
  * @public false
  */
 
+const jsonSchema = BncrCreateSchema.object({
+    searchApi: BncrCreateSchema.string().setTitle('表情搜索接口').setDescription('留空则只支持收藏/发送已保存表情；接口需返回 JSON 数组或 {data:[...]}').setDefault(''),
+    resultLimit: BncrCreateSchema.number().setTitle('搜索返回条数').setDefault(5),
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
 module.exports = async sender => {
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    const resultLimit = Number(cfg.resultLimit) || 5;
+
     const cmd = sender.getMsg();
     const db = new BncrDB('emoji');
     const userId = sender.getUserId();
@@ -30,13 +40,14 @@ module.exports = async sender => {
             return;
         }
         
+        if (!cfg.searchApi) {
+            await sender.reply('⚠️ 未配置表情搜索接口\n请在后台「插件配置编辑器」填写搜索接口地址，或直接收藏已有表情');
+            return;
+        }
         await sender.reply(`🔍 正在搜索 ${keyword} 相关的表情包...`);
         
         try {
-            // 这里可以调用表情包 API
-            // 例如：https://api.api5.com/ 或其他表情包 API
-            
-            const results = await searchEmoji(keyword);
+            const results = await searchEmoji(keyword, cfg.searchApi, resultLimit);
             
             if (results.length === 0) {
                 await sender.reply(`❌ 未找到 ${keyword} 相关的表情包`);
@@ -45,11 +56,11 @@ module.exports = async sender => {
             
             // 显示前几个结果
             let reply = `🎭 找到 ${results.length} 个表情包:\n\n`;
-            results.slice(0, 5).forEach((item, index) => {
+            results.slice(0, resultLimit).forEach((item, index) => {
                 reply += `${index + 1}. ${item.name}\n`;
             });
             
-            reply += '\n回复数字发送对应表情包，或输入"保存表情"收藏';
+            reply += '\n发送「发送表情 数字」发送对应表情，或输入「保存表情」收藏';
             await sender.reply(reply);
             
             // 临时存储搜索结果
@@ -107,7 +118,7 @@ module.exports = async sender => {
         const keyword = sender.param(2);
         
         if (!keyword) {
-            await sender.reply('❌ 请输入表情关键词\n例如：发送表情 开心\n或者回复数字发送搜索到的表情');
+            await sender.reply('❌ 请输入表情关键词\n例如：发送表情 开心\n或者发送「发送表情 1」发送搜索到的第一个表情');
             return;
         }
         
@@ -148,13 +159,14 @@ module.exports = async sender => {
     }
 };
 
-async function searchEmoji(keyword) {
-    // 示例：调用表情包 API
-    // 这里返回模拟数据
-    
-    return [
-        { name: `${keyword} 表情 1`, url: 'https://example.com/emoji1.jpg' },
-        { name: `${keyword} 表情 2`, url: 'https://example.com/emoji2.jpg' },
-        { name: `${keyword} 表情 3`, url: 'https://example.com/emoji3.jpg' }
-    ];
+async function searchEmoji(keyword, api, limit) {
+    const url = `${api}${api.includes('?') ? '&' : '?'}msg=${encodeURIComponent(keyword)}&limit=${limit}`;
+    const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+    if (!resp.ok) throw new Error(`接口 HTTP ${resp.status}`);
+    const json = await resp.json();
+    const list = Array.isArray(json) ? json : (json.data || json.result || []);
+    return list.map(item => ({
+        name: item.name || item.title || item.msg || '表情',
+        url: item.url || item.image || item.imageUrl || item.path || '',
+    })).filter(item => item.url).slice(0, limit);
 }

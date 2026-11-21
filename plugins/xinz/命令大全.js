@@ -2,7 +2,7 @@
  * @author Doraemon
  * @name 命令大全
  * @team xinz
- * @version 1.0.0
+ * @version 1.0.1
  * @description 无界命令大全
  * @rule ^(命令)$
  * @admin true
@@ -13,7 +13,12 @@
  */
 
 
- var link = '：' //连接符
+const jsonSchema = BncrCreateSchema.object({
+    linkSymbol: BncrCreateSchema.string().setTitle('命令与说明的连接符').setDefault('：'),
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
+let link = '：' //连接符
 
  var basics = { //基础命令
      'set ? ? ?': '*设置存储桶-名-值',
@@ -47,6 +52,8 @@
  
  //插件入口
 module.exports = async s => {
+    await ConfigDB.get();
+    link = (ConfigDB.userConfig && ConfigDB.userConfig.linkSymbol) || '：';
     let newBasics = ''
     for (let [key, value] of Object.entries(basics)) {
         newBasics += `${key}${link}${value}\n`

@@ -18,6 +18,13 @@
 const currentGame = new Map(); // 存储各群的游戏状态
 const scores = new Map(); // 存储用户积分
 
+const jsonSchema = BncrCreateSchema.object({
+    scorePerWin: BncrCreateSchema.number().setTitle('猜对得分').setDefault(10),
+    topLimit: BncrCreateSchema.number().setTitle('排行榜人数').setDefault(10)
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
+
 // 歌曲库（示例，实际可以扩展）
 const songLibrary = [
     { lyrics: '你是我的小呀小苹果', answer: '小苹果', artist: '筷子兄弟' },
@@ -33,6 +40,10 @@ const songLibrary = [
 ];
 
 module.exports = async sender => {
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    const scorePerWin = Number(cfg.scorePerWin) || 10;
+    const topLimit = Number(cfg.topLimit) || 10;
     const cmd = sender.getMsg();
     const groupId = sender.getGroupId();
     const db = new BncrDB('game');
@@ -54,7 +65,7 @@ module.exports = async sender => {
             answered: false
         });
         
-        await sender.reply(`🎮 猜歌游戏开始！\n\n📝 歌词：${song.lyrics}\n\n第一个猜对的用户获得 10 积分！\n输入"猜歌答案"查看答案`);
+        await sender.reply(`🎮 猜歌游戏开始！\n\n📝 歌词：${song.lyrics}\n\n第一个猜对的用户获得 ${scorePerWin} 积分！\n输入"猜歌答案"查看答案`);
         return;
     }
     
@@ -76,7 +87,7 @@ module.exports = async sender => {
         const userScores = await db.get('guess_song_scores', {});
         const sorted = Object.entries(userScores)
             .sort((a, b) => b[1] - a[1])
-            .slice(0, 10);
+            .slice(0, topLimit);
         
         if (sorted.length === 0) {
             await sender.reply('🏆 暂无排名数据\n快来玩猜歌游戏吧！');
@@ -110,12 +121,12 @@ module.exports = async sender => {
                 
                 // 记录积分
                 const userScores = await db.get('guess_song_scores', {});
-                userScores[userName] = (userScores[userName] || 0) + 10;
+                userScores[userName] = (userScores[userName] || 0) + scorePerWin;
                 await db.set('guess_song_scores', userScores);
                 
                 const timeUsed = Math.floor((Date.now() - game.startTime) / 1000);
                 
-                await sender.reply(`🎉 恭喜你猜对了！\n🎵 歌曲：${game.song.answer}\n👤 歌手：${game.song.artist}\n⏱️ 用时：${timeUsed}秒\n🏆 获得：10 积分\n\n输入"开始猜歌"继续游戏`);
+                await sender.reply(`🎉 恭喜你猜对了！\n🎵 歌曲：${game.song.answer}\n👤 歌手：${game.song.artist}\n⏱️ 用时：${timeUsed}秒\n🏆 获得：${scorePerWin} 积分\n\n输入"开始猜歌"继续游戏`);
                 
                 currentGame.delete(groupId);
             }

@@ -3,7 +3,7 @@
  * @name 群管理助手
  * @team xinz
  * @origin 群管理
- * @version 1.0.0
+ * @version 1.0.1
  * @description 群管理功能：欢迎新人、自动踢人、禁言、群公告等
  * @platform qqBot wxKeAImao wxQianxun
  * @rule ^(欢迎消息 | 欢迎词)$
@@ -18,14 +18,23 @@
  * @public false
  */
 
+
+const jsonSchema = BncrCreateSchema.object({
+    defaultWelcome: BncrCreateSchema.string().setTitle('默认欢迎语').setDefault('未设置欢迎消息')
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
 module.exports = async sender => {
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    const defaultWelcome = cfg.defaultWelcome || '未设置欢迎消息';
     const db = new BncrDB('group');
     const groupId = sender.getGroupId();
     const cmd = sender.getMsg();
     
     // 获取欢迎消息
     if (cmd === '欢迎消息' || cmd === '欢迎词') {
-        const welcomeMsg = await db.get(`welcome_${groupId}`, '未设置欢迎消息');
+        const welcomeMsg = await db.get(`welcome_${groupId}`, defaultWelcome);
         await sender.reply(`📝 当前欢迎消息：${welcomeMsg}`);
         return;
     }

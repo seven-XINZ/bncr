@@ -3,7 +3,7 @@
  * @name 待办事项
  * @team xinz
  * @origin 效率工具
- * @version 1.0.0
+ * @version 1.0.1
  * @description 个人待办事项管理：添加、查看、完成、删除
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(待办 | 任务 | 计划) (.+)$
@@ -16,7 +16,16 @@
  * @public false
  */
 
+
+const jsonSchema = BncrCreateSchema.object({
+    maxItems: BncrCreateSchema.number().setTitle('每人最大待办数').setDefault(100)
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
 module.exports = async sender => {
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    const maxItems = Number(cfg.maxItems) || 100;
     const cmd = sender.getMsg();
     const db = new BncrDB('todo');
     const userId = sender.getUserId();
@@ -39,6 +48,10 @@ module.exports = async sender => {
             completed: false
         };
         
+        if (todos.length >= maxItems) {
+            await sender.reply(`❌ 待办数量已达上限（${maxItems} 条），请先完成或删除部分事项`);
+            return;
+        }
         todos.push(newTodo);
         await db.set(`todos_${userId}`, todos);
         

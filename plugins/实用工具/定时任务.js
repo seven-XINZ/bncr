@@ -3,7 +3,7 @@
  * @name 定时任务
  * @team xinz
  * @origin 实用工具
- * @version 1.0.0
+ * @version 1.0.1
  * @description 创建、查看、删除定时任务
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(添加定时任务 | 创建任务|定时) (.+)$
@@ -17,7 +17,16 @@
 
 const tasks = new Map();
 
+const jsonSchema = BncrCreateSchema.object({
+    maxTasks: BncrCreateSchema.number().setTitle('最大任务数').setDefault(50)
+});
+const ConfigDB = new BncrPluginConfig(jsonSchema);
+
+
 module.exports = async sender => {
+    await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    const maxTasks = Number(cfg.maxTasks) || 50;
     const cmd = sender.getMsg();
     const db = new BncrDB('tasks');
     
@@ -36,6 +45,11 @@ module.exports = async sender => {
         const taskName = `task_${Date.now()}`;
         
         try {
+            const existed = await db.keys();
+            if (existed.length >= maxTasks) {
+                await sender.reply(`❌ 任务数量已达上限（${maxTasks} 个），请先删除不用的任务`);
+                return;
+            }
             await db.set(taskName, { cron: cronTime, cmd: taskCmd, createdAt: new Date().toISOString() });
             
             sysMethod.cron.newCron(cronTime, async () => {
