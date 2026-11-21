@@ -203,7 +203,7 @@
     "name": "IKUN",
     "author": "seven",
     "team": "xinz",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "发送IKUN语录和表情包支持所有平台",
     "classification": [
       "功能插件"
@@ -335,7 +335,7 @@
     "name": "命令大全",
     "author": "Doraemon",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "无界命令大全",
     "classification": [
       "功能插件"
@@ -467,7 +467,7 @@
     "name": "热点趋势",
     "author": "Dswang",
     "team": "xinz",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "获取网络热点",
     "classification": [
       "工具"
