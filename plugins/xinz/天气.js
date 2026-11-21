@@ -555,14 +555,6 @@ const completeWeatherConditions = {
     },
 };
 
-// 示例使用
-const weatherDescription = "Thundery Outbreaks Nearby";
-const translatedWeather = completeWeatherConditions[weatherDescription] ? completeWeatherConditions[weatherDescription].中文 : "未知天气状况";
-const weatherDetail = completeWeatherConditions[weatherDescription] ? completeWeatherConditions[weatherDescription].描述 : "无详细描述";
-
-console.log(`天气状况: ${translatedWeather}`); // 输出: 天气状况: 附近有雷暴活动
-console.log(`天气描述: ${weatherDetail}`); // 输出: 天气描述: 在某些区域可能出现雷暴，其他区域则为晴朗。
-
 // 导出模块
 module.exports = async s => {
     await ConfigDB.get();
