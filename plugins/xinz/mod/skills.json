@@ -1,0 +1,10 @@
+{
+  "skills": [
+    {
+      "name": "技能测试",
+      "desc": "验证 mod 技能通道：返回容器主机名与时间",
+      "file": "skills/ping.py",
+      "keywords": ["技能测试", "mod测试"]
+    }
+  ]
+}

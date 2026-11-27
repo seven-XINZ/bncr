@@ -1,14 +1,14 @@
-# Bncr × 微信智能管家
+# Bncr · 全平台智能中枢
 
 ![封面](docs/readme-cover.webp)
 
-把微信变成机器人入口：扫码登录、自然语言调度、会记事、有情绪，没大模型也能跑。
+一个入口接管全平台：微信、QQ、Telegram、Web、SSH 都能对话；会记事、有情绪，没大模型也能跑，还能挂 Python 技能。
 
 这个仓库是 [Bncr（无界）](https://github.com/Anmour/Bncr) 的个人部署版，额外做了三件事：
 
-1. **微信 ClawBot 适配器**：不折腾协议，扫码即用，文本/图片/文件全通，可选语音回复
-2. **智能管家**：唯一入口，把全仓 40+ 插件收进一张嘴，用一句话调度
-3. **插件工坊**：接上大模型后，一句话让它自己写插件、落盘、语法校验
+1. **多平台适配器**：微信 ClawBot 扫码即用，QQ/TG/PGM/Web/SSH 复用同一套插件
+2. **智能管家**：唯一入口，把全仓 40+ 插件收进一张嘴，装上新插件自动入库
+3. **插件工坊 + mod 模块**：一句话生成插件；mod 提供 JSON 存储与 Python 技能通道，Bncr 不再只能用 JS
 
 > 所有能力都有降级路径：大模型挂了走本地词库，词库不中给候选，绝不瞎执行。
 
@@ -28,6 +28,27 @@
 
 ---
 
+## 全平台
+
+Bncr 是适配器架构，管家不绑定某个平台。当前仓库自带这些适配器：
+
+| 适配器 | 平台 | 说明 |
+|---|---|---|
+| wxClawBot | 微信（ClawBot/iLink） | 扫码登录，文本/图片/文件，可选 TTS |
+| wechaty | 微信（Wechaty） | 需配 token / padlocal |
+| wxXyo / wxQianxun / wxKeAImao | 微信（第三方协议） | 按各自网关填地址 |
+| wxMP / wxWork / wxWorkKF | 公众号 / 企业微信 / 企微客服 | 回调模式 |
+| qq / pgm | QQ（OneBot / go-cqhttp） | 正向或反向 WS |
+| tgBot | Telegram | Bot Token |
+| web | 网页对话 | 内置 Web 面板 |
+| ssh | SSH 终端 | 命令行直接聊 |
+| HumanTG | Telegram 人机混合 | 人工接管 |
+| wechatFerry | 微信（PC Hook） | 需对应版本客户端 |
+
+插件里的 `@platform` 决定它能在哪些平台跑；管家调度时会照常把消息交给插件，平台差异由适配器抹平。
+
+---
+
 ## 目录结构
 
 ```text
@@ -41,6 +62,10 @@
 │   │   ├── 微信TTS.js         # 文本转语音开关
 │   │   ├── 热点趋势.js         # 微博官方榜单 + 第三方兜底
 │   │   └── ...
+│   ├── xinz/mod/              # 数据模块：store.js / data / skills
+│   │   ├── store.js           # 命名空间 JSON 存储
+│   │   ├── skills.json        # 技能清单（python 等）
+│   │   └── skills/            # 技能脚本
 │   ├── 自动生成/               # 插件工坊产出，和手写插件隔离
 │   └── (官方/实用工具/娱乐...)
 ├── docs/
@@ -52,25 +77,22 @@
 
 ## 快速开始
 
-```yaml
-# docker-compose.yml
-services:
-  bncr:
-    image: anmour/bncr:latest
-    container_name: bncr
-    restart: unless-stopped
-    ports:
-      - "9090:9090"
-    volumes:
-      - /vol1/1000/docker/1panel/apps/BncrData:/bncr/BncrData
+官方镜像用 `docker run`，不要套 compose：
+
+```bash
+docker run -itd --name bncr --restart=always \
+  -p 9090:9090 \
+  -v /vol1/1000/docker/1panel/apps/BncrData:/bncr/BncrData \
+  -e TZ=Asia/Shanghai \
+  anmour/bncr:latest
 ```
 
-1. 启动容器，浏览器打开 `http://<host>:9090` 进面板
-2. 在「适配器」里启用 `wxClawBot`，扫面板上的二维码登录微信
-3. 在「插件配置」里填 `智能管家` 的大模型 Key（可留空，留空走词库）
-4. 微信里发一句 `ai 你会什么` 验证链路
+1. 打开 `http://<host>:9090` 进面板
+2. 在「适配器」启用需要的平台（微信选 `wxClawBot` 扫码）
+3. 在「插件配置」填 `智能管家` 的大模型 Key（可留空，留空走词库）
+4. 任意平台发一句 `ai 你会什么` 验证链路
 
----
+> 授权中心域名偶尔解析到 IPv6 导致启动卡住，可加 `--add-host bncr.619030.xyz:172.67.170.203`。
 
 ## 微信适配器 wxClawBot
 
@@ -109,6 +131,9 @@ services:
 | `ai 学词 查快递 => 天气 快递` | 加词条，立即生效 |
 | `ai 删词 查快递` | 删词条 |
 | `ai 你会什么` | 按当前插件数生成能力清单 |
+| `ai 刷新插件` | 立即重新扫描插件目录（新装插件不用重启） |
+| `ai 技能` | 列出 mod 技能 |
+| `ai 跑 <技能名> [参数]` | 执行 mod 里的 python/shell 技能 |
 
 ### 情绪
 
@@ -142,6 +167,48 @@ services:
 | 智能AI聊天 | `聊天` |
 
 ---
+
+## mod 模块（plugins/xinz/mod）
+
+插件目录下的数据层，不依赖数据库，文件即数据。
+
+```text
+mod/
+├── store.js        # 命名空间 KV 存储（原子写入）
+├── data/           # 每个命名空间一个 JSON，可直接改
+├── skills.json     # 技能清单
+└── skills/         # python / shell 脚本
+```
+
+**存储**
+
+```js
+const store = require('./mod/store');
+await store.set('smart', 'state', {...});   // 写
+await store.get('smart', 'state', {});      // 读
+await store.push('logs', 'items', {...}, 100); // 队列
+```
+
+管家已把记忆、词库、情绪状态迁到 `mod/data/smart.json`，出问题直接看文件，不用翻 LevelDB。
+
+**技能（让 Bncr 不止能用 JS）**
+
+`skills.json` 里登记脚本，管家按名字调用：
+
+```json
+{
+  "skills": [
+    { "name": "技能测试", "desc": "返回主机名与时间", "file": "skills/ping.py", "keywords": ["技能测试"] }
+  ]
+}
+```
+
+```text
+ai 技能                  # 列出已注册技能
+ai 跑 技能测试 你好       # 执行 python3 skills/ping.py 你好
+```
+
+脚本 stdout 直接回给用户，15 秒超时，只允许授权用户触发。
 
 ## 插件工坊（plugins/xinz/插件工坊.js）
 
@@ -265,6 +332,12 @@ ai 做个插件 每天 8 点把成都天气推到群里
 ---
 
 ## 更新日志
+
+### v1.4.0
+- 新增 `plugins/xinz/mod`：JSON 存储 + Python 技能通道，记忆/词库/状态落文件
+- 新插件 10 秒内自动入库，`ai 刷新插件` 可立即生效，装完即可调用
+- 修复插件扫描正则被拆分导致「0 个插件」的问题
+- 全平台适配器清单整理，README 与封面改为全平台主题
 
 ### v1.3.1
 - 优先级提到 `999999`，内置「接管全部插件」开关并默认开启，所有消息先由管家调度

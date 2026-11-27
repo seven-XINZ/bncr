@@ -2,7 +2,7 @@
  *  @author xinz
  *  @name 智能管家
  *  @team xinz
- *  @version 1.3.1
+ *  @version 1.4.0
  *  @description 启动即接管全部插件：唯一入口、记忆、词库、情绪，无大模型也能干活
  *  @rule ^([\s\S]+)$
  *  @admin false
@@ -16,6 +16,7 @@ const axios = require('axios');
 
 const PLUGIN_ROOT = path.join(__dirname, '..');
 const SELF_FILE = __filename;
+
 const STATE_KEY = 'state';
 const LEX_KEY = 'lexicon';
 const MEM_KEY = 'memory';
@@ -42,6 +43,43 @@ const jsonSchema = BncrCreateSchema.object({
 });
 const ConfigDB = new BncrPluginConfig(jsonSchema);
 const StateDB = new BncrDB('智能管家状态');
+const child = require('child_process');
+const MOD_DIR = path.join(__dirname, 'mod');
+let modStore = null;
+try { modStore = require('./mod/store'); } catch (e) { console.log('[智能管家] mod/store 不可用:', e.message); }
+async function SDBget(k, d) {
+    if (modStore) {
+        const v = await modStore.get('smart', k, undefined);
+        if (v !== undefined) return v;
+    }
+    const old = await StateDB.get(k, d);
+    if (modStore && old !== d) modStore.set('smart', k, old).catch(() => {});
+    return old;
+}
+const SDB = {
+    get: SDBget,
+    set: async (k, v) => {
+        if (modStore) {
+            try { await modStore.set('smart', k, v); } catch (e) {}
+        }
+        return StateDB.set(k, v).catch(() => true);
+    },
+};
+function loadSkills() {
+    try {
+        return (JSON.parse(fs.readFileSync(path.join(MOD_DIR, 'skills.json'), 'utf8')).skills || []).filter(x => x && x.name && x.file);
+    } catch (e) {
+        return [];
+    }
+}
+function runSkill(sk, args) {
+    return new Promise((resolve, reject) => {
+        child.execFile('python3', [path.join(MOD_DIR, sk.file)].concat(args || []), { timeout: 15000 }, (err, so, se) => {
+            if (err) return reject(new Error(String(se || err.message).slice(0, 200)));
+            resolve(String(so || se || '').trim());
+        });
+    });
+}
 
 /* ================= 情绪 ================= */
 const MOODS = {
@@ -81,20 +119,23 @@ const DEFAULT_CHAT = [
 const SKIP_DIRS = new Set(['node_modules', 'mod', '_archive', '.git', 'EncryptFiles']);
 let cache = { at: 0, list: [] };
 
+let pmCalls=0, pmNoName=0, pmNoRule=0;
 function parseMeta(file) {
+    pmCalls++;
     let head = '';
     try {
         head = fs.readFileSync(file, 'utf8').slice(0, 4000);
     } catch (e) {
+        console.log('[智能管家] read err', file, e.message);
         return null;
     }
-    if (!/@name/.test(head)) return null;
+    if (!/@name/.test(head)) { pmNoName++; return null; }
     const pick = k => {
         const m = head.match(new RegExp('@' + k + '\\s+([^\\n\\r]+)'));
         return m ? m[1].trim() : '';
     };
-    const rules = [...head.matchAll(/@ru' + 'le\s+([^\n\r]+)/g)].map(m => m[1].trim()).filter(Boolean);
-    if (!rules.length) return null;
+    const rules = [...head.matchAll(new RegExp('@ru' + 'le\\s+([^\\n\\r]+)', 'g'))].map(m => m[1].trim()).filter(Boolean);
+    if (!rules.length) { pmNoRule++; return null; }
     return {
         name: pick('name') || path.basename(file, '.js'),
         desc: pick('description'),
@@ -107,28 +148,37 @@ function parseMeta(file) {
 
 function scanPlugins(force) {
     const now = Date.now();
-    if (!force && now - cache.at < 60000) return cache.list;
+    if (!force && now - cache.at < 10000) return cache.list;
     const out = [];
+    let visited = 0;
     const walk = dir => {
-        let items = [];
+        let names = [];
         try {
-            items = fs.readdirSync(dir, { withFileTypes: true });
+            names = fs.readdirSync(dir);
         } catch (e) {
+            console.log('[智能管家] walk err', dir, e.message);
             return;
         }
-        for (const it of items) {
-            if (it.name.startsWith('.')) continue;
-            const full = path.join(dir, it.name);
-            if (it.isDirectory()) {
-                if (SKIP_DIRS.has(it.name)) continue;
+        visited++;
+        for (const name of names) {
+            if (!name || name.startsWith('.')) continue;
+            const full = path.join(dir, name);
+            const isJs = /\.js$/i.test(name);
+            let isDir = false;
+            try {
+                isDir = !!fs.statSync(full).isDirectory();
+            } catch (e) {}
+            if (isDir && !isJs) {
+                if (SKIP_DIRS.has(name)) continue;
                 walk(full);
-            } else if (it.name.endsWith('.js') && full !== SELF_FILE) {
+            } else if (isJs && full !== SELF_FILE) {
                 const meta = parseMeta(full);
                 if (meta && !meta.disable) out.push(meta);
             }
         }
     };
     walk(PLUGIN_ROOT);
+    if (!out.length) if (!out.length) console.log('[智能管家] scan empty dirs', visited);
     cache = { at: now, list: out };
     return out;
 }
@@ -203,7 +253,7 @@ async function runPlugin(meta, text, sender, flag) {
 
 /* ================= 词库读写 ================= */
 async function loadLexicon() {
-    const lex = (await StateDB.get(LEX_KEY, null)) || {};
+    const lex = (await SDB.get(LEX_KEY, null)) || {};
     const intents = Array.isArray(lex.intents) && lex.intents.length ? lex.intents : DEFAULT_INTENTS;
     // 兼容旧版本存下来的、build 函数已被 JSON 丢弃的词条
     for (const it of intents) if (typeof it.build === 'function') delete it.build;
@@ -214,16 +264,16 @@ async function loadLexicon() {
     };
 }
 async function saveLexicon(lex) {
-    await StateDB.set(LEX_KEY, lex);
+    await SDB.set(LEX_KEY, lex);
 }
 
 /* ================= 记忆 ================= */
 async function loadMemory() {
-    const m = (await StateDB.get(MEM_KEY, null)) || {};
+    const m = (await SDB.get(MEM_KEY, null)) || {};
     return { users: m.users || {}, shared: m.shared || [] };
 }
 async function saveMemory(m) {
-    await StateDB.set(MEM_KEY, m);
+    await SDB.set(MEM_KEY, m);
 }
 function userMem(mem, uid) {
     if (!mem.users[uid]) mem.users[uid] = { name: '', facts: [], last: null, history: [] };
@@ -453,7 +503,7 @@ module.exports = async s => {
     if (!(await isAuthorized(s, cfg))) return s.reply('还没授权你调插件，找管理员加 userId。');
 
     const uid = s.getUserId();
-    const st = (await StateDB.get(STATE_KEY, null)) || { mood: 'calm', energy: 70, affinity: {}, talks: 0, updatedAt: 0 };
+    const st = (await SDB.get(STATE_KEY, null)) || { mood: 'calm', energy: 70, affinity: {}, talks: 0, updatedAt: 0 };
     const mem = await loadMemory();
     const userM = userMem(mem, uid);
     const lex = await loadLexicon();
@@ -545,6 +595,31 @@ module.exports = async s => {
     }
     if (/^(你会什么|你能干啥|能干什么|帮助|help|功能列表)$/.test(low)) {
         return s.reply(helpText(cfg, lex, all, prefix));
+    }
+    if (/^(刷新插件|重载插件|刷新入库)$/.test(low)) {
+        const fresh = scanPlugins(true).filter(p => !splitList(cfg.excludePlugins).includes(p.name));
+        return s.reply(`已重新入库：${fresh.length} 个插件，新装的可以直接调。`);
+    }
+    if (/^(技能|mod技能|技能列表)$/.test(low)) {
+        const skills = loadSkills();
+        return s.reply(
+            skills.length
+                ? 'mod 技能（plugins/xinz/mod）：\n' + skills.map(k => `· ${k.name}：${k.desc || '无说明'}`).join('\n') + `\n调用：${prefix} 跑 <技能名> [参数]`
+                : '还没有注册 mod 技能，编辑 plugins/xinz/mod/skills.json 即可。'
+        );
+    }
+    if (/^(跑|运行技能|执行技能)\s*(.+)$/.test(low)) {
+        const body = text.replace(/^(跑|运行技能|执行技能)\s*/, '').trim();
+        const parts = body.split(/\s+/);
+        const name = parts.shift();
+        const sk = loadSkills().find(k => k.name === name) || loadSkills().find(k => new RegExp(escRe(k.name), 'i').test(name));
+        if (!sk) return s.reply(`没找到技能「${name}」，发「${prefix} 技能」看列表。`);
+        try {
+            const out = await runSkill(sk, parts);
+            return s.reply(out ? out.slice(0, 1200) : `${sk.name} 执行完了，没有输出。`);
+        } catch (e) {
+            return s.reply(`技能 ${sk.name} 失败：${e.message}`);
+        }
     }
 
     // 自动记名字 / 常住地 / 喜好
