@@ -9,12 +9,29 @@ const KB_DIR = path.join(__dirname, 'kb');
 const CHUNK_SIZE = 420;
 let cache = { sig: '', chunks: [], df: {}, avg: 1 };
 
-function files() {
+function walk(dir, out) {
+    let list = [];
     try {
-        return fs.readdirSync(KB_DIR).filter(f => /\.(md|txt)$/i.test(f)).map(f => path.join(KB_DIR, f));
+        list = fs.readdirSync(dir);
     } catch (e) {
-        return [];
+        return out;
     }
+    for (const name of list) {
+        if (name.startsWith('.')) continue;
+        const full = path.join(dir, name);
+        let st = null;
+        try {
+            st = fs.statSync(full);
+        } catch (e) {
+            continue;
+        }
+        if (st.isDirectory()) walk(full, out);
+        else if (/\.(md|txt)$/i.test(name)) out.push(full);
+    }
+    return out;
+}
+function files() {
+    return walk(KB_DIR, []);
 }
 function sigOf(list) {
     return list.map(f => {
@@ -56,7 +73,7 @@ function splitChunks(file) {
             const first = text.split('\n')[0];
             let t = /^-\s+/.test(first) ? first.replace(/^-\s+/, '') : title;
             t = t.replace(/\*\*/g, '').replace(/https?:\/\/\S+/g, '').replace(/[：:]\s*$/, '').trim().slice(0, 48);
-            chunks.push({ file: path.basename(file), title: t, text });
+            chunks.push({ file: path.relative(KB_DIR, file).replace(/\\/g, '/'), title: t, text });
         }
         buf = [];
         size = 0;
@@ -83,7 +100,10 @@ function build() {
     const sig = sigOf(list);
     if (sig === cache.sig && cache.chunks.length) return cache;
     const chunks = [];
-    for (const f of list) chunks.push(...splitChunks(f));
+    for (const f of list) {
+        if (path.basename(f) === 'index.md') continue;
+        chunks.push(...splitChunks(f));
+    }
     const df = {};
     for (const c of chunks) {
         const seen = new Set(tokenize(c.title + '\n' + c.text));
@@ -122,7 +142,7 @@ function bm25(query, limit) {
 }
 function stats() {
     const { chunks } = build();
-    const list = files().map(f => path.basename(f));
+    const list = files().map(f => path.relative(KB_DIR, f).replace(/\\/g, '/'));
     return { files: list, chunks: chunks.length };
 }
 module.exports = { search: bm25, stats, tokenize };

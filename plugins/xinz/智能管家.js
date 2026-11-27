@@ -2,7 +2,7 @@
  *  @author xinz
  *  @name 智能管家
  *  @team xinz
- *  @version 1.7.0
+ *  @version 1.8.0
  *  @description 启动即接管全部插件：本地知识库、槽位追问、指代消解、危险确认、生词自学习，无大模型也能干活
  *  @rule ^([\s\S]+)$
  *  @admin false
@@ -518,9 +518,10 @@ function kbQuery(q, limit) {
     if (!kbMod) return null;
     try {
         const n = limit || 2;
-        let r = kbMod.search(q, n) || [];
-        const clean = String(q).replace(/装什么|推荐|有没有|哪些|怎么装|什么好|项目|东西/g, '').trim();
-        if (clean && clean !== q) {
+        const qx = String(q).replace(/怎么接|如何接|接入/g, '对接');
+        let r = kbMod.search(qx, n) || [];
+        const clean = qx.replace(/装什么|推荐|有没有|哪些|怎么装|怎么配|什么好|项目|东西/g, '').trim();
+        if (clean && clean !== qx) {
             const r2 = kbMod.search(clean, n) || [];
             const seen = new Set(r.map(x => x.file + '|' + x.title));
             for (const x of r2) {
@@ -693,7 +694,7 @@ function helpText(cfg, lex, all, prefix) {
         `记性：${prefix} 记住 xxx / ${prefix} 你记得什么 / ${prefix} 清空记忆`,
         `学词：${prefix} 学词 查快递 => SSH终端管家Pro`,
         `接话：群里不点名时我自己判断该不该开口；${prefix} 回应 看判断日志`,
-        `知识库：${prefix} 知识 NAS 装什么 / ${prefix} 知识 3x-ui 隧道 / ${prefix} 知识库`,
+        `知识库：${prefix} 知识 NAS 装什么 / ${prefix} 知识 海豚AI 怎么接 / ${prefix} 知识库`,
         `生词：${prefix} 生词本 看没接住的话，${prefix} 学词 关键词 => 插件名 补上`,
         '没配大模型也能用，靠本地词库兜底。',
     ].join('\n');
