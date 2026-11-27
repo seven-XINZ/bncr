@@ -2,7 +2,7 @@
  * @author Aming
  * @name ACGNTTSon
  * @team xinz
- * @version 1.0.0
+ * @version 1.0.1
  * @description A plugin for handling ACGN TTS functionalities.
  * @rule ^(生成音频|获取角色列表|检查token) ([^ \n]+)$
  * @admin true
@@ -23,7 +23,7 @@ const jsonSchema = BncrCreateSchema.object({
     baseUrl: BncrCreateSchema.string()
         .setTitle('TTS 服务地址')
         .setDescription('ACGN TTS 服务的 baseUrl，例如 https://example.com/flashsummary')
-        .setDefault(''),
+        .setDefault('https://api.ttson.cn/flashsummary'),
     token: BncrCreateSchema.string()
         .setTitle('Token')
         .setDescription('服务访问 Token')

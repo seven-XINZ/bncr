@@ -1,66 +1,107 @@
-/** 
- * @author xinz
- * @name 智能AI聊天
- * @team xinz
- * @version 1.0.18
- * @description 通过API进行智能AI聊天，支持用户输入问题并将AI回复转换为语音
- * @rule ^聊天 (.+)$
- * @admin true
- * @public false
- * @priority 1
- * @disable false
+/**
+ *  @author xinz
+ *  @name 智能AI聊天
+ *  @team xinz
+ *  @version 1.1.0
+ *  @description 兼容 OpenAI 格式的聊天接口（豆包/DeepSeek/Ollama 均可），支持多轮上下文
+ *  @rule ^聊天 (.+)$
+ *  @rule ^聊天$ 
+ *  @admin false
+ *  @public false
+ *  @priority 1
+ *  @disable false
  */
-
 const axios = require('axios');
 
 const jsonSchema = BncrCreateSchema.object({
-    chatApi: BncrCreateSchema.string().setTitle('聊天接口').setDefault('https://api.mhimg.cn/api/gpt_aojiaojj/'),
-    ttsApi: BncrCreateSchema.string().setTitle('语音合成接口').setDescription('返回 JSON 且包含 url 字段').setDefault('https://api.mhimg.cn/api/lyy_yy/'),
+    apiBase: BncrCreateSchema.string()
+        .setTitle('接口地址')
+        .setDescription('OpenAI 兼容的 base，例如 https://ark.cn-beijing.volces.com/api/v3')
+        .setDefault('https://ark.cn-beijing.volces.com/api/v3'),
+    apiKey: BncrCreateSchema.string()
+        .setTitle('API Key')
+        .setDescription('火山方舟填 sk- 开头的 Key；本地 Ollama 可留空')
+        .setDefault(''),
+    model: BncrCreateSchema.string()
+        .setTitle('模型名')
+        .setDescription('例如 doubao-seed-2-1-turbo、deepseek-chat、llama3')
+        .setDefault('doubao-seed-2-1-turbo'),
+    systemPrompt: BncrCreateSchema.string()
+        .setTitle('系统提示词')
+        .setDefault('你是群里的聊天助手，回答简短自然，不要用表情符号。'),
+    historyRounds: BncrCreateSchema.number()
+        .setTitle('上下文轮数')
+        .setDescription('每个用户保留的历史对话轮数，0 表示不保留')
+        .setDefault(6),
 });
 const ConfigDB = new BncrPluginConfig(jsonSchema);
 
-let activeUsers = {}; // 用于存储活跃用户的状态
+const histories = new Map(); // userId -> [{role, content}]
+const lastUse = new Map();
 
-module.exports = async (sender) => {
+function pushHistory(userId, role, content, rounds) {
+    if (!rounds) return;
+    const list = histories.get(userId) || [];
+    list.push({ role, content });
+    while (list.length > rounds * 2) list.shift();
+    histories.set(userId, list);
+    lastUse.set(userId, Date.now());
+    if (histories.size > 200) {
+        const oldest = [...lastUse.entries()].sort((a, b) => a[1] - b[1])[0];
+        if (oldest) {
+            histories.delete(oldest[0]);
+            lastUse.delete(oldest[0]);
+        }
+    }
+}
+
+module.exports = async sender => {
     await ConfigDB.get();
     const cfg = ConfigDB.userConfig || {};
-    const chatApi = cfg.chatApi || 'https://api.mhimg.cn/api/gpt_aojiaojj/';
-    const ttsApi = cfg.ttsApi || 'https://api.mhimg.cn/api/lyy_yy/';
-    const userId = sender.getUserId(); // 获取用户ID
-    const userInput = sender.getMsg().trim(); // 获取用户输入
-    const prompt = userInput.replace(/^聊天\s+/, ''); // 提取用户的提问内容
+    const apiBase = String(cfg.apiBase || 'https://ark.cn-beijing.volces.com/api/v3').replace(/\/+$/, '');
+    const apiKey = String(cfg.apiKey || '').trim();
+    const model = String(cfg.model || 'doubao-seed-2-1-turbo').trim();
+    const rounds = Number(cfg.historyRounds == null ? 6 : cfg.historyRounds);
 
-    // 检查用户输入是否为空
+    const raw = String(sender.getMsg() || '').trim();
+    const prompt = raw.replace(/^聊天\s*/, '').trim();
     if (!prompt) {
-        await sender.reply('请提供提问内容。');
-        return; // 继续等待用户输入
+        return sender.reply('用法：聊天 你的问题\n清空上下文：聊天 清空');
+    }
+    if (prompt === '清空' || prompt.toLowerCase() === 'reset') {
+        histories.delete(sender.getUserId());
+        return sender.reply('上下文已清空');
+    }
+    if (!apiKey && !/localhost|127\.0\.0\.1|192\.168\./.test(apiBase)) {
+        return sender.reply('未配置 API Key，请到插件配置里填写（火山方舟控制台可创建）。');
     }
 
-    // 检查用户是否发送了退出命令
-    if (prompt.toLowerCase() === 'q') {
-        await sender.reply('对话已结束。如需再次聊天，请发送“聊天”。');
-        delete activeUsers[userId]; // 删除用户状态
-        return;
-    }
+    const userId = sender.getUserId();
+    const messages = [{ role: 'system', content: cfg.systemPrompt || '你是群里的聊天助手，回答简短自然。' }];
+    for (const h of histories.get(userId) || []) messages.push(h);
+    messages.push({ role: 'user', content: prompt });
 
     try {
-        // 调用AI聊天API
-        const response = await axios.get(`${chatApi}?prompt=${encodeURIComponent(prompt)}`, { timeout: 15000 });
-        
-        // 获取AI回复
-        const aiReply = response.data;
-
-        // 调用语音合成API
-        const voiceResponse = await axios.get(`${ttsApi}?word=${encodeURIComponent(aiReply)}`, { timeout: 15000 });
-        
-        // 检查语音合成结果
-        if (voiceResponse.data && voiceResponse.data.url) {
-            await sender.reply({ type: 'record', path: voiceResponse.data.url });
-        } else {
-            await sender.reply(`AI回复：\n${aiReply}\n未获取到语音链接，请稍后再试。`);
-        }
-    } catch (error) {
-        console.error('请求错误:', error); // 打印错误信息到控制台
-        await sender.reply('请求失败，请稍后再试。可能是网络问题或服务端错误。');
+        const res = await axios.post(
+            `${apiBase}/chat/completions`,
+            { model, messages, temperature: 0.6 },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(apiKey ? { Authorization: 'Bearer ' + apiKey } : {}),
+                },
+                timeout: 60000,
+                validateStatus: s => s === 200,
+            }
+        );
+        const answer = String((((res.data || {}).choices || [])[0] || {}).message?.content || '').trim();
+        if (!answer) return sender.reply('接口没有返回内容，检查模型名是否正确。');
+        pushHistory(userId, 'user', prompt, rounds);
+        pushHistory(userId, 'assistant', answer, rounds);
+        await sender.reply(answer);
+    } catch (e) {
+        const detail = e.response && e.response.data ? JSON.stringify(e.response.data).slice(0, 200) : e.message;
+        console.warn('[智能AI聊天] 调用失败:', detail);
+        await sender.reply('AI 调用失败：' + detail);
     }
 };

@@ -1,71 +1,97 @@
 /**
- * @author seven
- * @name 疯狂星期四
- * @team xinz
- * @version 1.1.0
- * @description 每周四定时推送疯狂星期四文案；推送平台与群号在插件配置中填写
- * @rule ^(疯狂星期四)$
- * @admin false
- * @public false
- * @priority 99999
- * @disable false
- * @cron 16 3 10 * * *
+ *  @author seven
+ *  @name 疯狂星期四
+ *  @team xinz
+ *  @version 1.1.0
+ *  @description 疯狂星期四文案，每日 10:03 定时检查，仅周四推送
+ *  @rule ^(疯狂星期四)$
+ *  @admin false
+ *  @public false
+ *  @priority 99999
+ *  @disable false
+ *  @cron 16 3 10 * * *
  */
-
 const axios = require('axios');
 
-/* 配置：推送列表，由用户在面板中填写，避免在源码中硬编码群号 */
+const FALLBACK_TEXT = '今天是疯狂星期四，V我50，我要去啃德基。';
 const jsonSchema = BncrCreateSchema.object({
-    pushList: BncrCreateSchema.array(BncrCreateSchema.object({
-        platform: BncrCreateSchema.string().setTitle('平台').setDescription('如 qq、tgbot、HumanTG').setDefault('qq'),
-        groupId: BncrCreateSchema.string().setTitle('群组 ID').setDescription('接收推送的群组 ID').setDefault('')
-    })).setTitle('推送列表').setDescription('定时任务触发时推送到的平台与群组').setDefault([])
+    targets: BncrCreateSchema.string()
+        .setTitle('推送目标')
+        .setDescription('每行一个，格式为「平台:群ID」，例如 qq:834396229')
+        .setDefault('qq:834396229\nqq:671685583\nqq:420035660\ntgbot:960566450\nHumanTG:671685583'),
 });
-
 const ConfigDB = new BncrPluginConfig(jsonSchema);
+
+function parseTargets(raw) {
+    return String(raw || '')
+        .split(/\n|,/)
+        .map(line => {
+            const i = line.indexOf(':');
+            if (i < 0) return null;
+            const platform = line.slice(0, i).trim();
+            const groupId = line.slice(i + 1).trim();
+            return platform && groupId ? { platform, groupId } : null;
+        })
+        .filter(Boolean);
+}
+
+async function fetchKfcText() {
+    const urls = [
+        'https://kfc-crazy-thursday.vercel.app/api/index',
+        'https://api.kfc-crazy-thursday.com/v1/random',
+    ];
+    for (const url of urls) {
+        try {
+            const res = await axios.get(url, {
+                timeout: 10000,
+                responseType: 'text',
+                transformResponse: [d => d],
+                validateStatus: s => s === 200,
+            });
+            const body = String(res.data || '').trim();
+            if (!body) continue;
+            // 接口有时返回 JSON 包裹，取里面的字符串
+            try {
+                const j = JSON.parse(body);
+                if (typeof j === 'string') return j;
+                if (j && typeof j.text === 'string') return j.text;
+                if (j && typeof j.data === 'string') return j.data;
+            } catch (e) {}
+            if (body.length < 3000 && !body.startsWith('<!DOCTYPE') && !body.startsWith('<html')) return body;
+        } catch (e) {
+            console.warn('[疯狂星期四] 接口失败 ' + url + ': ' + e.message);
+        }
+    }
+    return FALLBACK_TEXT;
+}
 
 module.exports = async s => {
     await ConfigDB.get();
+    const cfg = ConfigDB.userConfig || {};
+    const rawTargets = cfg.targets || 'qq:834396229\nqq:671685583\nqq:420035660\ntgbot:960566450\nHumanTG:671685583';
 
-    // 删除触发消息
-    s.delMsg(s.getMsgId(), { wait: 1 });
+    // 星期几本地计算，不再依赖第三方节假日接口（原 mxnzp 接口已失效，会导致 weekDay 为 undefined）
+    const weekday = new Date().getDay(); // 0 周日 … 4 周四
+    const isCron = s.getFrom() === 'cron';
 
-    // 获取当前星期几（周日 0 ~ 周六 6，周四为 4），不再依赖第三方接口
-    const weekDay = new Date().getDay();
-    console.log('当前星期几:', weekDay);
+    if (isCron && weekday !== 4) return; // 非周四的定时触发直接静默退出
 
-    // 获取疯狂星期四的内容
-    const url = "https://kfc-crazy-thursday.vercel.app/api/index";
-    let result;
+    const text = await fetchKfcText();
 
-    try {
-        const res = await axios.get(url);
-        result = res.data;
-    } catch (error) {
-        console.error("获取疯狂星期四内容失败:", error);
-        return s.reply("获取疯狂星期四内容失败，请稍后再试。");
-    }
-
-    console.log("疯狂星期四内容:", result);
-
-    // 判断是否是定时任务
-    if (s.getFrom() === "cron") {
-        // 如果是定时任务，检查是否是星期四
-        if (weekDay === 4) {
-            const pushList = ConfigDB.userConfig.pushList || [];
-            // 遍历推送列表并发送消息
-            for (const { groupId, platform } of pushList) {
-                if (!groupId) continue;
-                sysMethod.push({
-                    platform: platform,
-                    groupId: groupId,
-                    userId: [], // 如果需要，可以填入特定的用户ID
-                    msg: result
-                });
+    if (isCron) {
+        const list = parseTargets(rawTargets);
+        for (const t of list) {
+            try {
+                await sysMethod.push({ platform: t.platform, groupId: t.groupId, userId: [], msg: text });
+            } catch (e) {
+                console.warn(`[疯狂星期四] 推送 ${t.platform}:${t.groupId} 失败: ${e.message}`);
             }
         }
-    } else {
-        // 非定时任务，直接回复
-        await s.reply(result);
+        return;
     }
+
+    try {
+        s.delMsg(s.getMsgId(), { wait: 1 });
+    } catch (e) {}
+    await s.reply(text);
 };

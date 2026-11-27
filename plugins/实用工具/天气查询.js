@@ -8,7 +8,7 @@
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(天气 | 气温 | 天气情况) (.+)$
  * @priority 100
- * @disable false
+ * @disable true
  * @admin false
  * @public false
  */
