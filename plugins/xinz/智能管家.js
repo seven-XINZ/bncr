@@ -2,8 +2,8 @@
  *  @author xinz
  *  @name 智能管家
  *  @team xinz
- *  @version 1.5.0
- *  @description 启动即接管全部插件：模糊匹配、多意图、内置时间计算、插件检索，无大模型也能干活
+ *  @version 1.6.0
+ *  @description 启动即接管全部插件：智能回应判断（该不该接话）、模糊匹配、多意图、内置时间计算，无大模型也能干活
  *  @rule ^([\s\S]+)$
  *  @admin false
  *  @public false
@@ -39,6 +39,16 @@ const jsonSchema = BncrCreateSchema.object({
         .setDefault('智能管家\n智能AI聊天\nChatGPT\ndify\nGemini\n定时消息推送'),
     moodEnabled: BncrCreateSchema.boolean().setTitle('情绪系统').setDefault(true),
     historyRounds: BncrCreateSchema.number().setTitle('上下文轮数').setDescription('记住最近几轮对话，0 为关闭').setDefault(4),
+    smartGate: BncrCreateSchema.boolean().setTitle('智能回应判断')
+        .setDescription('群里没点名时，自己判断该不该接话；不该接就沉默，不刷屏').setDefault(true),
+    gateThreshold: BncrCreateSchema.number().setTitle('接话阈值')
+        .setDescription('分数越高越容易开口，默认 30；嫌吵调高、嫌闷调低').setDefault(30),
+    gateCooldown: BncrCreateSchema.number().setTitle('接话冷却（秒）')
+        .setDescription('同一个群两次主动接话的最小间隔').setDefault(120),
+    interestWords: BncrCreateSchema.string().setTitle('兴趣词')
+        .setDescription('逗号分隔，命中加分').setDefault('bncr,插件,bug,报错,日志,接口,api,docker,部署,重启,服务器,机器人,刷屏'),
+    quietHours: BncrCreateSchema.string().setTitle('免打扰时段')
+        .setDescription('如 23:30-07:30，此时段群里不主动接话').setDefault('23:30-07:30'),
     debug: BncrCreateSchema.boolean().setTitle('调试日志').setDefault(false),
 });
 const ConfigDB = new BncrPluginConfig(jsonSchema);
@@ -462,6 +472,17 @@ function opinionReply(cfg, st) {
     const pool = st.mood === 'grumpy' ? ['你自己不是有答案吗。', '这事问我没用，我又不能替你决定。'] : OPINION_POOL;
     return pool[Math.floor(Math.random() * pool.length)];
 }
+/* 群里接话：没命中插件时别只会说「没听懂」 */
+function chimeReply(text, cfg, st, all) {
+    const cand = searchPlugins(all, normalize(text)).slice(0, 2).map(p => p.name);
+    if (cand.length) return `这个我能碰：${cand.join(' / ')}。要办就发「${cfg.prefix} + 需求」。`;
+    if (/[?？]|吗|呢|怎么|为什么|为啥|要不要|能不能/.test(text)) {
+        const pool = ['这个得看具体情况，你说详细点我给你捋。', '能办，但得知道你要哪一步。', '听着像能干的活，细节给我。'];
+        return pool[Math.floor(Math.random() * pool.length)] + (st.mood === 'grumpy' ? ' 快点说。' : '');
+    }
+    const pool = ['嗯，在听。', '接着说。', '这个有意思。'];
+    return pool[Math.floor(Math.random() * pool.length)];
+}
 function offlineChat(intent, cfg, st, mem) {
     const pool = (intent.moods && intent.moods[st.mood]) || intent.replies || [];
     const tpl = pool[Math.floor(Math.random() * pool.length)] || '';
@@ -568,8 +589,111 @@ function helpText(cfg, lex, all, prefix) {
         `常用：${tips}`,
         `记性：${prefix} 记住 xxx / ${prefix} 你记得什么 / ${prefix} 清空记忆`,
         `学词：${prefix} 学词 查快递 => SSH终端管家Pro`,
+        `接话：群里不点名时我自己判断该不该开口；${prefix} 回应 看判断日志`,
         '没配大模型也能用，靠本地词库兜底。',
     ].join('\n');
+}
+
+/* ================= 智能回应判断：该不该接话 ================= */
+function groupIdOf(s) {
+    try {
+        const g = typeof s.getGroupId === 'function' ? s.getGroupId() : s.groupId;
+        return g && String(g) !== '0' ? String(g) : '';
+    } catch (e) {
+        return '';
+    }
+}
+function isAtMe(s, rawMsg, name) {
+    if (/\[CQ:at,/i.test(rawMsg) && /\b(all|0)\b/i.test(rawMsg)) return false;
+    if (new RegExp('@\\s*' + escRe(name)).test(rawMsg)) return true;
+    if (new RegExp('\\[CQ:at,qq=' + escRe(String((s.getUserId && s.getUserId()) || '')) + '\\]').test(rawMsg)) return true;
+    return false;
+}
+function inQuietHours(qh) {
+    const m = /^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})$/.exec(String(qh || '').trim());
+    if (!m) return false;
+    const cur = new Date().getHours() * 60 + new Date().getMinutes();
+    const a = Number(m[1]) * 60 + Number(m[2]);
+    const b = Number(m[3]) * 60 + Number(m[4]);
+    return a <= b ? cur >= a && cur < b : cur >= a || cur < b;
+}
+const SELF_CMD_RE = /^(回应|接话|回应策略|回应日志|要不要回|为什么没回|怎么没回|刚才怎么没回|想不想回|闭嘴|说话|解除静音|别闭嘴|可以说话了|记住|记一下|记着|帮我记住|忘记|忘掉|删掉记忆|别记|清空记忆|清除记忆|全忘掉|resetmemory|词库|学词|删词|你会什么|你能做什么|技能|刷新插件|找插件|我叫|我是谁|你记得什么|阈值|接话阈值|冷却|接话冷却)/;
+const GATE_EMOJI = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}\s]+$/u;
+function gateScore(text, ctx) {
+    const low = normalize(text);
+    let sc = 0;
+    const why = [];
+    const add = (n, r) => { sc += n; why.push((n > 0 ? '+' : '') + n + ' ' + r); };
+    if (/^(哈+|6+|好+|嗯+|哦+|ok|收到|行|可以|牛|赞|强|笑死|确实|真的|对|是的|草|卧槽|666|1)[!！。.?？~～ 　]*$/i.test(low)) add(-60, '纯附和/语气词');
+    if (GATE_EMOJI.test(String(text))) add(-50, '纯表情');
+    if (/^(https?:\/\/|www\.)/i.test(low)) add(-40, '纯链接');
+    if (/^\[CQ:(?:image|record|video|file)|^\[图片|^\[视频|^\[语音|^\[文件/.test(String(text))) add(-45, '纯媒体');
+    if (ctx.strong) add(45, '明确命令');
+    if (low.length < 4) add(-30, '太短');
+    else if (low.length <= 60) add(12, '长度适中');
+    else add(-8, '太长');
+    if (/[?？]|吗|呢|怎么|为什么|为啥|啥|多少|几点|几号|能不能|可不可以|帮我|查一下|查下|看一下|看下|有没有/.test(low)) add(30, '问句/请求');
+    if (/(帮|查|开|关|发|写|做|生成|下载|重启|部署|装|安装|修|跑|执行|设置|配置)/.test(low)) add(12, '动作词');
+    let hits = 0;
+    for (const w of ctx.interests) if (w && low.includes(String(w).toLowerCase())) hits++;
+    if (hits) add(Math.min(35, hits * 18), '兴趣词×' + hits);
+    if (/@/.test(String(text)) && !ctx.mentioned) add(-20, '在跟别人说话');
+    const moodAdj = { happy: 8, hype: 12, grumpy: -12, tired: -10, calm: 0 }[ctx.mood] || 0;
+    if (moodAdj) add(moodAdj, '心情 ' + ctx.mood);
+    if (ctx.energy < 30) add(-10, '体力低');
+    if (ctx.affinity >= 20) add(8, '熟人'); else if (ctx.affinity < 0) add(-6, '不熟');
+    return { sc, why };
+}
+async function gateDecide(s, rawMsg, cfg, opt) {
+    const st = (await SDB.get(STATE_KEY, null)) || { mood: 'calm', energy: 70, affinity: {}, updatedAt: 0 };
+    st.gate = st.gate || { log: [], last: {}, mute: {}, cfg: {} };
+    const gid = groupIdOf(s) || 'group';
+    const now = Date.now();
+    const override = st.gate.cfg || {};
+    const base = Number(override.th || cfg.gateThreshold || 30);
+    const cd = Number(override.cd || cfg.gateCooldown || 120) * 1000;
+    const moodTh = { grumpy: 10, tired: 8, hype: -8, happy: -4 }[st.mood] || 0;
+    const th = base + moodTh;
+    const uid = String((s.getUserId && s.getUserId()) || '');
+    const ctx = {
+        interests: splitList(cfg.interestWords),
+        mood: cfg.moodEnabled === false ? 'calm' : st.mood,
+        energy: st.energy,
+        affinity: (st.affinity || {})[uid] || 0,
+        strong: !!(opt && opt.strong),
+    };
+    const { sc, why } = gateScore(rawMsg, ctx);
+    let reply = false;
+    let reason = '';
+    if (st.gate.mute && st.gate.mute[gid] && st.gate.mute[gid] > now) reason = '本群静音中（剩 ' + Math.ceil((st.gate.mute[gid] - now) / 60000) + ' 分）';
+    else if (inQuietHours(cfg.quietHours)) reason = '免打扰时段 ' + cfg.quietHours;
+    else if ((st.gate.last[gid] || 0) + cd > now && sc < 55) reason = '接话冷却中（' + Math.ceil(((st.gate.last[gid] || 0) + cd - now) / 1000) + 's）';
+    else if (sc < th) reason = '分数 ' + sc + ' < 阈值 ' + th;
+    else { reply = true; reason = '分数 ' + sc + ' ≥ 阈值 ' + th; }
+    st.gate.log.push({ t: now, gid, sc, th, reply, reason, text: String(rawMsg).slice(0, 60) });
+    while (st.gate.log.length > 30) st.gate.log.shift();
+    if (reply) st.gate.last[gid] = now;
+    await SDB.set(STATE_KEY, st);
+    if (cfg.debug) console.log('[智能管家] 接话判断 ' + (reply ? '回' : '不回') + ' | ' + reason + ' | ' + String(rawMsg).slice(0, 40));
+    return { reply, sc, th, reason, why };
+}
+function gateReport(cfg, st, gid) {
+    const g = (st && st.gate) || {};
+    const log = g.log || [];
+    const yes = log.filter(x => x.reply).length;
+    const no = log.length - yes;
+    const lines = [
+        '智能回应：' + (cfg.smartGate === false ? '关' : '开') + '｜阈值 ' + ((g.cfg && g.cfg.th) || cfg.gateThreshold || 30) +
+            '｜冷却 ' + ((g.cfg && g.cfg.cd) || cfg.gateCooldown || 120) + 's｜免打扰 ' + (cfg.quietHours || '关'),
+        '本群：' + (gid ? (g.mute && g.mute[gid] > Date.now() ? '静音剩 ' + Math.ceil((g.mute[gid] - Date.now()) / 60000) + ' 分' : '正常') : '私聊（句句都回）'),
+        '最近判断 ' + log.length + ' 条：回 ' + yes + ' / 不回 ' + no,
+    ];
+    log.slice(-6).forEach(x => {
+        const d = new Date(x.t);
+        const hh = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+        lines.push(hh + ' [' + (x.reply ? '回' : '不回') + '] ' + x.reason + ' ｜ ' + x.text);
+    });
+    return lines.join('\n');
 }
 
 /* ================= 主流程 ================= */
@@ -588,6 +712,11 @@ module.exports = async s => {
             authorizedGroups: '',
             excludePlugins: '智能管家\n智能AI聊天\nChatGPT\ndify\nGemini\n定时消息推送',
             moodEnabled: true,
+            smartGate: true,
+            gateThreshold: 30,
+            gateCooldown: 120,
+            interestWords: 'bncr,插件,bug,报错,日志,接口,api,docker,部署,重启,服务器,机器人,刷屏',
+            quietHours: '23:30-07:30',
         },
         ConfigDB.userConfig || {}
     );
@@ -615,8 +744,25 @@ module.exports = async s => {
         if (!hitLex && !hitChat && !hitRule) return 'next';
         text = rawMsg;
     }
+    /* ---------- 群里没点名：自己判断该不该接话 ---------- */
+    const gid = groupIdOf(s);
+    const isGroup = !!gid;
+    let gatePassed = false;
+    if (isGroup && !aliasRe.test(rawMsg) && !isAtMe(s, rawMsg, cfg.name) && cfg.smartGate !== false && !SELF_CMD_RE.test(normalize(rawMsg))) {
+        let strong = false;
+        try {
+            strong = scanPlugins().some(p => (p.rules || []).some(r => isSpecificRule(r) && ruleFits({ rules: [r] }, rawMsg)));
+        } catch (e) {}
+        const d = await gateDecide(s, rawMsg, cfg, { strong });
+        if (!d.reply) return 'next';
+        gatePassed = true;
+        text = rawMsg.replace(new RegExp('@\\s*' + escRe(cfg.name), 'g'), '').trim() || rawMsg;
+    }
+
     if (!text) return s.reply(`${cfg.name}在，说事。`);
-    if (!(await isAuthorized(s, cfg))) return s.reply('还没授权你调插件，找管理员加 userId。');
+    if (!(await isAuthorized(s, cfg))) {
+        return isGroup && !aliasRe.test(rawMsg) ? 'next' : s.reply('还没授权你调插件，找管理员加 userId。');
+    }
 
     const uid = s.getUserId();
     const st = (await SDB.get(STATE_KEY, null)) || { mood: 'calm', energy: 70, affinity: {}, talks: 0, updatedAt: 0 };
@@ -636,6 +782,81 @@ module.exports = async s => {
     const low = normalize(text);
     const lowx = applySynonyms(low);
     const done = () => SDB.set(STATE_KEY, st);
+
+    /* ---------- 回应判断指令 ---------- */
+    if (/^(回应|接话|回应策略|回应日志|要不要回)$/.test(low)) {
+        await done();
+        return s.reply(gateReport(cfg, st, gid));
+    }
+    if (/^(为什么没回|怎么没回|刚才怎么没回)$/.test(low)) {
+        const log = ((st.gate || {}).log || []).filter(x => !x.reply);
+        if (!log.length) return s.reply('没有沉默记录，最近该回的都回了。');
+        const x = log[log.length - 1];
+        return s.reply(`最近一次没回：「${x.text}」\n原因：${x.reason}（分数 ${x.sc}，线在 ${x.th}）`);
+    }
+    {
+        const m = /^想不想回[\s，,:：]*(.+)$/.exec(text);
+        if (m) {
+            const probe = m[1].trim();
+            const ctx = {
+                interests: splitList(cfg.interestWords),
+                mood: cfg.moodEnabled === false ? 'calm' : st.mood,
+                energy: st.energy,
+                affinity: (st.affinity || {})[userM.id || uid] || 0,
+                strong: false,
+            };
+            const { sc, why } = gateScore(probe, ctx);
+            const th = Number((st.gate && st.gate.cfg && st.gate.cfg.th) || cfg.gateThreshold || 30) +
+                ({ grumpy: 10, tired: 8, hype: -8, happy: -4 }[st.mood] || 0);
+            const blocks = [];
+            if (st.gate && st.gate.mute && st.gate.mute[gid] > Date.now()) blocks.push('本群静音中');
+            if (inQuietHours(cfg.quietHours)) blocks.push('免打扰时段 ' + cfg.quietHours);
+            if ((st.gate && st.gate.last[gid] || 0) + Number((st.gate && st.gate.cfg && st.gate.cfg.cd) || cfg.gateCooldown || 120) * 1000 > Date.now() && sc < 55) blocks.push('接话冷却中');
+            if (sc < th) blocks.push('分数没到线');
+            const yes = !blocks.length;
+            return s.reply(
+                `「${probe.slice(0, 40)}」→ ${yes ? '会接' : '不回'}（${sc} / 线 ${th}）\n` +
+                    (why.length ? why.join('；') : '没有加分项') +
+                    (yes ? '' : '\n卡在：' + blocks.join('、'))
+            );
+        }
+    }
+    if (/^闭嘴(?:[\s，,]*(\d{1,3})\s*(?:分钟|分|min)?)?$/.test(low)) {
+        if (!gid) return s.reply('私聊必回，闭不了嘴。');
+        const mm2 = /^闭嘴[\s，,]*(\d{1,3})?/.exec(low);
+        const mins = Number((mm2 && mm2[1]) || 0) || 30;
+        st.gate = st.gate || { log: [], last: {}, mute: {}, cfg: {} };
+        st.gate.mute = st.gate.mute || {};
+        st.gate.mute[gid] = Date.now() + mins * 60000;
+        await done();
+        return s.reply(`${mins} 分钟内本群不主动接话，点名和 ${prefix} 指令照常。说「${prefix} 说话」提前解禁。`);
+    }
+    if (/^(说话|解除静音|别闭嘴|可以说话了)$/.test(low)) {
+        if (st.gate && st.gate.mute && st.gate.mute[gid]) {
+            delete st.gate.mute[gid];
+            await done();
+            return s.reply('行，我回来了。');
+        }
+        return s.reply('本来就没闭。');
+    }
+    {
+        const m = /^(?:接话)?阈值[\s，,:：]*(\d{1,3})$/.exec(low);
+        if (m) {
+            st.gate = st.gate || { log: [], last: {}, mute: {}, cfg: {} };
+            st.gate.cfg = st.gate.cfg || {};
+            st.gate.cfg.th = Number(m[1]);
+            await done();
+            return s.reply(`阈值调到 ${m[1]}，${m[1] >= 40 ? '我会更闷' : m[1] <= 22 ? '我会更爱插话' : '正常水平'}。`);
+        }
+        const c = /^(?:接话)?冷却[\s，,:：]*(\d{1,5})$/.exec(low);
+        if (c) {
+            st.gate = st.gate || { log: [], last: {}, mute: {}, cfg: {} };
+            st.gate.cfg = st.gate.cfg || {};
+            st.gate.cfg.cd = Number(c[1]);
+            await done();
+            return s.reply(`同群两次主动接话间隔改成 ${c[1]} 秒。`);
+        }
+    }
 
     /* ---------- 记忆指令 ---------- */
     if (/^(记住|记一下|记着|帮我记住|记住一下)/.test(low)) {
@@ -856,7 +1077,7 @@ module.exports = async s => {
             plans.push({ p, cmd });
         }
         if (plans.length === segs.length) {
-            userM.last = { target: plans[0].p.name, command: plans[0].cmd, at: Date.now() };
+            userM.last = { target: plans[0].p.name, command: plans[0].cmd, at: Date.now(), gid };
             await saveMemory(mem);
             await done();
             for (const plan of plans) {
@@ -897,8 +1118,9 @@ module.exports = async s => {
         }
     }
 
-    // 上一轮意图延续（"那明天呢"）
-    if (!target && userM.last && /^(那|这|明天|后天|它|他)/.test(low)) {
+    // 上一轮意图延续（"那明天呢"），10 分钟内、同一会话才认
+    if (!target && userM.last && Date.now() - (userM.last.at || 0) < 10 * 60 * 1000 &&
+        (userM.last.gid || '') === gid && /^(那|这|明天|后天|它|他)/.test(low)) {
         const p = resolvePlugin(all, userM.last.target);
         if (p) {
             target = p;
@@ -939,9 +1161,14 @@ module.exports = async s => {
         }
         if (lowx.length <= 8 && !/[0-9]/.test(lowx)) {
             await done();
+            if (gatePassed) return s.reply(chimeReply(text, cfg, st, all));
             return s.reply(`嗯，${userM.name || '你说'}。有事就直说，${prefix} + 需求。`);
         }
         const cand = searchPlugins(all, lowx).map(p => p.name);
+        if (gatePassed) {
+            await done();
+            return s.reply(chimeReply(text, cfg, st, all));
+        }
         const hints = lex.intents.slice(0, 3).map(i => `${prefix} ${i.keys[0]}`);
         await done();
         return s.reply(
@@ -965,7 +1192,7 @@ module.exports = async s => {
         }
     }
 
-    userM.last = { target: target.name, command, at: Date.now() };
+    userM.last = { target: target.name, command, at: Date.now(), gid };
     await saveMemory(mem);
     await done();
 
