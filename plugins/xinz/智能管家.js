@@ -2,9 +2,9 @@
  *  @author xinz
  *  @name 智能管家
  *  @team xinz
- *  @version 1.2.0
- *  @description 有记忆、有词库、有情绪的调度中枢：无大模型也能靠本地意图词库干活
- *  @rule ^(ai|AI)\s+([\s\S]+)$
+ *  @version 1.3.0
+ *  @description 有记忆、有词库、有情绪的调度中枢：别名、学词、多轮上下文，无大模型也能干活
+ *  @rule ^([\s\S]+)$
  *  @admin false
  *  @public false
  *  @priority 99998
@@ -36,6 +36,8 @@ const jsonSchema = BncrCreateSchema.object({
         .setTitle('屏蔽插件')
         .setDefault('智能管家\n智能AI聊天\nChatGPT\ndify\nGemini\n定时消息推送'),
     moodEnabled: BncrCreateSchema.boolean().setTitle('情绪系统').setDefault(true),
+    historyRounds: BncrCreateSchema.number().setTitle('上下文轮数').setDescription('记住最近几轮对话，0 为关闭').setDefault(4),
+    debug: BncrCreateSchema.boolean().setTitle('调试日志').setDefault(false),
 });
 const ConfigDB = new BncrPluginConfig(jsonSchema);
 const StateDB = new BncrDB('智能管家状态');
@@ -52,17 +54,17 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
 /* ================= 词库（可被用户改写并存库） ================= */
 const DEFAULT_INTENTS = [
-    { keys: ['做个插件', '写个插件', '生成插件'], target: '插件工坊', build: q => (q ? `做个插件 ${q}` : '') },
-    { keys: ['天气', '气温', '温度', '热不热', '冷不冷', '下雨', '带伞'], target: '天气', build: q => (q ? `${q}天气` : '') },
-    { keys: ['热搜', '热榜', '热点', '热门'], target: '热点趋势', build: () => '微博热搜' },
-    { keys: ['状态', '负载', '内存', 'cpu', '运行情况', '服务器'], target: '运行状态', build: () => '运行状态' },
-    { keys: ['摸鱼', '无聊'], target: '摸鱼', build: () => '摸鱼' },
-    { keys: ['菜单', '命令', 'help', '功能'], target: '鑫仔bot菜单', build: () => '#菜单' },
-    { keys: ['60s', '早报', '新闻'], target: '每天60秒读懂世界', build: () => '60s' },
-    { keys: ['二维码'], target: '二维码生成', build: q => (q ? `二维码生成 ${q}` : '') },
-    { keys: ['搜索', '搜一下', '查一下资料'], target: '智能搜索', build: q => (q ? `搜索 ${q}` : '') },
-    { keys: ['星座', '运势'], target: '星座运势', build: q => (q ? `今日运势 ${q}` : '') },
-    { keys: ['待办', '任务清单'], target: '待办事项', build: () => '我的待办' },
+    { keys: ['做个插件', '写个插件', '生成插件', '造个插件'], target: '插件工坊', t: '做个插件 ${q}' },
+    { keys: ['天气', '气温', '温度', '热不热', '冷不冷', '下雨', '带伞'], target: '天气', t: '${q}天气' },
+    { keys: ['热搜', '热榜', '热点', '热门'], target: '热点趋势', t: '微博热搜' },
+    { keys: ['状态', '负载', '内存', 'cpu', '运行情况', '服务器'], target: '运行状态', t: '运行状态' },
+    { keys: ['摸鱼', '无聊'], target: '摸鱼', t: '摸鱼' },
+    { keys: ['菜单', '命令', 'help', '功能'], target: '鑫仔bot菜单', t: '#菜单' },
+    { keys: ['60s', '早报', '新闻'], target: '每天60秒读懂世界', t: '60s' },
+    { keys: ['二维码'], target: '二维码生成', t: '二维码生成 ${q}' },
+    { keys: ['搜索', '搜一下', '查一下资料'], target: '智能搜索', t: '搜索 ${q}' },
+    { keys: ['星座', '运势'], target: '星座运势', t: '今日运势 ${q}' },
+    { keys: ['待办', '任务清单'], target: '待办事项', t: '我的待办' },
 ];
 
 const DEFAULT_CHAT = [
@@ -165,7 +167,7 @@ async function isAuthorized(s, cfg) {
 }
 
 /* ================= 执行 ================= */
-function makeShim(real, text, rules) {
+function makeShim(real, text, rules, flag) {
     let matched = null;
     for (const r of rules) {
         try {
@@ -178,6 +180,12 @@ function makeShim(real, text, rules) {
     return new Proxy(real, {
         get(t, p) {
             if (p === 'getMsg') return () => text;
+            if (p === 'reply') {
+                return (...args) => {
+                    if (flag) flag.replied = true;
+                    return t.reply(...args);
+                };
+            }
             if (p === 'param') return i => (matched ? matched[i] || '' : '');
             const v = t[p];
             return typeof v === 'function' ? v.bind(t) : v;
@@ -185,19 +193,23 @@ function makeShim(real, text, rules) {
     });
 }
 
-async function runPlugin(meta, text, sender) {
+async function runPlugin(meta, text, sender, flag) {
     const mod = require(meta.file);
     const fn = typeof mod === 'function' ? mod : mod && mod.default;
     if (typeof fn !== 'function') throw new Error('插件导出不是函数');
-    await fn(makeShim(sender, text, meta.rules));
+    await fn(makeShim(sender, text, meta.rules, flag));
 }
 
 /* ================= 词库读写 ================= */
 async function loadLexicon() {
     const lex = (await StateDB.get(LEX_KEY, null)) || {};
+    const intents = Array.isArray(lex.intents) && lex.intents.length ? lex.intents : DEFAULT_INTENTS;
+    // 兼容旧版本存下来的、build 函数已被 JSON 丢弃的词条
+    for (const it of intents) if (typeof it.build === 'function') delete it.build;
     return {
-        intents: Array.isArray(lex.intents) && lex.intents.length ? lex.intents : DEFAULT_INTENTS,
+        intents,
         chat: Array.isArray(lex.chat) && lex.chat.length ? lex.chat : DEFAULT_CHAT,
+        learned: Array.isArray(lex.learned) ? lex.learned : [],
     };
 }
 async function saveLexicon(lex) {
@@ -213,7 +225,7 @@ async function saveMemory(m) {
     await StateDB.set(MEM_KEY, m);
 }
 function userMem(mem, uid) {
-    if (!mem.users[uid]) mem.users[uid] = { name: '', facts: [], last: null };
+    if (!mem.users[uid]) mem.users[uid] = { name: '', facts: [], last: null, history: [] };
     return mem.users[uid];
 }
 
@@ -230,8 +242,40 @@ function stripFillers(t) {
     return out;
 }
 function pickKey(text, keys) {
-    for (const k of keys) if (text.includes(k.toLowerCase())) return k;
-    return '';
+    let best = '';
+    for (const k of keys) {
+        const kk = String(k).toLowerCase();
+        if (text.includes(kk) && kk.length > best.length) best = kk;
+    }
+    return best;
+}
+function escRe(t) {
+    return String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+/* 意图模板：${q} 替换为提取出的参数 */
+function renderCmd(it, q) {
+    if (typeof it.build === 'function') return String(it.build(q) || '');
+    const t = String(it.t || '');
+    return t.replace(/\$\{q\}/g, q);
+}
+function pickIntent(text, intents) {
+    let best = null;
+    for (const it of intents) {
+        if (!Array.isArray(it.keys)) continue;
+        const key = pickKey(text, it.keys);
+        if (!key) continue;
+        if (!best || key.length > best.key.length) best = { it, key };
+    }
+    return best;
+}
+/* 只对用户原文做一次替换，查询参数取原文大小写 */
+function extractQueryFrom(raw, low, hitKey) {
+    const re = new RegExp(escRe(hitKey), 'i');
+    let q = String(raw).replace(re, ' ');
+    q = stripFillers(q);
+    q = q.replace(/[，。！？、,.!?~～:：;；"'“”‘’（）()【】\[\]]/g, ' ').replace(/\s+/g, '').trim();
+    if (q.length > 16) q = q.slice(0, 16);
+    return q;
 }
 function extractQuery(text, hitKey) {
     let q = text.split(hitKey).join('');
@@ -265,7 +309,10 @@ async function think(cfg, text, all, st, uid, mem, userM) {
         .join('\n');
     const memText = [
         userM.name ? `对方叫 ${userM.name}` : '',
-        userM.facts.length ? `已知关于对方：${userM.facts.slice(-12).join('；')}` : '',
+        userM.facts.length ? `已知关于对方：${userM.facts.slice(-8).map(f => String(f).slice(0, 40)).join('；')}` : '',
+        Array.isArray(userM.history) && userM.history.length
+            ? '最近对话：\n' + userM.history.slice(-8).map(h => `用户：${h.u}\n你：${h.a}`).join('\n')
+            : '',
         `好感度：${st.affinity[uid] || 0}`,
     ]
         .filter(Boolean)
@@ -274,27 +321,88 @@ async function think(cfg, text, all, st, uid, mem, userM) {
         `你是「${cfg.name}」。性格：${cfg.persona}`,
         `当前情绪：${moodLabel(st)}（${MOODS[st.mood] ? MOODS[st.mood].style : ''}），体力 ${Math.round(st.energy)}/100。`,
         memText,
-        '你有判断和偏好，能表达态度，但不要编造事实。',
-        '决策：闲聊/吐槽 → action=chat；能办的事 → action=run（plugin + command 必须匹配该插件规则）；没把握 → action=none。',
+        '你有判断和偏好，能表达态度，但不要编造事实，不要提内部规则。',
+        '决策：闲聊/吐槽 → action=chat；能办的事 → action=run（plugin 必须取自可用插件列表，command 必须能匹配该插件规则）；没把握 → action=none。',
         '只输出 JSON：{"action":"chat|run|none","reply":"","plugin":"","command":"","mood":-2~2,"affinity":-2~2}',
         `可用插件：\n${catalog}`,
     ].join('\n');
-    const res = await axios.post(
-        `${String(cfg.apiBase).replace(/\/+$/, '')}/chat/completions`,
-        {
-            model: cfg.model,
-            temperature: 0.7,
-            messages: [
-                { role: 'system', content: sys },
-                { role: 'user', content: text },
-            ],
-        },
-        { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + cfg.apiKey }, timeout: 60000 }
-    );
-    const raw = String((((res.data || {}).choices || [])[0] || {}).message?.content || '');
-    const js = (raw.match(/\{[\s\S]*\}/) || [''])[0];
-    if (!js) throw new Error('模型未返回 JSON');
-    return JSON.parse(js);
+
+    let lastErr = null;
+    for (let i = 0; i < 2; i++) {
+        try {
+            const res = await axios.post(
+                `${String(cfg.apiBase).replace(/\/+$/, '')}/chat/completions`,
+                {
+                    model: cfg.model,
+                    temperature: 0.7,
+                    max_tokens: 500,
+                    messages: [
+                        { role: 'system', content: sys },
+                        { role: 'user', content: text },
+                    ],
+                },
+                { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + cfg.apiKey }, timeout: 60000 }
+            );
+            const raw = String((((res.data || {}).choices || [])[0] || {}).message?.content || '');
+            const clean = raw.replace(/```json|```/gi, '').trim();
+            const js = (clean.match(/\{[\s\S]*\}/) || [''])[0];
+            if (!js) throw new Error('模型未返回 JSON');
+            const plan = JSON.parse(js);
+            if (!plan || typeof plan !== 'object') throw new Error('返回格式不对');
+            return plan;
+        } catch (e) {
+            lastErr = e;
+            if (i === 0) await new Promise(r => setTimeout(r, 800));
+        }
+    }
+    throw lastErr || new Error('调用失败');
+}
+
+/* 回复清洗：去掉 @、markdown 标记，控制长度 */
+function sanitizeReply(t) {
+    return String(t || '')
+        .replace(/@\S+/g, '')
+        .replace(/[*_`#>]+/g, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim()
+        .slice(0, 250);
+}
+/* 规则里至少要有具体的字面词，避免「^([\s\S]+)$」这类万能规则抢话 */
+function isSpecificRule(r) {
+    if (/\\s\\S|\\.\\*|\\.\+/.test(r)) return false;
+    const literals = String(r)
+        .replace(/\^|\$|\\(.)/g, '$1')
+        .replace(/[.*+?()[\]{}|]/g, '')
+        .match(/[\u4e00-\u9fa5A-Za-z0-9]{2,}/g);
+    return !!(literals && literals.length);
+}
+function ruleFits(meta, cmd) {
+    return meta.rules.some(r => {
+        try {
+            return new RegExp(r).test(cmd);
+        } catch (e) {
+            return false;
+        }
+    });
+}
+function pushHistory(userM, u, a, rounds) {
+    if (!rounds || !a) return;
+    if (!Array.isArray(userM.history)) userM.history = [];
+    userM.history.push({ u: String(u).slice(0, 80), a: String(a).slice(0, 120), at: Date.now() });
+    while (userM.history.length > rounds * 2) userM.history.shift();
+}
+function helpText(cfg, lex, all, prefix) {
+    const tips = lex.intents
+        .slice(0, 8)
+        .map(it => `「${prefix} ${it.keys[0]}」`)
+        .join('、');
+    return [
+        `我是${cfg.name}，现在能调度 ${all.length} 个插件。`,
+        `常用：${tips}`,
+        `记性：${prefix} 记住 xxx / ${prefix} 你记得什么 / ${prefix} 清空记忆`,
+        `学词：${prefix} 学词 查快递 => SSH终端管家Pro`,
+        '没配大模型也能用，靠本地词库兜底。',
+    ].join('\n');
 }
 
 /* ================= 主流程 ================= */
@@ -319,11 +427,24 @@ module.exports = async s => {
 
     const rawMsg = String(s.getMsg() || '').trim();
     const prefix = String(cfg.prefix || 'ai');
+    const aliasRe = new RegExp('^(?:' + [prefix, 'ai', '小新', '管家'].map(x => escRe(x)).join('|') + ')[，,：:]?\\s*', 'i');
+    const isPrefixMode = String(cfg.mode || 'prefix').toLowerCase() === 'prefix';
     let text = rawMsg;
-    if (String(cfg.mode || 'prefix').toLowerCase() === 'prefix') {
-        const re = new RegExp('^' + prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*', 'i');
-        if (!re.test(rawMsg)) return 'next';
-        text = rawMsg.replace(re, '').trim();
+    if (aliasRe.test(rawMsg)) {
+        text = rawMsg.replace(aliasRe, '').trim();
+    } else if (isPrefixMode) {
+        return 'next';
+    } else {
+        // auto 模式：只接得住认得的需求，其余交还其它插件
+        const q = normalize(rawMsg);
+        if (q.length < 2) return 'next';
+        const lex0 = await loadLexicon();
+        const p0 = scanPlugins();
+        const hitLex = pickIntent(q, lex0.intents);
+        const hitChat = lex0.chat.some(c => pickKey(q, c.keys));
+        const hitRule = p0.some(p => ruleFits(p, rawMsg));
+        if (!hitLex && !hitChat && !hitRule) return 'next';
+        text = rawMsg;
     }
     if (!text) return s.reply(`${cfg.name}在，说事。`);
     if (!(await isAuthorized(s, cfg))) return s.reply('还没授权你调插件，找管理员加 userId。');
@@ -333,6 +454,7 @@ module.exports = async s => {
     const mem = await loadMemory();
     const userM = userMem(mem, uid);
     const lex = await loadLexicon();
+    const all = scanPlugins().filter(p => !splitList(cfg.excludePlugins).includes(p.name));
 
     // 自然恢复
     if (Date.now() - (st.updatedAt || 0) > 6 * 3600 * 1000) {
@@ -343,50 +465,102 @@ module.exports = async s => {
     st.talks = (st.talks || 0) + 1;
 
     const low = normalize(text);
+    const done = () => StateDB.set(STATE_KEY, st);
 
     /* ---------- 记忆指令 ---------- */
-    if (/^(记住|记一下|帮我记住)/.test(low)) {
-        const fact = text.replace(/^(记住|记一下|帮我记住)\s*/, '').trim();
+    if (/^(记住|记一下|记着|帮我记住|记住一下)/.test(low)) {
+        const fact = text.replace(/^(记住|记一下|记着|帮我记住|记住一下)\s*/, '').trim();
         if (!fact) return s.reply('记住什么？说完整点。');
         if (!userM.facts.includes(fact)) userM.facts.push(fact);
-        while (userM.facts.length > 20) userM.facts.shift();
+        while (userM.facts.length > 40) userM.facts.shift();
         await saveMemory(mem);
-        await StateDB.set(STATE_KEY, st);
+        await done();
         return s.reply(`记下了：${fact}`);
     }
-    if (/^(忘记|删掉记忆|别记)/.test(low)) {
-        const kw = stripFillers(text.replace(/^(忘记|删掉记忆|别记)\s*/, '').trim());
+    if (/^(忘记|忘掉|删掉记忆|别记)/.test(low)) {
+        const kw = stripFillers(text.replace(/^(忘记|忘掉|删掉记忆|别记)\s*/, '').trim());
+        if (!kw) return s.reply('要忘掉哪个关键词？');
         const before = userM.facts.length;
         userM.facts = userM.facts.filter(f => !f.includes(kw));
         await saveMemory(mem);
+        await done();
         return s.reply(before === userM.facts.length ? `没找到跟「${kw}」有关的记忆。` : `删了 ${before - userM.facts.length} 条。`);
     }
-    if (/^(你记得什么|记忆|我的记忆)$/.test(low) || low === 'mem') {
+    if (/^(清空记忆|清除记忆|全忘掉|resetmemory)$/.test(low)) {
+        userM.facts = [];
+        userM.history = [];
+        await saveMemory(mem);
+        await done();
+        return s.reply('关于你的记忆清空了，名字还留着。');
+    }
+    if (/^(你记得什么|记忆|我的记忆|mem)$/.test(low)) {
         const lines = [];
         if (userM.name) lines.push(`· 你叫 ${userM.name}`);
         for (const f of userM.facts) lines.push(`· ${f}`);
         lines.push(`· 好感度 ${st.affinity[uid] || 0}，当前心情 ${moodLabel(st)}`);
-        return s.reply(lines.length > 1 ? '关于你我记得：\n' + lines.join('\n') : '对你暂时一无所知，说句「ai 记住 xxx」我就记。');
+        return s.reply(lines.length > 1 ? '关于你我记得：\n' + lines.join('\n') : '对你暂时一无所知，说句「' + prefix + ' 记住 xxx」我就记。');
     }
     if (/^(我是谁|我叫什么|你知道我是谁吗)$/.test(low)) {
-        return s.reply(userM.name ? `你是 ${userM.name}。` : '你还没告诉过我名字，说「ai 我叫xxx」。');
-    }
-    if (/^(词库|意图)/.test(low)) {
-        const lines = lex.intents.slice(0, 10).map(i => `· ${i.keys.slice(0, 4).join('/')} → ${i.target}`);
-        return s.reply(`本地词库共 ${lex.intents.length} 条意图：\n${lines.join('\n')}\n（无大模型时靠它做匹配）`);
+        return s.reply(userM.name ? `你是 ${userM.name}。` : '你还没告诉过我名字，说「' + prefix + ' 我叫xxx」。');
     }
 
-    // 自动记名字 / 常住地
-    const nameHit = text.match(/(?:我叫|我是|叫我)([\u4e00-\u9fa5A-Za-z0-9_]{1,12})/);
-    if (nameHit && !/谁|什么|吗|呢/.test(nameHit[1])) {
-        userM.name = nameHit[1];
+    /* ---------- 词库指令 ---------- */
+    if (/^(词库|意图|词条)$/.test(low)) {
+        const learned = lex.intents.filter(i => !DEFAULT_INTENTS.some(d => d.target === i.target && d.keys[0] === (i.keys || [])[0]));
+        const lines = lex.intents.slice(0, 12).map(i => `· ${(i.keys || []).slice(0, 4).join('/')} → ${i.target}`);
+        return s.reply(
+            `本地词库 ${lex.intents.length} 条（自学 ${learned.length} 条）：\n` +
+                lines.join('\n') +
+                `\n改词：${prefix} 学词 关键词 => 插件名；${prefix} 删词 关键词`
+        );
     }
+    if (/^(学词|学一下|添加词条|新增词条)/.test(low)) {
+        const body = text.replace(/^(学词|学一下|添加词条|新增词条)\s*/, '').trim();
+        const m = body.match(/^(.{1,20}?)\s*(?:=>|->|＝>|＝|=|→)\s*(.{1,40})$/);
+        if (!m) return s.reply(`格式：${prefix} 学词 关键词 => 插件名 [命令模板]\n例如：${prefix} 学词 查快递 => SSH终端管家Pro`);
+        const kw = m[1].trim();
+        const rest = m[2].trim();
+        const parts = rest.split(/\s+/);
+        const targetName = parts[0];
+        const tpl = parts.slice(1).join(' ') || '${q}';
+        const p = resolvePlugin(all, targetName);
+        if (!p) return s.reply(`没找到插件「${targetName}」，先发「${prefix} 词库」看看能调什么。`);
+        const exist = lex.intents.findIndex(i => (i.keys || []).includes(kw));
+        const item = { keys: [kw], target: p.name, t: tpl };
+        if (exist >= 0) lex.intents[exist] = item;
+        else lex.intents.push(item);
+        await saveLexicon(lex);
+        return s.reply(`学会了：说「${kw}」→ ${p.name}${tpl !== '${q}' ? '（' + tpl + '）' : ''}`);
+    }
+    if (/^(删词|删除词条|忘词)/.test(low)) {
+        const kw = text.replace(/^(删词|删除词条|忘词)\s*/, '').trim();
+        if (!kw) return s.reply('要删哪个关键词？');
+        const before = lex.intents.length;
+        lex.intents = lex.intents.filter(i => !(i.keys || []).includes(kw));
+        await saveLexicon(lex);
+        return s.reply(before === lex.intents.length ? `词库里没有「${kw}」。` : `删掉了「${kw}」。`);
+    }
+    if (/^(你会什么|你能干啥|能干什么|帮助|help|功能列表)$/.test(low)) {
+        return s.reply(helpText(cfg, lex, all, prefix));
+    }
+
+    // 自动记名字 / 常住地 / 喜好
+    const nameHit = text.match(/(?:我叫|我是|叫我)\s*([\u4e00-\u9fa5A-Za-z0-9_]{1,12})/);
+    if (nameHit && !/谁|什么|吗|呢/.test(nameHit[1])) userM.name = nameHit[1];
     const cityHit = text.match(/(?:我在|我住|住在|坐标)([\u4e00-\u9fa5]{2,6})/);
     if (cityHit) {
         const fact = `住在${cityHit[1]}`;
         if (!userM.facts.includes(fact)) userM.facts.push(fact);
     }
-    if (nameHit || cityHit) await saveMemory(mem);
+    const likeHit = text.match(/(我喜欢|我爱吃|爱吃|我讨厌|我不吃)([^，。！？、\s]{1,10})/);
+    if (likeHit) {
+        const fact = likeHit[0];
+        if (!userM.facts.includes(fact)) userM.facts.push(fact);
+    }
+    if (nameHit || cityHit || likeHit) {
+        while (userM.facts.length > 40) userM.facts.shift();
+        await saveMemory(mem);
+    }
     const ack = nameHit ? `记住你叫 ${userM.name} 了。` : cityHit ? `记下你在${cityHit[1]}了。` : '';
 
     /* ---------- 情绪与好感 ---------- */
@@ -395,7 +569,7 @@ module.exports = async s => {
     if (/(垃圾|废物|傻|滚|闭嘴|烦死|蠢)/.test(text)) deltaA -= 2;
     st.affinity[uid] = clamp((st.affinity[uid] || 0) + deltaA, -10, 20);
 
-    const all = scanPlugins().filter(p => !splitList(cfg.excludePlugins).includes(p.name));
+    const rounds = clamp(Number(cfg.historyRounds) || 0, 0, 10);
 
     /* ---------- 大模型优先 ---------- */
     let plan = null;
@@ -404,6 +578,17 @@ module.exports = async s => {
             plan = await think(cfg, text, all, st, uid, mem, userM);
         } catch (e) {
             console.warn('[智能管家] 大脑掉线，走本地词库:', e.message);
+        }
+    }
+    // 校验模型给的执行计划，防止乱造命令
+    if (plan && plan.action === 'run') {
+        const p = resolvePlugin(all, plan.plugin || '');
+        const cmd0 = String(plan.command || '').trim();
+        if (!p || !cmd0 || !ruleFits(p, cmd0)) {
+            if (cfg.debug) console.warn('[智能管家] 模型命令不可执行，降级:', plan.plugin, cmd0);
+            plan = { action: 'none', reply: plan.reply || '' };
+        } else {
+            plan.meta = p;
         }
     }
     if (plan && typeof plan.mood === 'number' && cfg.moodEnabled) {
@@ -418,26 +603,55 @@ module.exports = async s => {
     }
 
     if (plan && plan.action === 'chat' && String(plan.reply || '').trim()) {
+        const reply = sanitizeReply(plan.reply) + (ack ? '\n' + ack : '');
+        pushHistory(userM, text, reply, rounds);
         await saveMemory(mem);
-        await StateDB.set(STATE_KEY, st);
-        return s.reply(String(plan.reply).trim().slice(0, 300));
+        await done();
+        return s.reply(reply);
+    }
+    if (plan && plan.action === 'run' && plan.meta) {
+        const p = plan.meta;
+        const cmd = String(plan.command).trim();
+        if (p.admin) {
+            let ok = false;
+            try {
+                ok = !!(await s.isAdmin());
+            } catch (e) {}
+            const wx = await new BncrDB('wxClawBot').get('ownerId', '');
+            if (!ok && wx && uid === wx) ok = true;
+            if (!ok) {
+                await done();
+                return s.reply(`「${p.name}」不是你能碰的。`);
+            }
+        }
+        userM.last = { target: p.name, command: cmd, at: Date.now() };
+        await saveMemory(mem);
+        await done();
+        const flag = { replied: false };
+        try {
+            if (cfg.debug) console.log(`[智能管家] LLM 决策 → ${p.name} ← ${cmd}`);
+            await runPlugin(p, cmd, s, flag);
+        } catch (e) {
+            console.error('[智能管家] 执行失败:', e.message);
+            return s.reply(`卡住了：${e.message}`);
+        }
+        if (!flag.replied) return s.reply(`${p.name} 收下了但没回话，可能卡住了。`);
+        return;
     }
 
     /* ---------- 本地意图路由 ---------- */
     let target = null;
     let command = '';
     let intent = null;
-    for (const it of lex.intents) {
-        const key = pickKey(low, it.keys);
-        if (!key) continue;
-        const q = extractQuery(low, key);
-        const cmd = String(it.build ? it.build(q, text) : '') || '';
-        const p = resolvePlugin(all, it.target);
+    const hit = pickIntent(low, lex.intents);
+    if (hit) {
+        const q = extractQueryFrom(text, low, hit.key);
+        const cmd = renderCmd(hit.it, q);
+        const p = resolvePlugin(all, hit.it.target);
         if (p && cmd) {
             target = p;
             command = cmd;
-            intent = it;
-            break;
+            intent = hit.it;
         }
     }
 
@@ -453,35 +667,36 @@ module.exports = async s => {
     // 原始命令直接命中
     if (!target) {
         for (const p of all) {
-            for (const r of p.rules) {
-                try {
-                    if (new RegExp(r).test(text)) {
-                        target = p;
-                        command = text;
-                        break;
-                    }
-                } catch (e) {}
+            if (p.rules.some(r => isSpecificRule(r) && ruleFits({ rules: [r] }, text))) {
+                target = p;
+                command = text;
+                break;
             }
-            if (target) break;
         }
     }
 
     if (!target) {
         const chat = lex.chat.find(c => pickKey(low, c.keys));
         if (chat) {
-            await saveMemory(mem);
-            await StateDB.set(STATE_KEY, st);
             const reply = offlineChat(chat, cfg, st, userM);
+            pushHistory(userM, text, reply, rounds);
+            await saveMemory(mem);
+            await done();
             const extra = userM.facts.length && Math.random() < 0.3 ? `（你不是说过${userM.facts.slice(-1)[0]}吗）` : '';
-            return s.reply(reply + extra);
+            return s.reply(reply + extra + (ack ? '\n' + ack : ''));
         }
-        await StateDB.set(STATE_KEY, st);
-        const cand = [];
-        for (const p of all) {
-            if (p.desc && low.includes(p.name)) cand.push(p.name);
+        if (ack) {
+            await saveMemory(mem);
+            await done();
+            return s.reply(ack);
         }
+        const cand = all.filter(p => p.name && low.includes(normalize(p.name))).slice(0, 3).map(p => p.name);
+        const hints = lex.intents.slice(0, 3).map(i => `${prefix} ${i.keys[0]}`);
+        await done();
         return s.reply(
-            `没听懂。${cfg.name}能办：天气、热搜、服务器状态、搜东西、待办、菜单。\n试试「${prefix} 成都天气」或「${prefix} 记住 我住成都」。`
+            `没听懂。${cfg.name}能办：${hints.join('、')}…\n` +
+                (cand.length ? `你说的可能对应：${cand.join(' / ')}\n` : '') +
+                `发「${prefix} 你会什么」看全部能力。`
         );
     }
 
@@ -494,20 +709,22 @@ module.exports = async s => {
         const wx = await new BncrDB('wxClawBot').get('ownerId', '');
         if (!ok && wx && uid === wx) ok = true;
         if (!ok) {
-            await StateDB.set(STATE_KEY, st);
+            await done();
             return s.reply(`「${target.name}」不是你能碰的。`);
         }
     }
 
     userM.last = { target: target.name, command, at: Date.now() };
     await saveMemory(mem);
-    await StateDB.set(STATE_KEY, st);
+    await done();
 
+    const flag = { replied: false };
     try {
-        console.log(`[智能管家] ${uid} → ${target.name} ← ${command} (${moodLabel(st)})`);
-        await runPlugin(target, command, s);
+        if (cfg.debug) console.log(`[智能管家] ${uid} → ${target.name} ← ${command} (${moodLabel(st)})`);
+        await runPlugin(target, command, s, flag);
     } catch (e) {
         console.error('[智能管家] 执行失败:', e.message);
-        await s.reply(`卡住了：${e.message}`);
+        return s.reply(`卡住了：${e.message}`);
     }
+    if (!flag.replied) return s.reply(`${target.name} 收下了但没回话，可能卡住了。`);
 };
