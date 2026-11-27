@@ -28,7 +28,8 @@ const jsonSchema = BncrCreateSchema.object({
     persona: BncrCreateSchema.string()
         .setTitle('性格设定')
         .setDefault('嘴上有点毒舌、心里挺靠谱；口语化短句，偶尔吐槽但不刻薄'),
-    mode: BncrCreateSchema.string().setTitle('触发模式').setDescription('auto=接管所有消息（认得才接），prefix=只接前缀').setDefault('auto'),
+    takeover: BncrCreateSchema.boolean().setTitle('接管全部插件').setDescription('开启后所有消息先由管家调度，关掉才需要前缀').setDefault(true),
+    mode: BncrCreateSchema.string().setTitle('触发模式（旧）').setDescription('仅接管关闭时生效：auto / prefix').setDefault('auto'),
     prefix: BncrCreateSchema.string().setTitle('前缀').setDefault('ai'),
     authorizedUsers: BncrCreateSchema.string().setTitle('授权用户').setDefault(''),
     authorizedGroups: BncrCreateSchema.string().setTitle('授权群').setDefault(''),
@@ -428,7 +429,8 @@ module.exports = async s => {
     const rawMsg = String(s.getMsg() || '').trim();
     const prefix = String(cfg.prefix || 'ai');
     const aliasRe = new RegExp('^(?:' + [prefix, 'ai', '小新', '管家'].map(x => escRe(x)).join('|') + ')[，,：:]?\\s*', 'i');
-    const isPrefixMode = String(cfg.mode || 'prefix').toLowerCase() === 'prefix';
+    const takeover = cfg.takeover !== false;
+    const isPrefixMode = !takeover && String(cfg.mode || 'auto').toLowerCase() === 'prefix';
     let text = rawMsg;
     if (aliasRe.test(rawMsg)) {
         text = rawMsg.replace(aliasRe, '').trim();
@@ -436,6 +438,7 @@ module.exports = async s => {
         return 'next';
     } else {
         // auto 模式：只接得住认得的需求，其余交还其它插件
+        if (!(await isAuthorized(s, cfg))) return 'next';
         const q = normalize(rawMsg);
         if (q.length < 2) return 'next';
         const lex0 = await loadLexicon();
