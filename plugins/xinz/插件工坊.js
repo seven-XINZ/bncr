@@ -51,8 +51,8 @@ async function askModel(cfg, requirement) {
         '你是 Bncr（Node.js 机器人框架）的插件开发专家，负责把需求写成可直接运行的插件。',
         '硬性约束：',
         '1. CommonJS，`module.exports = async s => { ... }`；可用内置模块与插件目录已安装的 axios。',
-        '2. 文件开头必须是 jsdoc 元信息注释，包含 @author @name @team @version @description，以及 @rule 或定时任务指令；',
-        '   @rule 用中文友好的正则，如 `@rule ^(今日油价)$`；定时任务写 `cron 表达式：秒 分 时 日 月 星期`。',
+        '2. 文件开头必须是 jsdoc 元信息注释，包含 author/name/team/version/description，以及 rule 或定时任务指令；',
+        '   规则关键字是 rule，写在 jsdoc 里并用中文友好的正则，例如匹配「今日油价」；定时任务写 cron 表达式：秒 分 时 日 月 星期。',
         '3. 需要配置项时用 BncrCreateSchema + BncrPluginConfig，不要硬编码密钥；持久化用 BncrDB。',
         '4. 禁止 child_process、删文件、改系统配置、eval；网络请求要加 timeout 和 try/catch。',
         '5. 代码不超过 200 行，注释用中文，出错时 `s.reply()` 给用户明确提示。',
@@ -112,7 +112,7 @@ module.exports = async s => {
     const code = String(obj.code);
     if (code.length > 60000) return s.reply('生成代码过长，已拒绝写入。');
     if (DANGEROUS.test(code)) return s.reply('生成的代码包含高危调用（child_process / 删文件 / eval），已拒绝写入。');
-    if (!/@name/.test(code) || !/@(rule|cron)/.test(code)) return s.reply('生成的代码缺少 @rule 或定时触发信息，已拒绝写入。');
+    if (!/@name/.test(code) || !/@(rule|cron)/.test(code)) return s.reply('生成的代码缺少触发规则或定时信息，已拒绝写入。');
 
     try {
         // 语法校验：用 Function 编译，不执行

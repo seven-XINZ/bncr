@@ -3,10 +3,10 @@
  * @author seven
  * @name ChatGPT
  * @team xinz
- * @version 1.0.5
- * @description ChatGpt聊天，适配无界3.0，删除了tts避免部分不支持tts 修复对话只能独立对话 
- * @rule ^(ai|画图) ([\s\S]+)$
- * @rule ^(ai|画图)$
+ * @version 1.0.6
+ * @description ChatGpt聊天（触发词改为 gpt/画图，ai 前缀让位智能管家），适配无界3.0
+ * @rule ^(gpt|画图) ([\s\S]+)$
+ * @rule ^(gpt|画图)$
  * @admin false
  * @public true
  * @priority 99999

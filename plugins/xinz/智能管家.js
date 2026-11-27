@@ -2,12 +2,12 @@
  *  @author xinz
  *  @name 智能管家
  *  @team xinz
- *  @version 1.3.0
- *  @description 有记忆、有词库、有情绪的调度中枢：别名、学词、多轮上下文，无大模型也能干活
+ *  @version 1.3.1
+ *  @description 启动即接管全部插件：唯一入口、记忆、词库、情绪，无大模型也能干活
  *  @rule ^([\s\S]+)$
  *  @admin false
  *  @public false
- *  @priority 99998
+ *  @priority 999999
  *  @disable false
  */
 const fs = require('fs');
@@ -28,7 +28,7 @@ const jsonSchema = BncrCreateSchema.object({
     persona: BncrCreateSchema.string()
         .setTitle('性格设定')
         .setDefault('嘴上有点毒舌、心里挺靠谱；口语化短句，偶尔吐槽但不刻薄'),
-    mode: BncrCreateSchema.string().setTitle('触发模式').setDescription('prefix / auto').setDefault('prefix'),
+    mode: BncrCreateSchema.string().setTitle('触发模式').setDescription('auto=接管所有消息（认得才接），prefix=只接前缀').setDefault('auto'),
     prefix: BncrCreateSchema.string().setTitle('前缀').setDefault('ai'),
     authorizedUsers: BncrCreateSchema.string().setTitle('授权用户').setDefault(''),
     authorizedGroups: BncrCreateSchema.string().setTitle('授权群').setDefault(''),
@@ -92,7 +92,7 @@ function parseMeta(file) {
         const m = head.match(new RegExp('@' + k + '\\s+([^\\n\\r]+)'));
         return m ? m[1].trim() : '';
     };
-    const rules = [...head.matchAll(/@rule\s+([^\n\r]+)/g)].map(m => m[1].trim()).filter(Boolean);
+    const rules = [...head.matchAll(/@ru' + 'le\s+([^\n\r]+)/g)].map(m => m[1].trim()).filter(Boolean);
     if (!rules.length) return null;
     return {
         name: pick('name') || path.basename(file, '.js'),
@@ -415,7 +415,7 @@ module.exports = async s => {
             model: 'doubao-seed-2-1-turbo',
             name: '小新',
             persona: '嘴上有点毒舌、心里挺靠谱；口语化短句，偶尔吐槽但不刻薄',
-            mode: 'prefix',
+            mode: 'auto',
             prefix: 'ai',
             authorizedUsers: '',
             authorizedGroups: '',
