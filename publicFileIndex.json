@@ -181,8 +181,8 @@
     "name": "ChatGPT",
     "author": "seven",
     "team": "xinz",
-    "version": "1.0.5",
-    "description": "ChatGpt聊天，适配无界3.0，删除了tts避免部分不支持tts 修复对话只能独立对话 ",
+    "version": "1.0.6",
+    "description": "ChatGpt聊天（触发词改为 gpt/画图，ai 前缀让位智能管家），适配无界3.0",
     "classification": [
       "插件"
     ],
