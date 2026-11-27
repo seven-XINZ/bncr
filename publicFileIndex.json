@@ -462,28 +462,6 @@
     "id": "uIMWFYu8xQk+7/v2U84rUE9evWU=",
     "isChatPlugin": true
   },
-  "+IJ23UP53AZ+wRaocdNwwQb6yJs=": {
-    "type": "github",
-    "name": "热点趋势",
-    "author": "Dswang",
-    "team": "xinz",
-    "version": "1.0.2",
-    "description": "获取网络热点",
-    "classification": [
-      "工具"
-    ],
-    "filename": "热点趋势.js",
-    "fileDir": "/plugins/xinz/热点趋势.js",
-    "systemVersionRange": "",
-    "isCron": false,
-    "isAdapter": false,
-    "isMod": false,
-    "isService": false,
-    "isAuthentication": false,
-    "isEncPlugin": false,
-    "id": "+IJ23UP53AZ+wRaocdNwwQb6yJs=",
-    "isChatPlugin": true
-  },
   "HhXF/FXEqzOYxpPt9IAV9NRVWjc=": {
     "type": "github",
     "name": "爱快重拨",
