@@ -2,8 +2,8 @@
  *  @author xinz
  *  @name 智能管家
  *  @team xinz
- *  @version 1.6.0
- *  @description 启动即接管全部插件：智能回应判断（该不该接话）、模糊匹配、多意图、内置时间计算，无大模型也能干活
+ *  @version 1.7.0
+ *  @description 启动即接管全部插件：本地知识库、槽位追问、指代消解、危险确认、生词自学习，无大模型也能干活
  *  @rule ^([\s\S]+)$
  *  @admin false
  *  @public false
@@ -49,6 +49,11 @@ const jsonSchema = BncrCreateSchema.object({
         .setDescription('逗号分隔，命中加分').setDefault('bncr,插件,bug,报错,日志,接口,api,docker,部署,重启,服务器,机器人,刷屏'),
     quietHours: BncrCreateSchema.string().setTitle('免打扰时段')
         .setDescription('如 23:30-07:30，此时段群里不主动接话').setDefault('23:30-07:30'),
+    kbEnabled: BncrCreateSchema.boolean().setTitle('本地知识库').setDescription('读 mod/kb/*.md，离线回答 NAS/博客/踩坑类问题').setDefault(true),
+    kbThreshold: BncrCreateSchema.number().setTitle('知识库命中线').setDescription('BM25 分数下限，默认 1.0；越高越保守').setDefault(1.0),
+    dangerConfirm: BncrCreateSchema.boolean().setTitle('危险操作确认')
+        .setDescription('重启/删除/清空类命令先问一句「确认」，60 秒内有效').setDefault(true),
+    slotFill: BncrCreateSchema.boolean().setTitle('缺参数追问').setDescription('天气没给城市时先问一句，再执行').setDefault(true),
     debug: BncrCreateSchema.boolean().setTitle('调试日志').setDefault(false),
 });
 const ConfigDB = new BncrPluginConfig(jsonSchema);
@@ -57,6 +62,8 @@ const child = require('child_process');
 const MOD_DIR = path.join(__dirname, 'mod');
 let modStore = null;
 try { modStore = require('./mod/store'); } catch (e) { console.log('[智能管家] mod/store 不可用:', e.message); }
+let kbMod = null;
+try { kbMod = require('./mod/kb'); } catch (e) { console.log('[智能管家] mod/kb 不可用:', e.message); }
 async function SDBget(k, d) {
     if (modStore) {
         const v = await modStore.get('smart', k, undefined);
@@ -472,6 +479,102 @@ function opinionReply(cfg, st) {
     const pool = st.mood === 'grumpy' ? ['你自己不是有答案吗。', '这事问我没用，我又不能替你决定。'] : OPINION_POOL;
     return pool[Math.floor(Math.random() * pool.length)];
 }
+/* ================= 本地知识库、槽位、指代、危险确认 ================= */
+const SLOT_ASK = {
+    天气: { slot: '城市', ask: '哪个城市？回一个城市名就行。' },
+    插件工坊: { slot: '插件需求', ask: '要什么插件？一句话说功能，比如「查询快递物流」。' },
+    二维码生成: { slot: '内容', ask: '二维码要放什么内容？链接或一段文字。' },
+    智能搜索: { slot: '关键词', ask: '搜什么？给个关键词。' },
+    星座运势: { slot: '星座', ask: '哪个星座？' },
+};
+const DANGER_RE = /(重启|关机|停止|停掉|删除|删掉|卸载|清空|格式化|重置|强制|kill|rm\\s|rmdir|drop\\s|truncate|shutdown|reboot)/i;
+function needsConfirm(command, cfg) {
+    if (cfg.dangerConfirm === false) return false;
+    return DANGER_RE.test(String(command || ''));
+}
+function cleanKbBody(text) {
+    return String(text || '')
+        .replace(/^#{1,4}\s*/gm, '')
+        .replace(/\*\*/g, '')
+        .replace(/^\s*-\s*/gm, '')
+        .replace(/\n+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+function kbFormat(results) {
+    return results
+        .map(x => {
+            const t = String(x.title || '').replace(/\*\*/g, '').trim();
+            const rest = x.text.split('\n').slice(1).join(' ');
+            let body = cleanKbBody(rest || x.text);
+            if (body.startsWith(t)) body = body.slice(t.length).trim();
+            const url = (body.match(/https?:\/\/\S+/) || [])[0] || '';
+            body = body.replace(url, '').replace(/^[：:，,、\-\s]+/, '').slice(0, 190);
+            return `【${t}】${body}${url ? '\n' + url : ''}`;
+        })
+        .join('\n\n');
+}
+function kbQuery(q, limit) {
+    if (!kbMod) return null;
+    try {
+        const n = limit || 2;
+        let r = kbMod.search(q, n) || [];
+        const clean = String(q).replace(/装什么|推荐|有没有|哪些|怎么装|什么好|项目|东西/g, '').trim();
+        if (clean && clean !== q) {
+            const r2 = kbMod.search(clean, n) || [];
+            const seen = new Set(r.map(x => x.file + '|' + x.title));
+            for (const x of r2) {
+                const k = x.file + '|' + x.title;
+                if (!seen.has(k)) {
+                    r.push(x);
+                    seen.add(k);
+                }
+            }
+            r.sort((a, b) => b.score - a.score);
+            r = r.slice(0, n);
+        }
+        return r.length ? r : null;
+    } catch (e) {
+        return null;
+    }
+}
+async function addMiss(text, gid) {
+    if (!modStore) return;
+    try {
+        const arr = (await modStore.get('miss', 'items', [])) || [];
+        const k = normalize(text).slice(0, 40);
+        const hit = arr.find(x => x.k === k);
+        if (hit) {
+            hit.n = (hit.n || 1) + 1;
+            hit.last = Date.now();
+        } else {
+            arr.push({ k, t: String(text).slice(0, 60), n: 1, first: Date.now(), last: Date.now(), gid: gid || '' });
+        }
+        while (arr.length > 300) arr.shift();
+        await modStore.set('miss', 'items', arr);
+    } catch (e) {}
+}
+async function readMiss() {
+    if (!modStore) return [];
+    try {
+        return (await modStore.get('miss', 'items', [])) || [];
+    } catch (e) {
+        return [];
+    }
+}
+function deref(text, userM) {
+    const list = (userM && userM.entities) || [];
+    if (!list.length) return text;
+    const last = list[list.length - 1];
+    if (Date.now() - (last.at || 0) > 10 * 60 * 1000) return text;
+    return String(text).replace(/^(它|他|她|这个|那个|刚才那个|上一个)[，,、\s]*/, last.name + ' ');
+}
+function pushEntity(userM, name, cmd) {
+    if (!userM.entities) userM.entities = [];
+    userM.entities.push({ name, cmd, at: Date.now() });
+    while (userM.entities.length > 5) userM.entities.shift();
+}
+
 /* 群里接话：没命中插件时别只会说「没听懂」 */
 function chimeReply(text, cfg, st, all) {
     const cand = searchPlugins(all, normalize(text)).slice(0, 2).map(p => p.name);
@@ -590,6 +693,8 @@ function helpText(cfg, lex, all, prefix) {
         `记性：${prefix} 记住 xxx / ${prefix} 你记得什么 / ${prefix} 清空记忆`,
         `学词：${prefix} 学词 查快递 => SSH终端管家Pro`,
         `接话：群里不点名时我自己判断该不该开口；${prefix} 回应 看判断日志`,
+        `知识库：${prefix} 知识 NAS 装什么 / ${prefix} 知识 3x-ui 隧道 / ${prefix} 知识库`,
+        `生词：${prefix} 生词本 看没接住的话，${prefix} 学词 关键词 => 插件名 补上`,
         '没配大模型也能用，靠本地词库兜底。',
     ].join('\n');
 }
@@ -717,6 +822,10 @@ module.exports = async s => {
             gateCooldown: 120,
             interestWords: 'bncr,插件,bug,报错,日志,接口,api,docker,部署,重启,服务器,机器人,刷屏',
             quietHours: '23:30-07:30',
+            kbEnabled: true,
+            kbThreshold: 1.0,
+            dangerConfirm: true,
+            slotFill: true,
         },
         ConfigDB.userConfig || {}
     );
@@ -748,7 +857,17 @@ module.exports = async s => {
     const gid = groupIdOf(s);
     const isGroup = !!gid;
     let gatePassed = false;
-    if (isGroup && !aliasRe.test(rawMsg) && !isAtMe(s, rawMsg, cfg.name) && cfg.smartGate !== false && !SELF_CMD_RE.test(normalize(rawMsg))) {
+    let pendFresh = false;
+    if (isGroup && cfg.slotFill !== false) {
+        try {
+            const m0 = await loadMemory();
+            const p0 = userMem(m0, String((s.getUserId && s.getUserId()) || ''));
+            pendFresh = !!(p0.pending && Date.now() - p0.pending.at < 180000 &&
+                rawMsg.length <= 20 && !/[?？]|吗|呢|怎么/.test(rawMsg));
+        } catch (e) {}
+    }
+    if (isGroup && !aliasRe.test(rawMsg) && !isAtMe(s, rawMsg, cfg.name) && cfg.smartGate !== false &&
+        !SELF_CMD_RE.test(normalize(rawMsg)) && !pendFresh) {
         let strong = false;
         try {
             strong = scanPlugins().some(p => (p.rules || []).some(r => isSpecificRule(r) && ruleFits({ rules: [r] }, rawMsg)));
@@ -779,9 +898,86 @@ module.exports = async s => {
     st.energy = clamp((st.energy || 70) - 2, 10, 100);
     st.talks = (st.talks || 0) + 1;
 
+    const origText = text;
+    text = deref(text, userM);
     const low = normalize(text);
     const lowx = applySynonyms(low);
     const done = () => SDB.set(STATE_KEY, st);
+
+    /* ---------- 危险操作确认 ---------- */
+    if (userM.confirm) {
+        const cn = normalize(text);
+        const c = userM.confirm;
+        if (/^(确认|确定|执行|继续|是|好|干|yes|y|ok)$/.test(cn)) {
+            userM.confirm = null;
+            const p = resolvePlugin(all, c.target);
+            if (!p) {
+                await saveMemory(mem);
+                await done();
+                return s.reply('那个插件已经不在了。');
+            }
+            await saveMemory(mem);
+            await done();
+            const f = { replied: false };
+            try {
+                await runPlugin(p, c.command, s, f);
+            } catch (e) {
+                return s.reply(`卡住了：${e.message}`);
+            }
+            if (!f.replied) return s.reply(`${p.name} 收下了但没回话。`);
+            return;
+        }
+        if (/^(取消|算了|不|别|no|n)$/.test(cn)) {
+            userM.confirm = null;
+            await saveMemory(mem);
+            await done();
+            return s.reply('行，不动。');
+        }
+        userM.confirm = null;
+    }
+
+    /* ---------- 槽位追问后的回答 ---------- */
+    const pendOther = !!(userM.pending && (SELF_CMD_RE.test(low) || /[?？]|吗|呢|怎么|为什么|多少/.test(text) || low.length > 20 ||
+        !!pickIntent(applySynonyms(low), lex.intents)));
+    if (userM.pending && pendOther) {
+        userM.pending = null;
+        await saveMemory(mem);
+    }
+    if (userM.pending && Date.now() - userM.pending.at < 180000 && !SELF_CMD_RE.test(low)) {
+        if (/^(取消|算了|不|别|no|n)$/.test(low)) {
+            userM.pending = null;
+            await saveMemory(mem);
+            await done();
+            return s.reply('行，这事先放着。');
+        }
+        const pend = userM.pending;
+        userM.pending = null;
+        const p = resolvePlugin(all, pend.target);
+        const cmd = renderCmd({ t: pend.tpl }, text);
+        if (!p) {
+            await saveMemory(mem);
+            await done();
+            return s.reply('那个插件不在了。');
+        }
+        if (needsConfirm(cmd, cfg)) {
+            userM.confirm = { target: p.name, command: cmd, at: Date.now() };
+            await saveMemory(mem);
+            await done();
+            return s.reply(`「${p.name}」要执行：${cmd}\n这动作有点重，回「确认」执行，60 秒内有效。`);
+        }
+        userM.last = { target: p.name, command: cmd, at: Date.now(), gid };
+        pushEntity(userM, p.name, cmd);
+        await saveMemory(mem);
+        await done();
+        const f = { replied: false };
+        try {
+            await runPlugin(p, cmd, s, f);
+        } catch (e) {
+            return s.reply(`卡住了：${e.message}`);
+        }
+        return f.replied ? undefined : s.reply(`${p.name} 收下了但没回话。`);
+    }
+    if (userM.pending) userM.pending = null;
 
     /* ---------- 回应判断指令 ---------- */
     if (/^(回应|接话|回应策略|回应日志|要不要回)$/.test(low)) {
@@ -856,6 +1052,77 @@ module.exports = async s => {
             await done();
             return s.reply(`同群两次主动接话间隔改成 ${c[1]} 秒。`);
         }
+    }
+
+    /* ---------- 指代：问上次那个怎么样了 ---------- */
+    {
+        const lastE = (userM.entities || []).slice(-1)[0];
+        const askBack = /^(它|他|她|这个|那个|刚才那个)[，,、\s]*(怎么样|还行|状态|挂了|好使|正常吗|还在吗|咋样)/.test(origText);
+        if (lastE && askBack && Date.now() - (lastE.at || 0) < 10 * 60 * 1000) {
+            const p = resolvePlugin(all, lastE.name);
+            if (p) {
+                if (p.admin) {
+                    let ok = false;
+                    try {
+                        ok = !!(await s.isAdmin());
+                    } catch (e) {}
+                    if (!ok) return s.reply(`「${p.name}」不是你能碰的。`);
+                }
+                if (needsConfirm(lastE.cmd, cfg)) {
+                    userM.confirm = { target: p.name, command: lastE.cmd, at: Date.now() };
+                    await saveMemory(mem);
+                    await done();
+                    return s.reply(`「${p.name}」要执行：${lastE.cmd}\n回「确认」执行。`);
+                }
+                userM.last = { target: p.name, command: lastE.cmd, at: Date.now(), gid };
+                await saveMemory(mem);
+                await done();
+                const f = { replied: false };
+                try {
+                    await runPlugin(p, lastE.cmd, s, f);
+                } catch (e) {
+                    return s.reply(`卡住了：${e.message}`);
+                }
+                return f.replied ? undefined : s.reply(`${p.name} 没回话。`);
+            }
+        }
+    }
+
+    /* ---------- 知识库与生词本 ---------- */
+    if (/^(知识库|资料库|kb库)$/.test(low)) {
+        if (!kbMod) return s.reply('知识库模块没加载起来，看日志 mod/kb.js。');
+        const stt = kbMod.stats();
+        await done();
+        return s.reply(`知识库：${stt.files.join(' / ')}\n共 ${stt.chunks} 块，问法：「${prefix} 知识 NAS 装什么」`);
+    }
+    {
+        const km = /^(?:知识|kb|查知识)[\s，,:：]*([\s\S]+)$/i.exec(text);
+        if (km) {
+            const q = km[1].trim();
+            if (!q) return s.reply(`用法：${prefix} 知识 NAS 装什么`);
+            const r = kbQuery(q, 3);
+            if (!r) return s.reply(`知识库里没找到「${q}」，换个关键词试试。目前有：NAS 折腾、Bncr 踩坑、博客文章。`);
+            if (cfg.kbEnabled === false) return s.reply('知识库开关是关的，去配置里打开。');
+            pushHistory(userM, text, r[0].title, clamp(Number(cfg.historyRounds) || 0, 0, 10));
+            await saveMemory(mem);
+            await done();
+            return s.reply(kbFormat(r));
+        }
+    }
+    if (/^(生词本|学词建议|没听懂什么|生词)$/.test(low)) {
+        const items = (await readMiss()).sort((a, b) => (b.n || 0) - (a.n || 0)).slice(0, 10);
+        if (!items.length) return s.reply('还没攒下生词，说明该认的都认了。');
+        const lines = [`最近没接住的话（共 ${items.length} 条）：`];
+        items.forEach((x, i) => {
+            const cand = searchPlugins(all, x.k).slice(0, 2).map(p => p.name);
+            lines.push(`${i + 1}. ${x.t} ×${x.n}${cand.length ? ' → 可能是 ' + cand.join(' / ') : ''}`);
+        });
+        lines.push(`补词：${prefix} 学词 关键词 => 插件名`);
+        return s.reply(lines.join('\n'));
+    }
+    if (/^(清空生词|清空生词本)$/.test(low)) {
+        if (modStore) await modStore.set('miss', 'items', []);
+        return s.reply('生词本清空了。');
     }
 
     /* ---------- 记忆指令 ---------- */
@@ -1085,6 +1352,12 @@ module.exports = async s => {
                     await s.reply(`「${plan.p.name}」不是你能碰的。`);
                     continue;
                 }
+                if (needsConfirm(plan.cmd, cfg)) {
+                    userM.confirm = { target: plan.p.name, command: plan.cmd, at: Date.now() };
+                    await saveMemory(mem);
+                    await done();
+                    return s.reply(`「${plan.p.name}」要执行：${plan.cmd}\n回「确认」执行，其余分段先停。`);
+                }
                 const f = { replied: false };
                 try {
                     await runPlugin(plan.p, plan.cmd, s, f);
@@ -1109,6 +1382,13 @@ module.exports = async s => {
     }
     if (hit) {
         const q = hit.fuzzy ? '' : extractQueryFrom(text, lowx, hit.key);
+        const need = SLOT_ASK[hit.it.target];
+        if (cfg.slotFill !== false && need && !q && String(hit.it.t || '').indexOf('${q}') >= 0) {
+            userM.pending = { target: hit.it.target, tpl: hit.it.t, at: Date.now() };
+            await saveMemory(mem);
+            await done();
+            return s.reply(`「${hit.it.target}」还差个${need.slot}。${need.ask}`);
+        }
         const cmd = renderCmd(hit.it, q);
         const p = resolvePlugin(all, hit.it.target);
         if (p && cmd) {
@@ -1154,6 +1434,15 @@ module.exports = async s => {
             await done();
             return s.reply(ack);
         }
+        if (cfg.kbEnabled !== false && /一-龥|nas|docker|bncr|博客|装什么|怎么装|推荐|有没有|写过/.test(lowx)) {
+            const kbr = kbQuery(text, 2);
+            if (kbr && kbr[0].score >= Number(cfg.kbThreshold || 1)) {
+                pushHistory(userM, text, kbr[0].title, rounds);
+                await saveMemory(mem);
+                await done();
+                return s.reply(kbFormat(kbr));
+            }
+        }
         if (/(觉得|怎么看|为什么|是不是|要不要|好不好|靠谱吗|行不行)/.test(text)) {
             pushHistory(userM, text, '', rounds);
             await done();
@@ -1164,6 +1453,7 @@ module.exports = async s => {
             if (gatePassed) return s.reply(chimeReply(text, cfg, st, all));
             return s.reply(`嗯，${userM.name || '你说'}。有事就直说，${prefix} + 需求。`);
         }
+        await addMiss(text, gid);
         const cand = searchPlugins(all, lowx).map(p => p.name);
         if (gatePassed) {
             await done();
@@ -1192,7 +1482,15 @@ module.exports = async s => {
         }
     }
 
+    if (needsConfirm(command, cfg)) {
+        userM.confirm = { target: target.name, command, at: Date.now() };
+        await saveMemory(mem);
+        await done();
+        return s.reply(`「${target.name}」要执行：${command}\n这动作有点重，回「确认」执行（60 秒内有效），回「取消」算了。`);
+    }
+
     userM.last = { target: target.name, command, at: Date.now(), gid };
+    pushEntity(userM, target.name, command);
     await saveMemory(mem);
     await done();
 
