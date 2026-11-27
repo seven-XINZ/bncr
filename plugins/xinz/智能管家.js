@@ -2,8 +2,8 @@
  *  @author xinz
  *  @name 智能管家
  *  @team xinz
- *  @version 1.4.0
- *  @description 启动即接管全部插件：唯一入口、记忆、词库、情绪，无大模型也能干活
+ *  @version 1.5.0
+ *  @description 启动即接管全部插件：模糊匹配、多意图、内置时间计算、插件检索，无大模型也能干活
  *  @rule ^([\s\S]+)$
  *  @admin false
  *  @public false
@@ -113,6 +113,9 @@ const DEFAULT_CHAT = [
     { keys: ['晚安', '睡了', '睡觉'], replies: ['睡吧，别熬。', '晚安，明天别忘带脑子。'] },
     { keys: ['你累不累', '累吗', '你还好吗'], replies: ['体力{mood_energy}，还行。', '有点乏，但还能撑。'] },
     { keys: ['夸我', '我厉害吗', '我牛吗'], replies: ['行，你厉害，行了吧。', '这次算你厉害。'] },
+    { keys: ['早', '早上好', '早安', '中午好', '下午好', '晚上好', '晚安'], replies: ['来了。', '嗯，在。'] },
+    { keys: ['无聊', '聊会', '聊聊', '陪我聊'], replies: ['行，聊五毛钱的。', '说吧，我听着。', '聊可以，别聊工作。'] },
+    { keys: ['讲个笑话', '说个笑话', '搞笑'], replies: ['我讲笑话的水平跟服务器负载一样，平时很低。', '有个 bug 走进了酒吧，老板问它要不要来杯 fix。'] },
 ];
 
 /* ================= 插件目录 ================= */
@@ -292,6 +295,67 @@ function stripFillers(t) {
     for (const f of FILLERS) out = out.split(f).join('');
     return out;
 }
+const SYNONYMS = [
+    [/咋样|怎么样|如何/g, ''],
+    [/查下|查询一下|看一下/g, '查'],
+    [/多少度|几度/g, '温度'],
+    [/几点钟|啥时候|什么时间/g, '几点'],
+    [/帮我/g, ''],
+    [/请问|麻烦/g, ''],
+    [/现在|当前/g, ''],
+];
+function applySynonyms(t) {
+    let out = t;
+    for (const [re, to] of SYNONYMS) out = out.replace(re, to);
+    return out;
+}
+function bigrams(str) {
+    const s = String(str || '').replace(/\s/g, '');
+    const out = [];
+    for (let i = 0; i < s.length - 1; i++) out.push(s.slice(i, i + 2));
+    if (!out.length && s) out.push(s);
+    return out;
+}
+function dice(a, b) {
+    const A = bigrams(a);
+    const B = bigrams(b);
+    if (!A.length || !B.length) return 0;
+    const map = {};
+    for (const x of A) map[x] = (map[x] || 0) + 1;
+    let hit = 0;
+    for (const y of B) {
+        if (map[y]) {
+            hit++;
+            map[y]--;
+        }
+    }
+    return (2 * hit) / (A.length + B.length);
+}
+function charOverlap(a, b) {
+    const A = new Set(String(a).replace(/\s/g, ''));
+    const B = new Set(String(b).replace(/\s/g, ''));
+    let hit = 0;
+    for (const c of A) if (B.has(c)) hit++;
+    return (2 * hit) / (A.size + B.size || 1);
+}
+function fuzzyIntents(low, intents) {
+    let best = null;
+    for (const it of intents) {
+        for (const k of it.keys || []) {
+            const sc = Math.max(dice(low, String(k).toLowerCase()), charOverlap(low, String(k).toLowerCase()));
+            if (sc >= 0.62 && (!best || sc > best.score)) best = { it, key: k, score: sc };
+        }
+    }
+    return best;
+}
+function searchPlugins(all, q) {
+    return all
+        .map(p => ({ p, score: Math.max(dice(q, p.name), dice(q, p.desc || '') * 0.9) }))
+        .filter(x => x.score >= 0.22)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .map(x => x.p);
+}
 function pickKey(text, keys) {
     let best = '';
     for (const k of keys) {
@@ -335,6 +399,48 @@ function extractQuery(text, hitKey) {
     return q;
 }
 
+/* ================= 离线内置能力 ================= */
+function builtinReply(text) {
+    const t = normalize(text);
+    if (/^(现在几点|几点了|什么时间|报时|时间)$/.test(t)) {
+        const d = new Date();
+        return `现在 ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}，${d.getMonth() + 1} 月 ${d.getDate()} 号。`;
+    }
+    if (/^(今天几号|日期|今天星期几|星期几|今天)$/.test(t)) {
+        const d = new Date();
+        const w = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
+        return `${d.getFullYear()} 年 ${d.getMonth() + 1} 月 ${d.getDate()} 日，星期${w}。`;
+    }
+    const calc = text.match(/^(?:算一下|计算|算)\s*([0-9+\-*/(). %]+)$/);
+    if (calc) {
+        const expr = calc[1].replace(/%/g, '/100').replace(/[^0-9+\-*/(). ]/g, '');
+        if (/^[0-9+\-*/(). ]+$/.test(expr)) {
+            try {
+                const v = Function('return (' + expr + ')')();
+                if (typeof v === 'number' && isFinite(v)) return `${expr.trim()} = ${Math.round(v * 1e6) / 1e6}`;
+            } catch (e) {}
+        }
+        return '这个式子我算不了，换个写法。';
+    }
+    if (/^(早|早上好|早安|中午好|下午好|晚上好|晚安|睡了)$/.test(t)) {
+        const h = new Date().getHours();
+        const bye = /晚安|睡/.test(t);
+        if (bye) return '睡吧，明天还得干活。';
+        if (h < 11) return '早，今天也别太拼。';
+        if (h < 14) return '中午了，先吃饭。';
+        if (h < 19) return '下午好，有事说事。';
+        return '晚上了，别熬太晚。';
+    }
+    if (/^(抛硬币|扔硬币|硬币)$/.test(t)) return Math.random() < 0.5 ? '正面。' : '反面。';
+    if (/^(掷骰子|扔骰子|骰子|摇骰子)$/.test(t)) return `${Math.floor(Math.random() * 6) + 1} 点。`;
+    const pick = text.match(/^(?:随机选|帮我选|二选一|选一个)\s*([^，。！？]+)$/);
+    if (pick) {
+        const opts = pick[1].split(/还是|或者|、|,|，|\s+/).filter(Boolean);
+        if (opts.length >= 2) return `选 ${opts[Math.floor(Math.random() * opts.length)]}。`;
+    }
+    return '';
+}
+
 /* ================= 离线应答 ================= */
 function moodLabel(st) {
     return MOODS[st.mood] ? MOODS[st.mood].label : '平静';
@@ -346,9 +452,19 @@ function render(tpl, cfg, st, mem) {
         .replace(/\{mood_energy\}/g, String(Math.round(st.energy)))
         .replace(/\{user\}/g, (mem && mem.name) || '你');
 }
+const OPINION_POOL = [
+    '这事我没什么立场，你自己拿主意更靠谱。',
+    '要我说，先做再说，想太多容易黄。',
+    '我不太确定，但感觉你说的有道理。',
+    '别问我，问就是看情况。',
+];
+function opinionReply(cfg, st) {
+    const pool = st.mood === 'grumpy' ? ['你自己不是有答案吗。', '这事问我没用，我又不能替你决定。'] : OPINION_POOL;
+    return pool[Math.floor(Math.random() * pool.length)];
+}
 function offlineChat(intent, cfg, st, mem) {
-    const arr = intent.replies || [];
-    const tpl = arr[Math.floor(Math.random() * arr.length)] || '';
+    const pool = (intent.moods && intent.moods[st.mood]) || intent.replies || [];
+    const tpl = pool[Math.floor(Math.random() * pool.length)] || '';
     return render(tpl, cfg, st, mem);
 }
 
@@ -518,7 +634,8 @@ module.exports = async s => {
     st.talks = (st.talks || 0) + 1;
 
     const low = normalize(text);
-    const done = () => StateDB.set(STATE_KEY, st);
+    const lowx = applySynonyms(low);
+    const done = () => SDB.set(STATE_KEY, st);
 
     /* ---------- 记忆指令 ---------- */
     if (/^(记住|记一下|记着|帮我记住|记住一下)/.test(low)) {
@@ -596,6 +713,15 @@ module.exports = async s => {
     if (/^(你会什么|你能干啥|能干什么|帮助|help|功能列表)$/.test(low)) {
         return s.reply(helpText(cfg, lex, all, prefix));
     }
+    if (/^(找插件|有没有.*插件|能干什么插件|插件搜索)/.test(low)) {
+        const q = text.replace(/^(找插件|有没有|能干什么插件|插件搜索)/, '').replace(/插件(吗|么|呢)?$/, '').trim() || low;
+        const hits = searchPlugins(all, q);
+        if (!hits.length) return s.reply(`没找到跟「${q}」相关的插件，发「${prefix} 词库」看现有能力。`);
+        return s.reply('可能对得上：\n' + hits.map(p => `· ${p.name}：${p.desc || '无说明'}（${p.rules[0]}）`).join('\n'));
+    }
+    const bi = builtinReply(text);
+    if (bi) return s.reply(bi);
+
     if (/^(刷新插件|重载插件|刷新入库)$/.test(low)) {
         const fresh = scanPlugins(true).filter(p => !splitList(cfg.excludePlugins).includes(p.name));
         return s.reply(`已重新入库：${fresh.length} 个插件，新装的可以直接调。`);
@@ -717,13 +843,51 @@ module.exports = async s => {
         return;
     }
 
+    /* ---------- 多意图 ---------- */
+    const segs = String(text).split(/和|、|;|；/).map(x => x.trim()).filter(x => x.length >= 2);
+    if (segs.length >= 2 && segs.length <= 3) {
+        const plans = [];
+        for (const seg of segs) {
+            const h = pickIntent(applySynonyms(normalize(seg)), lex.intents);
+            if (!h) break;
+            const cmd = renderCmd(h.it, extractQueryFrom(seg, applySynonyms(normalize(seg)), h.key));
+            const p = resolvePlugin(all, h.it.target);
+            if (!p || !cmd) break;
+            plans.push({ p, cmd });
+        }
+        if (plans.length === segs.length) {
+            userM.last = { target: plans[0].p.name, command: plans[0].cmd, at: Date.now() };
+            await saveMemory(mem);
+            await done();
+            for (const plan of plans) {
+                if (plan.p.admin && !(await s.isAdmin().catch(() => false))) {
+                    await s.reply(`「${plan.p.name}」不是你能碰的。`);
+                    continue;
+                }
+                const f = { replied: false };
+                try {
+                    await runPlugin(plan.p, plan.cmd, s, f);
+                } catch (e) {
+                    await s.reply(`${plan.p.name} 卡住了：${e.message}`);
+                }
+                if (!f.replied) await s.reply(`${plan.p.name} 收下了但没回话。`);
+                await new Promise(r => setTimeout(r, 600));
+            }
+            return;
+        }
+    }
+
     /* ---------- 本地意图路由 ---------- */
     let target = null;
     let command = '';
     let intent = null;
-    const hit = pickIntent(low, lex.intents);
+    let hit = pickIntent(lowx, lex.intents);
+    if (!hit) {
+        const fz = fuzzyIntents(lowx, lex.intents);
+        if (fz && fz.score >= 0.66) hit = { it: fz.it, key: fz.key, fuzzy: true };
+    }
     if (hit) {
-        const q = extractQueryFrom(text, low, hit.key);
+        const q = hit.fuzzy ? '' : extractQueryFrom(text, lowx, hit.key);
         const cmd = renderCmd(hit.it, q);
         const p = resolvePlugin(all, hit.it.target);
         if (p && cmd) {
@@ -754,7 +918,7 @@ module.exports = async s => {
     }
 
     if (!target) {
-        const chat = lex.chat.find(c => pickKey(low, c.keys));
+        const chat = lex.chat.find(c => pickKey(lowx, c.keys));
         if (chat) {
             const reply = offlineChat(chat, cfg, st, userM);
             pushHistory(userM, text, reply, rounds);
@@ -768,7 +932,16 @@ module.exports = async s => {
             await done();
             return s.reply(ack);
         }
-        const cand = all.filter(p => p.name && low.includes(normalize(p.name))).slice(0, 3).map(p => p.name);
+        if (/(觉得|怎么看|为什么|是不是|要不要|好不好|靠谱吗|行不行)/.test(text)) {
+            pushHistory(userM, text, '', rounds);
+            await done();
+            return s.reply(opinionReply(cfg, st));
+        }
+        if (lowx.length <= 8 && !/[0-9]/.test(lowx)) {
+            await done();
+            return s.reply(`嗯，${userM.name || '你说'}。有事就直说，${prefix} + 需求。`);
+        }
+        const cand = searchPlugins(all, lowx).map(p => p.name);
         const hints = lex.intents.slice(0, 3).map(i => `${prefix} ${i.keys[0]}`);
         await done();
         return s.reply(
