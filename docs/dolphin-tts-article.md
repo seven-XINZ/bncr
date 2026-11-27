@@ -1,335 +1,351 @@
-# 海豚AI（DolphinVoice）TTS 接入实战：从鉴权到声线、情绪调度
+# 海豚AI（TTS-Online）开发文档与接入教程：Token、3751 个声线与 37 种情绪
 
-> 给智能管家加一张嘴：19 个声线、26 种情绪/风格，HTTP 和 WebSocket 两条路都能走。这篇把鉴权、参数、踩坑和 Bncr 集成一次讲完。
+> 本文分两部分：前半部分是**教程**，跟着命令从零跑通一条语音；后半部分是**开发文档**，查接口、字段、错误码和 Bncr 集成。海豚AI 不是“申请 API Key”那种开放平台，而是网页版配音站 + `/flashsummary` 接口。
 
 ![海豚AI 语音接入实战](https://raw.githubusercontent.com/seven-XINZ/bncr/main/docs/tts-cover.webp)
 
-## 0. 先分清你用的是哪个“海豚AI”
+项目仓库：[github.com/seven-XINZ/bncr](https://github.com/seven-XINZ/bncr)
 
-搜“海豚AI”会同时撞到两个东西：
+## 快速开始（教程）
 
-| 产品 | 入口 | 公开 API | 说明 |
+5 分钟跑通一条语音，按顺序做：
+
+1. 浏览器打开 `https://www.ttson.cn?token=<TOKEN>`，确认能登录、能看到额度。
+2. F12 → Network，过滤 `flashsummary`，记下请求的 host，记为 `BASE`。
+3. 查额度：`GET {BASE}/flashsummary/getTokenData?token=<TOKEN>`。
+4. 选声线：`GET {BASE}/flashsummary/voices?language=zh-CN&tag_id=1&token=<TOKEN>`，记一个 `id`。
+5. 合成：`POST {BASE}/flashsummary/tts?token=<TOKEN>`，body 见第 5 节。
+6. 用返回的 `url + port + voice_path` 下载 mp3。
+
+下面每一节都把这几步拆开讲；着急的话直接跳到第 5、6 节复制代码。
+
+## 0. 先分清两个站
+
+| 模式 | 入口 | 用途 |
+| --- | --- | --- |
+| 普通站 | `https://www.ttson.cn?token=<TOKEN>` | 通用声线、旁白、播报、中文角色 |
+| 二次元站 | `https://acgn.ttson.cn?token=<会员TOKEN>` | 原神、星铁、鸣潮、日漫等 ACGN 角色 |
+
+二次元角色要用 **acgn 会员凭证**。拿普通站 Token 去调二次元角色，常见结果是 `350`（余额/权限不足），不是代码坏了。把 `www` 换成 `acgn`、换会员 Token 再试。
+
+海豚AI 和另一套海外 API“DolphinVoice（api.voice.dolphin-ai.jp）”不是同一个东西。DolphinVoice 是 AppID/AppSecret 换 JWT、19 个声线；海豚AI 是 Token 登录、3751 条声线、37 个情绪 id。两套参数不能混用。
+
+## 1. Token 登录与额度
+
+Token 直接拼在 URL 上：
+
+```
+https://www.ttson.cn?token=2103...
+```
+
+打开后网页会登录，并把 Token 存在本地。调接口时同样把 Token 作为查询参数：
+
+```
+GET {BASE}/flashsummary/getTokenData?token=<TOKEN>
+```
+
+返回：
+
+```json
+{"code":200,"data":{"limit":80000,"use_count":3,"expiry_date":"2028-08-08","vip_level":4,"concurrency":3}}
+```
+
+- `limit`：字符额度
+- `use_count`：已用字符
+- `expiry_date`：到期日
+- `vip_level`：会员等级
+- `concurrency`：并发数
+
+Token 等于账号凭证，**不要提交到 Git、不要发到群里、不要写进前端**。泄露就去官网重新生成；给朋友体验，最好单独开子账号或短期 Token。
+
+## 2. 接口地址是动态的
+
+网页把接口挂在一台 GPU 实例上，当前是：
+
+```
+https://u95167-8ncb-3637bf8b.bjb1.seetacloud.com:8443
+```
+
+这个 host 会变。两种找法：
+
+1. 打开 `https://www.ttson.cn`，F12 → Network，过滤 `flashsummary`，看请求的 host；
+2. 看首页 `index.*.js` 里的 `Ja={host:"..."}`。
+
+下面用 `BASE` 代表这个 host。**不要硬编码到代码里**，做成配置。
+
+## 接口速查（开发文档）
+
+| 用途 | 方法 | 路径 | 鉴权 |
 | --- | --- | --- | --- |
-| DolphinVoice | `dolphinvoice.ai`，接口域名 `api.voice.dolphin-ai.jp` | 有 | AppID + AppSecret 换 Token，按调用计费，本文讲这套 |
-| 海豚AI配音（网页版） | `ttson.cn` | 未见公开 API 文档 | 网页配音工具，声线叫艾墨、艾颖、知琪等 |
+| 查额度 | GET | `/flashsummary/getTokenData` | `?token=` |
+| 声线列表 | GET | `/flashsummary/voices?language=zh-CN&tag_id=1` | `?token=` |
+| 情绪列表 | GET | `/flashsummary/emotions` | `?token=` |
+| 标签列表 | GET | `/flashsummary/voicetags` | `?token=` |
+| 合成 | POST | `/flashsummary/tts` | `?token=` + JSON |
+| 取音频 | GET | `/flashsummary/retrieveFileData?stream=True&voice_audio_path=` | `?token=` |
 
-两套的声线名、情绪名不通用。你要接自动化、接机器人，走 DolphinVoice；只在网页上做几条配音，用网页版就行。下面所有 `voice`、`emotion` 都是 DolphinVoice 的 token。
+统一约定：
 
-## 1. 鉴权：HMAC-SHA1 换 7 天 Token
+- `BASE` 从网页 Network 取，不固定；
+- 所有请求都带 `token` 查询参数，没有 `Authorization` 头；
+- POST 带 `Content-Type: application/json` 和 `X-checkout-Header: _checkout`；
+- 业务成功看 `code === 200`，不是 HTTP 200。
 
-DolphinVoice 不用 AK/SK 直接调接口，而是先换一个短期 Token：
+## 3. 声线：3751 条，先分类再选
 
-1. 把 `app_id`、`secret`、`timestamp`（秒）按字典序拼成字符串；
-2. 用 AppSecret 做 HMAC-SHA1，再 Base64，得到 `signature`；
-3. POST 到 `/platform/v1/auth/online/token`，拿 `data.token`；
-4. 之后所有请求带 `Authorization: Bearer <token>`。
-
-签名串长这样：
+拉全量：
 
 ```
-app_id=xxxx&secret=xxxx&timestamp=1700000000
+GET {BASE}/flashsummary/voices?language=zh-CN&tag_id=1&token=<TOKEN>
 ```
 
-Node 实现：
+当前返回 **3751 条**，男性 1517、女性 2234。注意：同一个角色常有多个“情绪版本/语气版本”，3751 条不等于 3751 个角色。
 
-```js
-const crypto = require('crypto');
+主要分类：
 
-const AUTH_URL = 'https://api.voice.dolphin-ai.jp/platform/v1/auth/online/token';
+| 标签 | 条目数 | 代表 |
+| --- | --- | --- |
+| 日漫1000+角色 | 1037 | 鬼灭、间谍过家家、Fate、GAL |
+| 新原神星铁 | 949 | 原神、星穹铁道 |
+| 蔚蓝档案 | 693 | 碧蓝档案（日语） |
+| Fate系列 | 274 | Fate/Grand Order |
+| 崩坏3 | 271 | 崩坏3 |
+| 番剧GAL | 146 | 番剧、GALGAME |
+| 鸣潮 | 123 | 鸣潮 |
+| 原神 | 65 | 原神 |
+| 星穹铁道 | 48 | 星铁 |
+| 国漫 | 51 | 全职高手、一人之下 |
+| APEX | 45 | APEX |
+| 虚拟热门 | 43 | 初音、奶龙、三国 |
+| 其他 | 58 | 王者、LOL、影视 |
 
-async function fetchToken(appId, appSecret) {
-  const timestamp = Math.floor(Date.now() / 1000);
-  const raw = `app_id=${appId}&secret=${appSecret}&timestamp=${timestamp}`;
-  const signature = crypto.createHmac('sha1', appSecret).update(raw).digest('base64');
+### 热门角色 id 样例
 
-  const res = await fetch(AUTH_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ app_id: appId, timestamp, signature }),
-  });
-  const json = await res.json();
-  if (json.status !== '000000') {
-    throw new Error(`换 Token 失败：${json.status} ${json.message}`);
-  }
-  return json.data; // { app_id, token, expiration_time }
-}
+| 角色 | voice_id | 角色 | voice_id |
+| --- | --- | --- | --- |
+| 胡桃（原神） | 479 | 甘雨（原神） | 486 |
+| 影（原神） | 480 | 刻晴（原神） | 477 |
+| 魈（原神） | 478 | 可莉（原神） | 1432 |
+| 神里绫华（原神） | 1431 | 达达利亚（原神） | 1430 |
+| 黑塔（星铁） | 429 | 镜流（星铁） | 424 |
+| 银狼（星铁） | 423 | 符玄（星铁） | 416 |
+| 长离（鸣潮） | 4328 | 维里奈（鸣潮） | 4315 |
+| 鹤城（碧蓝档案） | 4260 | 阿斯托尔福（Fate） | 5155 |
+| 炭治郎（鬼灭） | 1433 | 阿尼亚（间谍过家家） | 3579 |
+| 初音未来 | 3553 | 旁白（通用） | 1841 |
+
+通用旁白/播报：
+
+- `1841` 旁白：纪录片、有声书
+- `2082` 男声：低音解说
+- `2044` 播报女声：新闻、客服、智能管家
+
+找角色时直接在 `voice_name` 里搜中文名/作品名，别凭记忆填 id。
+
+## 4. 情绪：37 个数字 id
+
+```
+GET {BASE}/flashsummary/emotions?token=<TOKEN>
 ```
 
-返回示例：
+完整表在仓库 `plugins/xinz/mod/kb/tts/emotions.md`，这里列常用的：
+
+| id | 情绪 | 适合 |
+| --- | --- | --- |
+| 0 | 默认 | 通用 |
+| 1 | 自然 | 日常对话 |
+| 2 | 开心 | 好消息、庆祝 |
+| 3 | 生气 | 冲突、警告 |
+| 4 | 悲伤 | 告别、煽情 |
+| 5 | 害怕 | 悬疑、惊吓 |
+| 6 | 惊讶 | 反转、发现 |
+| 9 | 感激 | 感谢、致谢 |
+| 12 | 严肃 | 公告、安全提醒 |
+| 17 | 深情 | 恋爱、独白 |
+| 18 | 温柔 | 安慰、治愈 |
+| 19 | 直播 | 带货、口播 |
+| 20 | 小说 | 有声书 |
+| 21 | 客服 | 售后、咨询 |
+| 22 | 新闻播报 | 通知、播报 |
+| 23 | 激动 | 广告、促销 |
+| 24 | 哭腔 | 虐心、哭戏 |
+| 25 | 旁白 | 纪录片 |
+| 26 | 傲娇 | 二次元角色 |
+| 27 | 抱歉 | 道歉 |
+| 28 | 专业 | 课程、说明 |
+| 30 | 紧张 | 悬疑 |
+| 33 | 平静 | 冥想、助眠 |
+| 50 | 稳定版 | 长文本 |
+
+规则：一句一个情绪；角色不支持时先降级为 0/1；长文本用 50 减少情绪跳变。
+
+## 5. 合成：一个 POST
+
+```
+POST {BASE}/flashsummary/tts?token=<TOKEN>
+Content-Type: application/json
+X-checkout-Header: _checkout
+```
+
+Body：
 
 ```json
 {
-  "status": "000000",
-  "message": "success",
-  "data": {
-    "app_id": "fb5c3de6-...",
-    "token": "eyJhbGciOiJIUzI1NiIs...",
-    "expiration_time": 1690370423
-  }
+  "voice_id": 1841,
+  "to_lang": "ZH",
+  "format": "mp3",
+  "speed_factor": 1.0,
+  "pitch_factor": 0,
+  "volume_change_dB": 0,
+  "emotion": 25,
+  "text": "你好，这里是海豚AI语音测试。"
 }
 ```
 
-`expiration_time` 是秒级时间。Token 默认 7 天有效，建议存文件或数据库，提前 1 小时刷新；多进程部署时只让一个进程刷新，避免互相覆盖。
-
-**安全红线**：AppSecret 只能放服务端。不要写进前端、不要发到群里、不要提交到 Git。
-
-## 2. HTTP 非流式合成：一次请求拿完整音频
-
-```
-
-POST https://api.voice.dolphin-ai.jp/v1/tts/api
-Content-Type: application/json
-Authorization: Bearer <TOKEN>
-
-```
-
-请求体核心字段：
+字段：
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
-| text | 是 | ≤1024 字节 UTF-8，中文约 300 字 |
-| lang_type | 是 | `zh-cmn-Hans-CN` / `ja-JP` / `en-US` |
-| voice | 是 | 声线 token，如 `Xiaohui` |
-| emotion | 否 | 情绪/风格 token，如 `customer_service` |
-| format | 否 | `mp3` / `wav` / `pcm`，默认看文档 |
-| sample_rate | 否 | 8000 / 16000 / 24000 |
-| speech_rate | 否 | 0.2–3，默认 1 |
-| volume | 否 | 0.1–3，默认 1 |
-| pitch_rate | 否 | 0.1–3，默认 1 |
-| text_type | 否 | `plain` 或 `ssml` |
-| silence_duration | 否 | 0–10000ms，默认 125 |
-| enable_timestamp | 否 | 需要字幕对齐时开 |
+| voice_id | 是 | 声线 id |
+| text | 是 | 待合成文本，长文本自己切段 |
+| to_lang | 否 | `ZH` / `EN` / `auto` |
+| format | 否 | `mp3` 常用 |
+| speed_factor | 否 | 语速，1.0 原速 |
+| pitch_factor | 否 | 音调偏移，0 原调 |
+| volume_change_dB | 否 | 音量增益，0 原音量 |
+| emotion | 否 | 情绪 id，0 默认 |
+| client_ip | 否 | 二次元站填 `ACGN` |
+| code | 否 | 网页验证码场景，普通调用不需要 |
 
-封装成函数：
+成功返回：
+
+```json
+{"code":200,"voice_path":"./temp/tts/20261128/07bef2cf.mp3","url":"https://u95167-f6u8-340bb9f2.bjb1.seetacloud.com","port":8443}
+```
+
+它不直接返回音频字节，而是给你临时路径 + 另一台音频主机。
+
+## 6. 取回音频
+
+```
+GET {url}:{port}/flashsummary/retrieveFileData?stream=True&token=<TOKEN>&voice_audio_path=<voice_path>
+```
+
+`Content-Type: audio/mpeg`，直接落盘。`voice_path` 有时效，生成后尽快下载。
+
+Node 完整封装：
 
 ```js
-const TTS_URL = 'https://api.voice.dolphin-ai.jp/v1/tts/api';
+const BASE = process.env.TTSON_BASE;   // 从网页 Network 取
+const TOKEN = process.env.TTSON_TOKEN; // 只放服务端
 
-async function synthesize(token, opts) {
-  const body = {
-    text: opts.text,
-    lang_type: opts.langType || 'zh-cmn-Hans-CN',
-    voice: opts.voice || 'Xiaohui',
-    emotion: opts.emotion,
-    format: opts.format || 'mp3',
-    sample_rate: opts.sampleRate || 24000,
-    speech_rate: opts.speechRate ?? 1,
-    volume: opts.volume ?? 1,
-    pitch_rate: opts.pitchRate ?? 1,
-  };
-
-  const res = await fetch(TTS_URL, {
+async function synth({ text, voiceId, emotion = 0, speed = 1, pitch = 0, volume = 0, lang = 'ZH' }) {
+  const res = await fetch(`${BASE}/flashsummary/tts?token=${TOKEN}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      'X-checkout-Header': '_checkout',
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      voice_id: voiceId,
+      to_lang: lang,
+      format: 'mp3',
+      speed_factor: speed,
+      pitch_factor: pitch,
+      volume_change_dB: volume,
+      emotion,
+      text,
+    }),
   });
   const json = await res.json();
-  if (json.status !== '000000') {
-    throw new Error(`合成失败：${json.status} ${json.message}`);
-  }
-  return {
-    audio: Buffer.from(json.data.result, 'base64'),
-    duration: json.data.duration,
-  };
+  if (json.code !== 200) throw new Error(`TTS 失败：${json.code} ${json.msg || ''}`);
+
+  const audioUrl = `${json.url}:${json.port}/flashsummary/retrieveFileData?stream=True&token=${TOKEN}&voice_audio_path=${encodeURIComponent(json.voice_path)}`;
+  const audio = await fetch(audioUrl);
+  if (!audio.ok) throw new Error(`取音频失败：${audio.status}`);
+  return Buffer.from(await audio.arrayBuffer());
 }
 ```
 
-成功后 `data.result` 是 Base64 音频，`data.duration` 是毫秒时长。做字幕再读 `data.timestamp`，它是 JSON 字符串，不是对象。
-
-## 3. WebSocket 流式：边合成边播
-
-实时对话、长文本播报用流式更合适。地址：
-
-```
-wss://api.voice.dolphin-ai.jp/v1/tts/ws
-```
-
-握手头带 `Authorization: Bearer <token>`，连接后发一帧 JSON（字段和 HTTP 基本一致），服务端会推事件：
-
-- `SynthesisStarted`：开始合成
-- `SynthesisDuration`：总时长
-- `SynthesisTimestamp`：时间戳
-- `SynthesisCompleted`：结束
+调用：
 
 ```js
-const WebSocket = require('ws');
-
-const ws = new WebSocket('wss://api.voice.dolphin-ai.jp/v1/tts/ws', {
-  headers: { Authorization: `Bearer ${token}` },
-});
-
-ws.on('open', () => {
-  ws.send(JSON.stringify({
-    text: '今晚八点，直播间到手价只要两位数。',
-    lang_type: 'zh-cmn-Hans-CN',
-    voice: 'Haoyu',
-    emotion: 'advertising',
-    format: 'mp3',
-    sample_rate: 24000,
-  }));
-});
-
-ws.on('message', (buf) => {
-  const msg = JSON.parse(buf.toString());
-  if (msg.event === 'SynthesisCompleted') ws.close();
-});
+const buf = await synth({ text: '欢迎使用鑫仔的智能管家。', voiceId: 2044, emotion: 1 });
+fs.writeFileSync('hello.mp3', buf);
 ```
 
-注意：`wav` 不支持流式，流式用 `mp3` 或 `pcm`。
+## 7. 接进 Bncr 的四个工程点
 
-## 4. 声线怎么选：先语言，再场景，最后情绪
+1. **配置**：`ttsonBase`、`ttsonToken`、默认 `voiceId`、默认 `emotion`，Token 不进仓库。
+2. **切段**：按 `。！？；\n` 切 200–300 字，逐段请求；段间保持同一 voice/emotion/speed。
+3. **取音频**：`voice_path` 有时效，拿到响应立刻下载，不要只存路径。
+4. **额度与并发**：调 `/getTokenData` 检查余额；`concurrency` 限制内排队，超了就降级文字。
 
-官方一共 19 个声线：中文 14、日语 3、英语 2。完整清单和每个声线支持的情绪，我整理在知识库里；这里给结论。
+## 8. 错误码与异常（开发文档）
 
-### 中文主力
-
-| 声线 | 定位 | 一句话建议 |
+| 现象 | 含义 | 处理 |
 | --- | --- | --- |
-| Xiaohui | 全能女声 | 不知道选谁就先选它，情绪支持最全 |
-| Ruoxuan | 年轻女声 | 短视频口播、客服 |
-| Siyue | 标准男声 | 新闻、通知 |
-| Mingcheng | 有声书男声 | 纪录片、有声书 |
-| Haoxuan | 磁性男声 | 旁白、故事 |
-| Sida / Ziyi / Mingyu | 温和男声 | 课程、讲解、助手 |
-| Ziyang / Xiaoyue | 古风男声 | 国风文案、诗词 |
-| Haoyu | 活力男声 | 广告、活动 |
-| Mengqi | 活力女声 | 带货、综艺 |
-| Tongtong | 男童 | 儿童内容 |
-| Huiya | 温柔女声 | 睡前、安慰 |
+| `code: 200` | 成功 | 取 `voice_path/url/port` 下载音频 |
+| `350` | 余额/权限不足，常见于普通 Token 调二次元角色 | 换 `acgn.ttson.cn` 会员 Token，或改用普通声线 |
+| `401/403` | Token 无效、过期、无权限 | 重新生成 Token；确认没有多余空格 |
+| `404` | 路径/主机不对 | 重新从 Network 取 `BASE`，注意 `/flashsummary` 前缀 |
+| `500` | 服务端合成失败 | 换文本/声线重试；持续失败看官网状态 |
+| 返回成功但下载 403 | 取音频没带同一个 Token | `retrieveFileData` 必须带 `token` |
+| 文本超长 | 单次请求文本过长 | 按 200–300 字切段 |
 
-### 日语 / 英语
+## 9. 网页端常见问题
 
-- 日语：`Yuko`（女）、`Norika`（女）、`Yosuke`（男）
-- 英语：`Julie`（女）、`John`（男）
+- **输入字数/统计消失**：关掉浏览器扩展（翻译、油猴、广告拦截类），再刷新。
+- **无法生成/一直转圈**：换网络或换浏览器；网页端依赖长连接，代理不稳会失败。
+- **二次元角色报 350**：确认用的是 `acgn.ttson.cn` 的会员 Token。
+- **生成成功但没声**：先确认音频 URL 能打开；`retrieveFileData` 必须带同一个 Token。
 
-读日语就用 `ja-JP` + 日语音色，读英语就用 `en-US` + 英语音色。用中文声线读外语，口音会很怪。
+## 10. 接口稳定性与版本（开发文档）
 
-### 选声顺序
+- **host 会变**：`BASE` 是动态 GPU 实例，换实例就换域名；必须配置化，不要写死。
+- **声线会增减**：3751 是当前快照，角色上新/下线都会变；上线前拉一次 `/voices` 缓存，不要依赖固定 id。
+- **Token 有到期日**：`/getTokenData` 的 `expiry_date` 要监控；到期前换 Token。
+- **并发有限制**：`concurrency` 是并发上限，群聊批量合成要排队。
+- **临时文件有时效**：`voice_path` 不是永久地址，生成后立刻下载。
 
-1. 先按内容语言筛；
-2. 再按场景筛（客服 / 旁白 / 有声书 / 广告 / 儿童）；
-3. 最后用 `emotion` 微调，不要反过来。
+## 11. 听书网关（社区玩法）
 
-## 5. 情绪与风格：26 个 token，别乱叠
+有把海豚AI 包成“阅读 App 书源”的网关，形如：
 
-`emotion` 分两类：11 个基础情绪 + 15 个表达风格。
-
-### 基础情绪
-
-`pleased` 愉悦、`happy` 开心、`sorry` 抱歉、`sad` 悲伤、`angry` 生气、`annoyed` 烦躁、`scare` 惊恐、`hate` 厌恶、`surprise` 惊讶、`tear` 哭泣、`novel_dialog` 平静对白。
-
-### 表达风格
-
-`customer_service` 客服、`professional` 专业、`serious` 严肃、`narrator` 旁白、`narrator_immersive` 沉浸旁白、`comfort` 安慰、`lovey-dovey` 甜腻、`conniving` 腹黑、`tsundere` 傲娇、`charming` 魅惑、`storytelling` 讲故事、`radio` 情感电台、`yoga` 冥想、`advertising` 广告、`assistant` 助手。
-
-### 三条规则
-
-1. 一句只给一个 `emotion`，要变化就切段；
-2. 必须和 `voice` 的支持列表匹配，不匹配就降级为不传；
-3. 情绪要和文本、标点一致，全句句号却传 `happy`，听起来一定假。
-
-## 6. 角色配方：直接抄作业
-
-| 角色 | 声线 | 情绪 | 参数 |
-| --- | --- | --- | --- |
-| 智能管家 | Xiaohui / Mingyu | assistant | rate 1.0，pitch 1.0 |
-| 电商客服 | Xiaohui / Ruoxuan | customer_service | rate 1.0 |
-| 售后道歉 | Huiya | sorry | rate 0.95 |
-| 纪录片旁白 | Mingcheng | narrator | rate 0.9，pitch 0.95 |
-| 悬疑有声书 | Mingcheng | narrator_immersive | rate 0.85，pitch 0.9 |
-| 傲娇大小姐 | Huiya | tsundere | rate 1.05，pitch 1.05 |
-| 甜系女友 | Mengqi / Huiya | lovey-dovey | rate 1.0，pitch 1.15 |
-| 腹黑反派 | Xiaohui | conniving | rate 0.95 |
-| 深夜电台 | Ruoxuan / Huiya | radio | rate 0.9，silence 400 |
-| 睡前冥想 | Huiya / Sida | yoga / comfort | rate 0.8，pitch 0.9 |
-| 儿童故事 | Tongtong | 不传或 storytelling | rate 0.9 |
-| 广告带货 | Haoyu / Mengqi | advertising | rate 1.15 |
-| 新闻公告 | Siyue | serious / professional | rate 0.95 |
-| 古风独白 | Ziyang / Xiaoyue | narrator | rate 0.9 |
-
-## 7. 接进 Bncr 智能管家：四个工程问题
-
-### 7.1 配置只放四样
-
-```js
-{
-  dolphinAppId: '',
-  dolphinAppSecret: '',
-  dolphinVoice: 'Xiaohui',
-  dolphinEmotion: 'assistant'
-}
+```
+https://<host>/flashsummary/book?token=<TOKEN>&voice_id=<ID>&emotion=<ID>&speed_factor=1.0&pitch_factor=0&text=<文本>
 ```
 
-声线、情绪做成默认值，具体指令可以覆盖；Secret 不写进代码，也不回显到群里。
+它主要给阅读类 App 直接播放音频，不一定返回标准 JSON。Token 由分享者分发，额度用完会失败，适合体验，不建议当生产接口。公开 Token 要定期换，别把主账号 Token 放进去。
 
-### 7.2 Token 缓存
+## 12. 仓库与知识库
 
-Token 存 `mod/data/tts-token.json`：
+- 项目仓库：[github.com/seven-XINZ/bncr](https://github.com/seven-XINZ/bncr)
+- 知识库路径：`plugins/xinz/mod/kb/tts/`
+  - `dolphin.md`：接口与排错
+  - `voices.md`：3751 条声线、标签、热门角色 id
+  - `emotions.md`：37 个情绪 id
+  - `roles.md`：角色库与 15 套配方
+- 博客封面与文章源文件：`docs/tts-cover.webp`、`docs/dolphin-tts-article.md`
 
-```json
-{ "token": "...", "expire": 1690370423 }
-```
+## 13. 上线检查清单
 
-读取时判断 `expire - now < 3600` 就刷新。刷新失败但旧 Token 还没过期，继续用旧的，别直接让业务挂掉。
+- [ ] Token 只在服务端，仓库里搜不到
+- [ ] API host 是配置项，不是硬编码
+- [ ] 合成后立刻下载 `voice_path`，不依赖临时文件
+- [ ] 文本按 200–300 字切段，不切断句子
+- [ ] 二次元走 acgn 会员 Token，普通 Token 不硬调
+- [ ] 有额度检查和并发排队
+- [ ] 失败回文字，不把错误堆栈发群里
 
-### 7.3 文本切段
+## 14. 小结
 
-接口限制 1024 字节，中文约 300 字。按标点切，优先 `。！？；\n`，每段不超过 250 字，段间保持同一 `voice/emotion/rate`。
+海豚AI 的难点不在“调通”，而在“调对”：
 
-```js
-function splitText(text, max = 250) {
-  const parts = text.split(/(?<=[。！？；\n])/).filter(Boolean);
-  const out = [];
-  let buf = '';
-  for (const p of parts) {
-    if ((buf + p).length > max && buf) { out.push(buf); buf = p; }
-    else buf += p;
-  }
-  if (buf) out.push(buf);
-  return out;
-}
-```
+- Token 是登录凭证，不是 API Key，别泄露；
+- 接口 host 会变，必须从网页 Network 取；
+- 3751 条声线里大量是同角色多版本，先拿 id 再试听；
+- 37 个情绪 id 是底色，文本、标点、语速要配合；
+- 二次元角色是另一套站点和会员凭证，`350` 先查权限。
 
-### 7.4 缓存与降级
-
-- 高频句（问候、天气、开关灯结果）按 `voice+emotion+rate+text` 做 key 缓存音频，能省大量调用；
-- Token 失效自动重取一次；
-- 仍失败就回文字，不要把错误堆栈发到群里；
-- 群聊默认 `mp3 + 24000`，文件小、兼容好。
-
-## 8. 错误码速查
-
-| 状态码 | 含义 | 处理 |
-| --- | --- | --- |
-| 110000 | Token 缺失 | 检查 `Authorization` 头 |
-| 110001 | Token 无效 | 重取 Token |
-| 110006 | Token 创建失败 | 看 message，检查 AppID/Secret |
-| 110007 | AppID 不存在 | 核对控制台 |
-| 110008 | 签名错误 | 检查参数顺序、时间戳、Base64 |
-| 110009 | Token 过期 | 按 `expiration_time` 提前刷新 |
-| 140004 | AppID/Secret 为空 | 检查配置 |
-| 300000 | 参数非法 | 看 message 里的字段名 |
-
-## 9. 上线前检查清单
-
-- [ ] AppSecret 只在服务端，仓库里搜不到明文
-- [ ] Token 能自动刷新，过期不会导致整条链路挂掉
-- [ ] 文本按 1024 字节切段，不切断句子
-- [ ] 每个声线只传它支持的情绪，不支持的自动降级
-- [ ] 群聊默认 mp3，做字幕才开 timestamp
-- [ ] 失败回文字，有日志但不刷屏
-- [ ] 高频句有缓存，避免重复计费
-
-## 10. 小结
-
-海豚AI 的接入难度不在“调通”，而在“调好”：
-
-- 鉴权用 HMAC-SHA1 换 7 天 Token，Secret 永远留在服务端；
-- HTTP 适合一次性播报，WS 适合实时对话；
-- 声线先按语言和场景筛，情绪只做底色；
-- 接进 Bncr 要把 Token、切段、缓存、降级四件事做扎实。
-
-按这套接完，智能管家就不只是“会回文字”，而是能用一个固定的角色声音说话：客服是客服，旁白是旁白，晚安是晚安。
+按这套接完，智能管家就能用固定角色声音说话：客服是客服，旁白是旁白，原神角色也不会串味。

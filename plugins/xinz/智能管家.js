@@ -2,7 +2,7 @@
  *  @author xinz
  *  @name 智能管家
  *  @team xinz
- *  @version 1.8.0
+ *  @version 1.8.1
  *  @description 启动即接管全部插件：本地知识库、槽位追问、指代消解、危险确认、生词自学习，无大模型也能干活
  *  @rule ^([\s\S]+)$
  *  @admin false

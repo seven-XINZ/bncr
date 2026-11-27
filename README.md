@@ -402,9 +402,13 @@ ai 做个插件 每天 8 点把成都天气推到群里
 
 ## 更新日志
 
+### v1.8.1
+- 海豚AI TTS 文档改为实际 ttson.cn 接口：Token 登录、`/flashsummary` 合成、3751 条声线、37 个情绪 id、角色清单与 ACGN 会员凭证说明
+- 新增博客文章《海豚AI（TTS-Online）开发文档与接入教程》与封面，文章带仓库地址
+
 ### v1.8.0
 - 知识库升级为目录结构，`mod/kb.js` 递归扫描子目录，新增 `kb/index.md` 总索引
-- 新增海豚AI（DolphinVoice）TTS 知识库：`tts/dolphin.md`（鉴权/HTTP/WS/错误码）、`tts/voices.md`（19 声线）、`tts/emotions.md`（26 情绪风格）、`tts/roles.md`（15 套角色配方）
+- 新增海豚AI（TTS-Online）知识库：`tts/dolphin.md`（Token/接口/取音频/350 排错）、`tts/voices.md`（3751 声线/标签/角色 id）、`tts/emotions.md`（37 情绪 id）、`tts/roles.md`（角色库/15 套配方）
 - 新增 `mod/kb-sync.js`：博客 RSS 增量同步，服务器 crontab 每 6 小时跑一次，新文章自动追加到 `blog.md`
 - 知识库查询支持「接入/怎么接」→「对接」同义词，问「海豚AI 怎么接」直接命中对接文档
 - 索引页 `index.md` 只做导航，不参与检索，避免命令示例污染结果
