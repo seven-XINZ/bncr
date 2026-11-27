@@ -2,7 +2,7 @@
 
 > 本文分两部分：前半部分是**教程**，跟着命令从零跑通一条语音；后半部分是**开发文档**，查接口、字段、错误码和 Bncr 集成。海豚AI 不是“申请 API Key”那种开放平台，而是网页版配音站 + `/flashsummary` 接口。
 
-![海豚AI 语音接入实战](https://raw.githubusercontent.com/seven-XINZ/bncr/main/docs/tts-cover.webp)
+![海豚AI 语音接入实战](https://raw.githubusercontent.com/seven-XINZ/bncr/main/docs/tts-cover.webp?v=6460bd5)
 
 项目仓库：[github.com/seven-XINZ/bncr](https://github.com/seven-XINZ/bncr)
 
