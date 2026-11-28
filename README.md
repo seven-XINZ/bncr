@@ -668,7 +668,7 @@ node scripts/check-plugins.js
 - `scripts/check-plugins.js` 升级为全目录体检：语法、加密块、加密标记、`eval`/`new Function`/`atob`、超长混淆行、`@name` 与触发定义；本轮 93/93 通过
 - 新增 GitHub Actions `插件开源体检`，push/PR 改动 `plugins/` 时自动跑同一套检查，防止加密或动态执行代码回流
 - 新增 `LICENSE`（MIT）与 `THIRD_PARTY_NOTICES.md`，补齐第三方依赖来源与许可证说明
-- 线上 Bncr 已同步并重启验证：86 个插件全部加载、0 报错；修复 `Bncr_ChatGPT` 名称不一致、`运行状态` 变量遮蔽、`ping` 的 ESM `got` 兼容、`每周回顾` cron 七段表达式；补装 `mqtt`、`jsonpath-plus`，移除重复 60s 与 `EncryptFiles` 密文目录
+- 线上 Bncr 已同步并重启验证：80 个插件全部加载、0 报错，线上 88 个 JS 语法检查 0 失败；修复 `Bncr_ChatGPT` 名称不一致、`运行状态` 变量遮蔽、`ping` 的 ESM `got` 兼容、`每周回顾` cron 七段表达式；补装 `mqtt`、`jsonpath-plus`，移除重复 60s 与 `EncryptFiles` 密文目录
 
 ### v1.11.0
 - 按“除镜像更新外全部做”的方向新增 15 个插件：每周回顾、网页监控、域名到期、设备中心、NAS健康、媒体栈、Halo运营、内容订阅、链接摘要、群互动、群治理、多模态、事件规则、数据维护、安全审计
