@@ -220,6 +220,28 @@
     "id": "Vz+9Ew7UNoaiqCCbEh2PF2j7VJA=",
     "isChatPlugin": true
   },
+  "mj1RBPSmxeEsT9lcmKTO8+Wr4Dg=": {
+    "type": "github",
+    "name": "RSS订阅",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "订阅 RSS/Atom/JSON Feed，定时抓取新条目，通过通知路由推送",
+    "classification": [
+      "工具"
+    ],
+    "filename": "RSS订阅.js",
+    "fileDir": "/plugins/xinz/RSS订阅.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "mj1RBPSmxeEsT9lcmKTO8+Wr4Dg=",
+    "isChatPlugin": true
+  },
   "PVdN8eL4keWgGAOQ12eDrGQYPB0=": {
     "type": "github",
     "name": "cd",
@@ -418,6 +440,28 @@
     "id": "Amd5jY4yUSjYtta0SIZTW1/ky0k=",
     "isChatPlugin": true
   },
+  "3JnGy+cfmHvQIVbTYFJcmBy0rU4=": {
+    "type": "github",
+    "name": "服务巡检",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "HTTP 服务健康巡检：状态、延迟、连续失败告警，可通过通知路由推送",
+    "classification": [
+      "工具"
+    ],
+    "filename": "服务巡检.js",
+    "fileDir": "/plugins/xinz/服务巡检.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "3JnGy+cfmHvQIVbTYFJcmBy0rU4=",
+    "isChatPlugin": true
+  },
   "UosC73daLJcJvkCXq/D+1MCvl+w=": {
     "type": "github",
     "name": "每天60s",
@@ -438,6 +482,28 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "UosC73daLJcJvkCXq/D+1MCvl+w=",
+    "isChatPlugin": true
+  },
+  "uhQrdt20Bz9xmrSL41/XkRZ5wes=": {
+    "type": "github",
+    "name": "每日简报",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "聚合天气、热搜、RSS、服务巡检和待读清单，生成每日简报并推送",
+    "classification": [
+      "效率"
+    ],
+    "filename": "每日简报.js",
+    "fileDir": "/plugins/xinz/每日简报.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "uhQrdt20Bz9xmrSL41/XkRZ5wes=",
     "isChatPlugin": true
   },
   "uIMWFYu8xQk+7/v2U84rUE9evWU=": {
@@ -482,6 +548,50 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "HhXF/FXEqzOYxpPt9IAV9NRVWjc=",
+    "isChatPlugin": true
+  },
+  "qBEGAAxQckq5loR89ZyF3TSA3PM=": {
+    "type": "github",
+    "name": "稍后读",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "收藏链接、自动抓标题、列表/搜索/完成/删除，并与日报统计联动",
+    "classification": [
+      "效率"
+    ],
+    "filename": "稍后读.js",
+    "fileDir": "/plugins/xinz/稍后读.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "qBEGAAxQckq5loR89ZyF3TSA3PM=",
+    "isChatPlugin": true
+  },
+  "FXW0cf4qV2TQnC29mLVx45K07r8=": {
+    "type": "github",
+    "name": "联动中心",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "查看插件联动清单、最近事件，手动调用任意插件，自检总线与通知链路",
+    "classification": [
+      "工具"
+    ],
+    "filename": "联动中心.js",
+    "fileDir": "/plugins/xinz/联动中心.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "FXW0cf4qV2TQnC29mLVx45K07r8=",
     "isChatPlugin": true
   },
   "sWb/rfa2xGDUiFD3+SXS+BiF8uk=": {
@@ -570,6 +680,28 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "igoPTLlTJSwn8BHC8emGklKO0yM=",
+    "isChatPlugin": true
+  },
+  "Feo3gPDNaqMoLAM360FuOaN5wNM=": {
+    "type": "github",
+    "name": "通知路由",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "统一管理通知目标，接收其他插件发出的 notify/alert 事件并推送到对应平台",
+    "classification": [
+      "工具"
+    ],
+    "filename": "通知路由.js",
+    "fileDir": "/plugins/xinz/通知路由.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "Feo3gPDNaqMoLAM360FuOaN5wNM=",
     "isChatPlugin": true
   }
 }
