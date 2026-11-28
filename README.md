@@ -513,7 +513,7 @@ GitHub动态 检查
 - `事件规则` 用 `{text}`、`{name}`、`{url}` 等占位符把事件字段带入命令，例如：
   `规则 添加 摘要入库 notify 链接摘要 摘要 保存 {url} 自动收藏`
 - `数据维护` 备份的是 `plugins/xinz/mod/data/`，恢复前会先自动存一份 `pre-restore-*`。
-- `群治理` 的兜底规则只做活跃/广告/限流统计，未命中时调用 `s.next()` 放行，不抢其它插件。
+- `群治理` 的兜底规则只做活跃/广告/限流统计，未命中时 `return 'next'` 放行，不抢其它插件。
 
 **本地启用**
 
@@ -661,6 +661,7 @@ node scripts/check-plugins.js
 ## 更新日志
 
 ### v2.0.0
+- 修复 `群治理` 的 catch-all 用 `s.next()` 导致 Bncr 不继续匹配、吞掉 `ai 你会什么` / `你好` 等消息的问题，改为标准 `return 'next'`；`ai` 开头消息直接放行给智能管家
 - **非官方插件全量迭代**：83 个活动插件统一补齐 `@version 2.0.0`、`@license MIT`、`@repo`、`@platform`、`@classification`、`@updated`，分类收敛为 AI / 工具 / 娱乐 / 数据 / 群管理 / 效率 / 运维 / 内容 / 媒体 9 类；官方插件与 `_archive` 不动
 - 新增 `plugins/xinz/mod/plugin-kit.js`：统一 HTTP 客户端（15s 超时、UA、validateStatus）、错误兜底 `guard`、JSON 读写、长消息分片 `replyLong`、体积/时长格式化、管理员判断
 - `mod/link.js` 元信息解析扩展 `classification/platform/license/updated/size/mtime`，新增 `listActive()` 与 `stats()`，自动排除官方、归档与 `mod` 模块

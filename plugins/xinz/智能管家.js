@@ -1252,7 +1252,7 @@ module.exports = async s => {
         await saveLexicon(lex);
         return s.reply(before === lex.intents.length ? `词库里没有「${kw}」。` : `删掉了「${kw}」。`);
     }
-    if (/^(你会什么|你能干啥|能干什么|帮助|help|功能列表)$/.test(low)) {
+    if (/^(你会什么|你会些什么|你会啥|你能干啥|能干什么|帮助|help|功能列表)$/.test(low)) {
         return s.reply(helpText(cfg, lex, all, prefix));
     }
     if (/^(找插件|有没有.*插件|能干什么插件|插件搜索)/.test(low)) {

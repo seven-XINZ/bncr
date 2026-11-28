@@ -74,6 +74,7 @@ module.exports = async s => {
     await ConfigDB.get();
     const cfg = ConfigDB.userConfig || {};
     const raw = String(s.getMsg() || '').trim();
+    if (/^ai\s+/i.test(raw)) return 'next';
     const { all, key, data } = await getData(s);
 
     if (raw === '群规') {
@@ -131,7 +132,7 @@ module.exports = async s => {
         return s.reply(data.limit ? '✅ 已设置每人每分钟上限：' + data.limit : '✅ 已关闭群限流');
     }
 
-    if (isCommand(raw)) return typeof s.next === 'function' ? s.next() : undefined;
+    if (isCommand(raw)) return 'next';
 
     const user = userName(s);
     data.activity = data.activity || {};
@@ -168,5 +169,5 @@ module.exports = async s => {
         }
     }
     await save(all);
-    return typeof s.next === 'function' ? s.next() : undefined;
+    return 'next';
 };
