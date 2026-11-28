@@ -3,6 +3,7 @@
  * @rule ^(吊带|丝滑舞蹈|小姐姐|美女穿搭|鞠婧祎|完美身材|杀猪饲料|章若楠|古风|玉足|慢摇|清纯|COS|纯情女高|萝莉|欲梦|甜妹|jk|热舞)$
  * @admin false
  * @public true
+ * @classification ["娱乐"]
  * @author zhu
  * @team xinz
  * @Github https://github.com/Mrzqd

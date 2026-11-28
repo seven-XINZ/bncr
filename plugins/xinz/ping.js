@@ -2,7 +2,7 @@
  * @author seven
  * @name ping
  * @team xinz
- * @version 1.17.0
+ * @version 1.17.1
  * @description ping/web测速插件
  * @rule ^ping (.+)$
  * @admin false
@@ -13,9 +13,13 @@
  */
 
 const { exec } = require('child_process');
-sysMethod.testModule(['got'], { install: true });
-const got = require('got');
+sysMethod.testModule(['axios'], { install: true });
+const axios = require('axios');
+const https = require('https');
 const dns = require('dns');
+
+// 测速场景允许自签证书
+const insecureAgent = new https.Agent({ rejectUnauthorized: false });
 
 /**
  * 插件入口，插件被触发时将运行该function
@@ -49,8 +53,8 @@ async function pingAndWebTest(address, sender) {
         // 查询 IP 地址的地理位置
         let regionOutput = '';
         try {
-            const locationResponse = await got(`https://ipinfo.io/${ipAddress}/json`);
-            const locationData = JSON.parse(locationResponse.body);
+            const locationResponse = await axios.get(`https://ipinfo.io/${ipAddress}/json`, { timeout: 5000 });
+            const locationData = locationResponse.data;
             const city = locationData.city || '';
             const region = locationData.region || '';
             const country = locationData.country || '';
@@ -111,7 +115,7 @@ async function pingAndWebTest(address, sender) {
             try {
                 // 自动补全 https/http，优先使用 https
                 const url = /^https?:\/\//i.test(address) ? address : `https://${address}`;
-                const response = await got(url, { timeout: 5000, https: { rejectUnauthorized: false } }); // 设置超时时间
+                const response = await axios.get(url, { timeout: 5000, httpsAgent: insecureAgent }); // 设置超时时间
                 const duration = Date.now() - startTime; // 计算耗时
                 
                 // 发送格式化的结果

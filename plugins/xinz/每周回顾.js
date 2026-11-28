@@ -2,7 +2,7 @@
  * @author xinz
  * @name 每周回顾
  * @team xinz
- * @version 1.0.0
+ * @version 1.0.1
  * @description 聚合 GitHub、RSS、巡检、证书、打卡、记账、纪念日、待读，生成每周回顾
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^(每周回顾|周报)$
@@ -10,7 +10,7 @@
  * @public true
  * @priority 1000000
  * @disable false
- * @cron 0 0 20 0 * * *
+ * @cron 0 0 20 * * 0
  * @classification ["效率"]
  */
 'use strict';

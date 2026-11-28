@@ -577,13 +577,13 @@ node scripts/check-plugins.js
 
 | 插件 | 版本 | 说明 |
 |---|---|---|
-| 运行状态 | 1.6.2 | CPU/内存/磁盘美化展示 |
+| 运行状态 | 1.6.3 | CPU/内存/磁盘美化展示 |
 | 状态查询 | 1.0.0 | 本机资源快查 |
 | 容器操作 | 1.5.1 | 容器状态、日志、截图、二维码 |
 | SSH终端管家Pro | 2.5.0 | 简化提示、结果不截断，支持 `ssh 3` 直连 |
 | qbittorrent操作 | 2.2.0 | qB 任务管理 |
 | Aria2 push | 1.0.5 | Aria2 下载任务 |
-| ping | 1.17.0 | ping / 测速 |
+| ping | 1.17.1 | ping / 测速 |
 | 爱快重拨 | 1.1.7 | iKuai 重拨 |
 | 二维码生成 | 1.0.1 | 文本/链接转二维码 |
 | GitHub动态 | 1.0.0 | GitHub 仓库提交监控，Atom 定时抓取 |
@@ -668,6 +668,7 @@ node scripts/check-plugins.js
 - `scripts/check-plugins.js` 升级为全目录体检：语法、加密块、加密标记、`eval`/`new Function`/`atob`、超长混淆行、`@name` 与触发定义；本轮 93/93 通过
 - 新增 GitHub Actions `插件开源体检`，push/PR 改动 `plugins/` 时自动跑同一套检查，防止加密或动态执行代码回流
 - 新增 `LICENSE`（MIT）与 `THIRD_PARTY_NOTICES.md`，补齐第三方依赖来源与许可证说明
+- 线上 Bncr 已同步并重启验证：86 个插件全部加载、0 报错；修复 `Bncr_ChatGPT` 名称不一致、`运行状态` 变量遮蔽、`ping` 的 ESM `got` 兼容、`每周回顾` cron 七段表达式；补装 `mqtt`、`jsonpath-plus`，移除重复 60s 与 `EncryptFiles` 密文目录
 
 ### v1.11.0
 - 按“除镜像更新外全部做”的方向新增 15 个插件：每周回顾、网页监控、域名到期、设备中心、NAS健康、媒体栈、Halo运营、内容订阅、链接摘要、群互动、群治理、多模态、事件规则、数据维护、安全审计

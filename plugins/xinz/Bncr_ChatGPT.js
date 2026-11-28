@@ -1,8 +1,8 @@
 /**
  * @author seven
- * @name Bncr_ChatGP
+ * @name Bncr_ChatGPT
  * @team xinz
- * @version 1.2.1
+ * @version 1.2.2
  * @description ChatGpt聊天 借助于chatgpt模块，增加tts功能
  * @rule ^(yy) ([\s\S]+)$
  * @rule ^(yy)$

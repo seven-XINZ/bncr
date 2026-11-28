@@ -2,7 +2,7 @@
  * @author seven
  * @name 运行状态
  * @team xinz
- * @version 1.6.2
+ * @version 1.6.3
  * @description 本机资源查询 - 美化版 (自动过滤磁盘, 无网络信息)
  * @rule ^(运行状态)$
  * @admin false
@@ -33,8 +33,7 @@ const jsonSchema = BncrCreateSchema.object({
 });
 const ConfigDB = new BncrPluginConfig(jsonSchema);
 
-// *** FIX: Define sysMethod directly here ***
-const sysMethod = { name: '运行状态' }; // Provide a default name for logging
+const PLUGIN_NAME = '运行状态';
 
 // 美化工具函数
 const format = {
@@ -134,8 +133,8 @@ async function getDiskInfo() {
         }));
 
     } catch (error) {
-        console.error(`[${sysMethod.name}] 获取磁盘信息失败 (si.fsSize):`, error);
-        console.warn(`[${sysMethod.name}] 尝试使用 "df" 作为后备方案...`);
+        console.error(`[${PLUGIN_NAME}] 获取磁盘信息失败 (si.fsSize):`, error);
+        console.warn(`[${PLUGIN_NAME}] 尝试使用 "df" 作为后备方案...`);
         try {
             const diskData = [];
             for (const mountPoint of CONFIG.majorMountPointsForFallback) {
@@ -155,11 +154,11 @@ async function getDiskInfo() {
                  } catch (dfError) { /* 静默处理单个df失败 */ }
             }
             diskData.sort((a, b) => CONFIG.majorMountPointsForFallback.indexOf(a.mount) - CONFIG.majorMountPointsForFallback.indexOf(b.mount));
-            if (diskData.length > 0) { console.warn(`[${sysMethod.name}] 使用 "df" 后备方案获取了 ${diskData.length} 个挂载点的信息.`); }
-            else { console.error(`[${sysMethod.name}] "df" 后备方案也未能获取磁盘信息.`); }
+            if (diskData.length > 0) { console.warn(`[${PLUGIN_NAME}] 使用 "df" 后备方案获取了 ${diskData.length} 个挂载点的信息.`); }
+            else { console.error(`[${PLUGIN_NAME}] "df" 后备方案也未能获取磁盘信息.`); }
             return diskData;
         } catch (cmdError) {
-            console.error(`[${sysMethod.name}] 执行 "df" 后备命令时出错:`, cmdError); return [];
+            console.error(`[${PLUGIN_NAME}] 执行 "df" 后备命令时出错:`, cmdError); return [];
         }
     }
 }
@@ -191,7 +190,7 @@ async function getCpuInfo() {
             processes: { total: processes.all || 0, active: processes.running || 0 }
         };
     } catch (error) {
-        console.error(`[${sysMethod.name}] 获取CPU信息失败 (si):`, error);
+        console.error(`[${PLUGIN_NAME}] 获取CPU信息失败 (si):`, error);
         try {
             const osCpus = os.cpus(); const cpuModel = osCpus?.[0]?.model.split('@')[0].trim() || 'Unknown';
             let cpuSpeed = 'N/A', coreCount = osCpus?.length || 0;
@@ -199,7 +198,7 @@ async function getCpuInfo() {
             return { model: cpuModel, speed: cpuSpeed, cores: coreCount, threads: coreCount,
                      usage: format.progressBar(0), temp: 'N/A', processes: { total: 0, active: 0 } };
         } catch (osError) {
-            console.error(`[${sysMethod.name}] 使用OS API获取CPU信息失败:`, osError);
+            console.error(`[${PLUGIN_NAME}] 使用OS API获取CPU信息失败:`, osError);
             return { model: 'Unknown', speed: 'N/A', cores: 'N/A', threads: 'N/A',
                      usage: format.progressBar(0), temp: 'N/A', processes: { total: 0, active: 0 } };
         }
@@ -217,14 +216,14 @@ async function getMemoryInfo() {
                  used: format.formatBytes(usedMemory), percent: percent,
                  swapTotal: format.formatBytes(mem.swaptotal), swapUsed: format.formatBytes(mem.swapused) };
     } catch (error) {
-        console.error(`[${sysMethod.name}] 获取内存信息失败 (si):`, error);
+        console.error(`[${PLUGIN_NAME}] 获取内存信息失败 (si):`, error);
          try {
             const total = os.totalmem(); const free = os.freemem(); const used = total - free;
             const percent = total > 0 ? (used / total) * 100 : 0;
             return { total: format.formatBytes(total), free: format.formatBytes(free), used: format.formatBytes(used),
                      percent: percent, swapTotal: 'N/A', swapUsed: 'N/A' };
         } catch (osMemError) {
-            console.error(`[${sysMethod.name}] 使用OS API获取内存信息失败:`, osMemError);
+            console.error(`[${PLUGIN_NAME}] 使用OS API获取内存信息失败:`, osMemError);
             return { total: 'N/A', free: 'N/A', used: 'N/A', percent: 0, swapTotal: 'N/A', swapUsed: 'N/A' };
         }
     }
@@ -235,7 +234,7 @@ async function getMemoryInfo() {
  */
 function getUptime() {
     try { const uptime = os.uptime(); return { seconds: uptime, formatted: format.formatUptime(uptime) }; }
-    catch (e) { console.error(`[${sysMethod.name}] 获取运行时间失败:`, e); return { seconds: 0, formatted: 'N/A' }; }
+    catch (e) { console.error(`[${PLUGIN_NAME}] 获取运行时间失败:`, e); return { seconds: 0, formatted: 'N/A' }; }
 }
 
 /**
@@ -249,12 +248,12 @@ async function getLoadInfo() {
         return { avg1: loadAvg[0].toFixed(2), avg5: loadAvg[1].toFixed(2), avg15: loadAvg[2].toFixed(2),
                  maxLoad: cpuCount, safeLoad: (cpuCount * 0.75).toFixed(2) };
     } catch (error) {
-        console.error(`[${sysMethod.name}] 获取负载信息失败:`, error);
+        console.error(`[${PLUGIN_NAME}] 获取负载信息失败:`, error);
         try { const cpuCountFallback = os.cpus()?.length || 1;
             return { avg1: 'N/A', avg5: 'N/A', avg15: 'N/A', maxLoad: cpuCountFallback,
                      safeLoad: (cpuCountFallback * 0.75).toFixed(2) };
         } catch (fallbackError) {
-            console.error(`[${sysMethod.name}] 获取负载信息彻底失败:`, fallbackError);
+            console.error(`[${PLUGIN_NAME}] 获取负载信息彻底失败:`, fallbackError);
             return { avg1: 'N/A', avg5: 'N/A', avg15: 'N/A', maxLoad: '?', safeLoad: 'N/A' };
         }
     }
@@ -323,14 +322,14 @@ ${diskSection}
 
         const replyid = await s.reply(info);
         if (!CONFIG.refreshInterval) {
-            setTimeout(() => { s.delMsg(replyid).catch(e => console.error(`[${sysMethod.name}] 删除消息 ${replyid} 失败:`, e)); }, CONFIG.delMsgTime);
+            setTimeout(() => { s.delMsg(replyid).catch(e => console.error(`[${PLUGIN_NAME}] 删除消息 ${replyid} 失败:`, e)); }, CONFIG.delMsgTime);
         }
     } catch (e) {
-        console.error(`[${sysMethod.name}] 构建或发送系统信息时出错:`, e);
+        console.error(`[${PLUGIN_NAME}] 构建或发送系统信息时出错:`, e);
         try {
             const errorMsg = await s.reply('⚠️ 系统状态获取失败，请查看控制台日志');
-            setTimeout(() => { s.delMsg(errorMsg).catch(e => console.error(`[${sysMethod.name}] 删除错误消息失败:`, e)); }, CONFIG.delMsgTime);
-        } catch (replyError) { console.error(`[${sysMethod.name}] 发送错误消息也失败了:`, replyError); }
+            setTimeout(() => { s.delMsg(errorMsg).catch(e => console.error(`[${PLUGIN_NAME}] 删除错误消息失败:`, e)); }, CONFIG.delMsgTime);
+        } catch (replyError) { console.error(`[${PLUGIN_NAME}] 发送错误消息也失败了:`, replyError); }
     }
 }
 
@@ -338,7 +337,7 @@ ${diskSection}
 // 模块导出 - 入口点
 module.exports = async s => {
     if (!s || typeof s.reply !== 'function' || typeof s.delMsg !== 'function') {
-        console.error(`[${sysMethod.name}] 无效的输入对象 's', 无法执行.`);
+        console.error(`[${PLUGIN_NAME}] 无效的输入对象 's', 无法执行.`);
         return;
     }
     await ConfigDB.get();
