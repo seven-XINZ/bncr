@@ -8,7 +8,7 @@
  *  @public false
  *  @priority 999999
  *  @disable false
- * @version 2.0.0
+ * @version 2.0.1
  * @license MIT
  * @repo https://github.com/seven-XINZ/bncr
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
@@ -116,7 +116,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 /* ================= 词库（可被用户改写并存库） ================= */
 const DEFAULT_INTENTS = [
     { keys: ['做个插件', '写个插件', '生成插件', '造个插件'], target: '插件工坊', t: '做个插件 ${q}' },
-    { keys: ['天气', '气温', '温度', '热不热', '冷不冷', '下雨', '带伞'], target: '天气', t: '${q}天气' },
+    { keys: ['天气', '气候', '气温', '温度', '热不热', '冷不冷', '下雨', '带伞'], target: '天气', t: '${q}天气' },
     { keys: ['热搜', '热榜', '热点', '热门'], target: '热点趋势', t: '微博热搜' },
     { keys: ['状态', '负载', '内存', 'cpu', '运行情况', '服务器'], target: '运行状态', t: '运行状态' },
     { keys: ['摸鱼', '无聊'], target: '摸鱼', t: '摸鱼' },
@@ -1452,9 +1452,11 @@ module.exports = async s => {
         }
     }
 
-    // 上一轮意图延续（"那明天呢"），10 分钟内、同一会话才认
+    // 上一轮意图延续：只认"那明天呢""继续"这类无新信息的追问短句。
+    // 不能只凭"明天/这/那"开头就续接，否则"明天成都温江是什么气候"会被上一条"服务器状态"劫持。
+    const FOLLOW_RE = /^(那|这|它|他)?(明天|后天|今天|这个|那个)?(呢|怎么样|如何|咋样|继续|然后)$/;
     if (!target && userM.last && Date.now() - (userM.last.at || 0) < 10 * 60 * 1000 &&
-        (userM.last.gid || '') === gid && /^(那|这|明天|后天|它|他)/.test(low)) {
+        (userM.last.gid || '') === gid && low.length <= 8 && FOLLOW_RE.test(low)) {
         const p = resolvePlugin(all, userM.last.target);
         if (p) {
             target = p;

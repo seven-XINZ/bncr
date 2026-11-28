@@ -2,15 +2,15 @@
  * @author seven
  * @name 天气
  * @team xinz
- * @description 中文城市自动转英文查询天气
+ * @description 中文城市自动转英文查询天气，支持今天/明天/后天与自然语言问法
  * @rule ^天气(?!\s)([\s\S]+)$
- * @rule ^([\s\S]+)(天气)$
+ * @rule ^([\s\S]+)(天气|气候)(怎么样|如何|咋样|情况|预报)?$
  * @admin false
  * @public false
  * @priority 9999
  * @disable false
  * @service false
- * @version 2.0.0
+ * @version 2.0.1
  * @license MIT
  * @repo https://github.com/seven-XINZ/bncr
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
@@ -18,7 +18,7 @@
  * @classification ["数据"]
  */
 // https://api.weatherapi.com 注册获取 WeatherAPI 密钥，在前端"插件配置"中填写，源码不留明文
-const https = require('https'); // 使用 Node.js 内置的 https 模块
+// 未配置或接口失败时自动退回 wttr.in，保证天气问句仍能回答
 
 // 配置：WeatherAPI 密钥在面板填写
 const jsonSchema = BncrCreateSchema.object({
@@ -204,6 +204,7 @@ const weatherConditionMapping = {
     "Freezing Rain": "冻雨",
     "Mist": "薄雾",
     "Smoke": "烟雾",
+    "Smoky haze": "烟霾",
     "Squall": "阵风",
     "Frost": "霜",
     "Ice": "冰",
@@ -560,81 +561,184 @@ const completeWeatherConditions = {
     },
 };
 
+// 中文/区县别名，WeatherAPI 对部分区县名支持不稳定，这里做一层兜底
+const CITY_ALIASES = {
+    '成都': 'Chengdu',
+    '成都市': 'Chengdu',
+    '温江': 'Wenjiang',
+    '温江区': 'Wenjiang',
+    '成都温江': 'Wenjiang',
+    '成都温江区': 'Wenjiang',
+};
+
+// 把自然语言问句还原成"城市 + 第几天"
+function parseWeatherInput(raw) {
+    const text = String(raw || '')
+        .replace(/[?？!！。，,、]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    let day = 0;
+    if (/后天/.test(text)) day = 2;
+    else if (/明天|明日/.test(text)) day = 1;
+
+    const city = text
+        .replace(/明天|明日|后天|今天|今日|现在|当前/g, '')
+        .replace(/是什么|什么|啥|怎么样|如何|咋样|情况|预报|天气|气候/g, '')
+        .replace(/请问|帮我|帮忙|麻烦|查询|查一下|看看|一下|的|呢|吗|啊|呀/g, '')
+        .replace(/[\s，。！？、,.!?~～:：;；"'“”‘’（）()【】\[\]]/g, '')
+        .trim();
+
+    return { city, day };
+}
+
+function cityCandidates(city) {
+    const list = [];
+    if (CITY_ALIASES[city]) list.push(CITY_ALIASES[city]);
+    if (cityMapping[city]) list.push(Object.keys(cityMapping[city])[0]);
+    const stripped = city.replace(/[省市区县]$/g, '');
+    if (stripped && stripped !== city) {
+        if (CITY_ALIASES[stripped]) list.push(CITY_ALIASES[stripped]);
+        if (cityMapping[stripped]) list.push(Object.keys(cityMapping[stripped])[0]);
+    }
+    // 区县查不到时退回所属城市
+    if (/成都|温江/.test(city)) list.push('Chengdu');
+    list.push(city);
+    return [...new Set(list.filter(Boolean))];
+}
+
+async function requestWeather(apiKey, city, day) {
+    const endpoint = day > 0 ? 'forecast.json' : 'current.json';
+    const url = `https://api.weatherapi.com/v1/${endpoint}?key=${encodeURIComponent(apiKey)}&q=${encodeURIComponent(city)}&days=${day > 0 ? 3 : 1}&aqi=no&lang=zh`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(12000) });
+    const result = await res.json();
+    if (result.error) throw new Error(result.error.message || '查询失败');
+    return result;
+}
+
+async function requestWttr(cities, day, label) {
+    for (const city of cities) {
+        try {
+            const url = `https://wttr.in/${encodeURIComponent(city)}?format=j1&lang=zh`;
+            const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+            const data = await res.json();
+            const area = data.nearest_area && data.nearest_area[0];
+            const nearest = (area && area.areaName && area.areaName[0] && area.areaName[0].value) || city;
+            const location = label || nearest;
+            if (day === 0) {
+                const cur = data.current_condition && data.current_condition[0];
+                if (!cur) continue;
+                return {
+                    provider: 'wttr',
+                    location,
+                    day,
+                    condition: (cur.weatherDesc && cur.weatherDesc[0] && cur.weatherDesc[0].value) || '',
+                    temp: cur.temp_C,
+                    humidity: cur.humidity,
+                    wind: cur.windspeedKmph,
+                    windDir: cur.winddir16Point,
+                };
+            }
+            const dayData = data.weather && data.weather[day];
+            if (!dayData) continue;
+            const hourly = dayData.hourly || [];
+            const noon = hourly[4] || hourly[0] || {};
+            return {
+                provider: 'wttr',
+                location,
+                day,
+                date: dayData.date,
+                condition: (noon.weatherDesc && noon.weatherDesc[0] && noon.weatherDesc[0].value) || '',
+                mintemp: dayData.mintempC,
+                maxtemp: dayData.maxtempC,
+                humidity: Math.round(hourly.reduce((n, h) => n + (Number(h.humidity) || 0), 0) / Math.max(hourly.length, 1)),
+                wind: Math.max(...hourly.map(h => Number(h.windspeedKmph) || 0), 0),
+                rain: Math.max(...hourly.map(h => Number(h.chanceofrain) || 0), 0),
+            };
+        } catch (err) {
+            // 换下一个城市候选
+        }
+    }
+    return null;
+}
+
 // 导出模块
 module.exports = async s => {
     await ConfigDB.get();
     const apiKey = (ConfigDB.userConfig && ConfigDB.userConfig.apiKey) || '';
-    if (!apiKey) {
-        return await s.reply('天气插件未配置 WeatherAPI 密钥，请前往前端"插件配置"填写。');
+
+    const parsed = parseWeatherInput(s.param(1));
+    if (!parsed.city) {
+        return await s.reply('要查哪个城市？例如「成都天气」「明天温江天气」。');
     }
 
-    // 获取用户输入的城市名
-    const cityInput = s.param(1).trim();  // 获取输入并去除多余空格
-
-    // 检查是否为中文城市名称并转换为英文
-    const city = Object.keys(cityMapping).includes(cityInput) ? Object.keys(cityMapping[cityInput])[0] : cityInput; // 如果映射表中存在则转换，否则使用原输入
-
-    // 构造请求 URL
-    const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(city)}&aqi=no`;
-    console.log("请求的 URL:", url); // 打印请求的 URL
-    console.log("查询的城市名称:", city); // 打印查询的城市名称
-
-    // 发送 HTTPS 请求
-    https.get(url, async (response) => {
-        let data = '';
-        
-        // 监听数据接收
-        response.on('data', chunk => {
-            data += chunk;
-        });
-
-        // 监听请求结束
-        response.on('end', async () => {
-            console.log("接收到的原始数据:", data); // 打印接收到的原始数据
-            
-            // 尝试解析 JSON 格式
+    const candidates = cityCandidates(parsed.city);
+    let result = null;
+    let lastError = null;
+    if (apiKey) {
+        for (const city of candidates) {
             try {
-                const result = JSON.parse(data);
-                console.log("解析后的结果:", result); // 打印解析后的结果
-                
-                // 检查返回的结果
-                if (result.error) {
-                    // 如果返回的状态码不是 200，说明请求失败
-                    await s.reply(`查询失败：${result.error.message}。请检查城市名称是否正确。`);
-                    return;
-                }
-
-                // 提取天气数据
-                const location = result.location.name; // 城市名称
-                const temperature = result.current.temp_c; // 温度
-                const weather = weatherConditionMapping[result.current.condition.text] || result.current.condition.text; // 天气状况翻译
-                const windDirection = windDirectionMapping[result.current.wind_dir] || result.current.wind_dir; // 风向翻译
-                const windPower = result.current.wind_kph; // 风速
-                const humidity = result.current.humidity; // 湿度
-                const reportTime = result.current.last_updated; // 发布时间
-
-                // 格式化返回信息为中文标准
-                const weatherReport = `地区：${location}（${cityInput}）\n` + // 显示原输入城市名称
-                                      `温度：${temperature}°C\n` +
-                                      `天气状况：${weather}\n` +
-                                      `风向：${windDirection}\n` +  // 这里使用了中文风向
-                                      `风速：${windPower}公里/小时\n` +
-                                      `湿度：${humidity}%\n` +
-                                      `发布时间：${reportTime}`;
-
-                // 发送天气信息
-                await s.reply(weatherReport);
-            } catch (error) {
-                console.error("解析错误:", error);
-                console.error("接收到的数据:", data); // 打印接收到的数据用于调试
-                await s.reply("解析天气数据失败，请稍后再试。");
+                result = await requestWeather(apiKey, city, parsed.day);
+                break;
+            } catch (err) {
+                lastError = err;
             }
-        });
-    }).on('error', async (error) => {
-        console.error("请求错误:", error);
-        await s.reply("天气查询失败，请稍后再试。");
-    });
+        }
+    }
 
-    // 插件运行结束时，如果返回 'next'，则继续向下匹配插件，否则只运行当前插件
-    return 'next';  // 继续向下匹配插件
-}
+    // WeatherAPI 没配或请求失败时，退回 wttr.in，避免天气问题直接哑火
+    if (!result) {
+        const wttr = await requestWttr(candidates, parsed.day, parsed.city);
+        if (wttr) {
+            const weather = weatherConditionMapping[wttr.condition] || wttr.condition || '未知';
+            const windDir = windDirectionMapping[wttr.windDir] || wttr.windDir || '';
+            const head = `地区：${wttr.location}\n`;
+            if (wttr.day > 0) {
+                const label = wttr.day === 1 ? '明天' : '后天';
+                return await s.reply(head +
+                    `日期：${wttr.date}（${label}）\n` +
+                    `天气状况：${weather}\n` +
+                    `气温：${wttr.mintemp}~${wttr.maxtemp}°C\n` +
+                    `降水概率：${wttr.rain}%\n` +
+                    `湿度：${wttr.humidity}%\n` +
+                    `最大风速：${wttr.wind}公里/小时`);
+            }
+            return await s.reply(head +
+                `温度：${wttr.temp}°C\n` +
+                `天气状况：${weather}\n` +
+                `风向：${windDir}\n` +
+                `风速：${wttr.wind}公里/小时\n` +
+                `湿度：${wttr.humidity}%`);
+        }
+        return await s.reply(`查询失败：${lastError ? lastError.message : '天气接口无响应'}。可以换个城市名再试，比如「成都天气」。`);
+    }
+
+    const location = result.location.name;
+    if (parsed.day > 0) {
+        const dayData = result.forecast && result.forecast.forecastday && result.forecast.forecastday[parsed.day];
+        if (!dayData) return await s.reply('天气预报数据还没出来，晚点再试。');
+        const label = parsed.day === 1 ? '明天' : '后天';
+        const condition = dayData.day.condition.text;
+        const weather = weatherConditionMapping[condition] || condition;
+        const report = `地区：${location}（${parsed.city}）\n` +
+            `日期：${dayData.date}（${label}）\n` +
+            `天气状况：${weather}\n` +
+            `气温：${dayData.day.mintemp_c}~${dayData.day.maxtemp_c}°C\n` +
+            `降水概率：${dayData.day.daily_chance_of_rain}%\n` +
+            `湿度：${dayData.day.avghumidity}%\n` +
+            `最大风速：${dayData.day.maxwind_kph}公里/小时`;
+        return await s.reply(report);
+    }
+
+    const condition = result.current.condition.text;
+    const weather = weatherConditionMapping[condition] || condition;
+    const windDirection = windDirectionMapping[result.current.wind_dir] || result.current.wind_dir;
+    const report = `地区：${location}（${parsed.city}）\n` +
+        `温度：${result.current.temp_c}°C\n` +
+        `天气状况：${weather}\n` +
+        `风向：${windDirection}\n` +
+        `风速：${result.current.wind_kph}公里/小时\n` +
+        `湿度：${result.current.humidity}%\n` +
+        `发布时间：${result.current.last_updated}`;
+    await s.reply(report);
+};
