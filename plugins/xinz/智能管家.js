@@ -71,7 +71,8 @@ function modelFieldSchema() {
     const ids = MODEL_CACHE.models.map(x => x.id);
     if (!ids.length) return base.setDefault('deepseek-v4-1-flash-economy-261017');
     const values = [...new Set([...ids, ...Object.keys(MODEL_ID_ALIASES)])];
-    return base.setEnum(values).setEnumNames(values).setDefault(ids[0]);
+    const preferred = ids.includes('deepseek-v4-1-flash-economy-261017') ? 'deepseek-v4-1-flash-economy-261017' : ids[0];
+    return base.setEnum(values).setEnumNames(values).setDefault(preferred);
 }
 async function fetchModelList(cfg) {
     const base = normalizeApiBase(cfg.apiBase);
@@ -105,6 +106,10 @@ function saveModelCache(cfg, models) {
             models,
         }, null, 2), 'utf8');
         fs.renameSync(tmp, MODEL_CACHE_FILE);
+        MODEL_CACHE.models = models;
+        MODEL_CACHE.updatedAt = Date.now();
+        MODEL_CACHE.apiBase = normalizeApiBase(cfg.apiBase);
+        MODEL_CACHE.keyTag = keyTag(cfg.apiKey);
     } catch (e) {
         console.log('[智能管家] 模型列表缓存写入失败:', e.message);
     }
