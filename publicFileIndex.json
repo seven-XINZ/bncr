@@ -379,7 +379,7 @@
     "name": "ping",
     "author": "seven",
     "team": "xinz",
-    "version": "1.17.0",
+    "version": "1.17.1",
     "description": "ping/web测速插件",
     "classification": [
       "功能插件"
@@ -482,6 +482,28 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "D/uaUYygyPL2RBPqT697A4TL02U=",
+    "isChatPlugin": true
+  },
+  "+a2fqDJ8ejUWNO+p6lxMFgWMgEg=": {
+    "type": "github",
+    "name": "各种小姐姐视频",
+    "author": "zhu",
+    "team": "xinz",
+    "version": "1.0.1",
+    "description": "小姐姐视频聚合，按关键词返回对应分类视频接口结果",
+    "classification": [
+      "娱乐"
+    ],
+    "filename": "各种小姐姐视频.js",
+    "fileDir": "/plugins/xinz/各种小姐姐视频.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "+a2fqDJ8ejUWNO+p6lxMFgWMgEg=",
     "isChatPlugin": true
   },
   "DGUtbcT2hyCFeCzRK8Ro3xcNfps=": {
@@ -709,7 +731,7 @@
     "name": "每周回顾",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "聚合 GitHub、RSS、巡检、证书、打卡、记账、纪念日、待读，生成每周回顾",
     "classification": [
       "效率"
