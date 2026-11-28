@@ -220,6 +220,28 @@
     "id": "OqNX/rewm/ibo7MlYtIHwACOLKU=",
     "isChatPlugin": true
   },
+  "88mZRP4avq/Ly5Km8mNQ7LDNJjk=": {
+    "type": "github",
+    "name": "Halo运营",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "读取 Halo 文章、评论、友链与站点统计，辅助博客运营",
+    "classification": [
+      "内容"
+    ],
+    "filename": "Halo运营.js",
+    "fileDir": "/plugins/xinz/Halo运营.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "88mZRP4avq/Ly5Km8mNQ7LDNJjk=",
+    "isChatPlugin": true
+  },
   "Vz+9Ew7UNoaiqCCbEh2PF2j7VJA=": {
     "type": "github",
     "name": "IKUN",
@@ -240,6 +262,28 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "Vz+9Ew7UNoaiqCCbEh2PF2j7VJA=",
+    "isChatPlugin": true
+  },
+  "Ps3zvS+ihKK9422/b8Crpu9TkeU=": {
+    "type": "github",
+    "name": "NAS健康",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "本机磁盘、SMART、UPS、备份时效巡检",
+    "classification": [
+      "运维"
+    ],
+    "filename": "NAS健康.js",
+    "fileDir": "/plugins/xinz/NAS健康.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "Ps3zvS+ihKK9422/b8Crpu9TkeU=",
     "isChatPlugin": true
   },
   "mj1RBPSmxeEsT9lcmKTO8+Wr4Dg=": {
@@ -374,6 +418,28 @@
     "id": "qqakjLyD/SseGbg7Mfym4MVJdYw=",
     "isChatPlugin": true
   },
+  "w0NPAU0sKVxqebJZB42NcxSHdhg=": {
+    "type": "github",
+    "name": "事件规则",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "监听联动总线事件，按规则调用其它插件，形成自动化工作流",
+    "classification": [
+      "自动化"
+    ],
+    "filename": "事件规则.js",
+    "fileDir": "/plugins/xinz/事件规则.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "w0NPAU0sKVxqebJZB42NcxSHdhg=",
+    "isChatPlugin": true
+  },
   "CnSNt7HhDyxvH10xE1PZGNfv1Jo=": {
     "type": "github",
     "name": "二维码生成",
@@ -396,6 +462,28 @@
     "id": "CnSNt7HhDyxvH10xE1PZGNfv1Jo=",
     "isChatPlugin": true
   },
+  "D/uaUYygyPL2RBPqT697A4TL02U=": {
+    "type": "github",
+    "name": "内容订阅",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "视频、播客、arXiv 等内容的 RSS/Atom 订阅与新条目提醒",
+    "classification": [
+      "内容"
+    ],
+    "filename": "内容订阅.js",
+    "fileDir": "/plugins/xinz/内容订阅.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "D/uaUYygyPL2RBPqT697A4TL02U=",
+    "isChatPlugin": true
+  },
   "DGUtbcT2hyCFeCzRK8Ro3xcNfps=": {
     "type": "github",
     "name": "命令大全",
@@ -416,6 +504,94 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "DGUtbcT2hyCFeCzRK8Ro3xcNfps=",
+    "isChatPlugin": true
+  },
+  "QeW1aBSthTFwQexNrfREoA6Vg/o=": {
+    "type": "github",
+    "name": "域名到期",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "通过 RDAP 查询域名到期时间，30/7 天临期告警",
+    "classification": [
+      "工具"
+    ],
+    "filename": "域名到期.js",
+    "fileDir": "/plugins/xinz/域名到期.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "QeW1aBSthTFwQexNrfREoA6Vg/o=",
+    "isChatPlugin": true
+  },
+  "rRy0egKBLPjU0a2q+PwojqvwkOw=": {
+    "type": "github",
+    "name": "多模态",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "通过可配置的 OCR/ASR/审核接口处理图片与音频链接",
+    "classification": [
+      "工具"
+    ],
+    "filename": "多模态.js",
+    "fileDir": "/plugins/xinz/多模态.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "rRy0egKBLPjU0a2q+PwojqvwkOw=",
+    "isChatPlugin": true
+  },
+  "Jv/958Gqd3jNO2OheNK1cgO0z4w=": {
+    "type": "github",
+    "name": "媒体栈",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "查询 Emby 服务状态、最近入库、正在播放与会话",
+    "classification": [
+      "媒体"
+    ],
+    "filename": "媒体栈.js",
+    "fileDir": "/plugins/xinz/媒体栈.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "Jv/958Gqd3jNO2OheNK1cgO0z4w=",
+    "isChatPlugin": true
+  },
+  "rYvWPKcN7r0VhrzB82hFOvtJysI=": {
+    "type": "github",
+    "name": "安全审计",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "联动事件审计、Token 估算与用量统计",
+    "classification": [
+      "运维"
+    ],
+    "filename": "安全审计.js",
+    "fileDir": "/plugins/xinz/安全审计.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "rYvWPKcN7r0VhrzB82hFOvtJysI=",
     "isChatPlugin": true
   },
   "XYzGWiCTgCXS4mMV7/Xbq1wZwvM=": {
@@ -462,6 +638,28 @@
     "id": "9rT6GpPCLzYeLk9a71i/XTUUMuI=",
     "isChatPlugin": true
   },
+  "B4AKH2ZUOBoxBh46RxOtyyoHcMQ=": {
+    "type": "github",
+    "name": "数据维护",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "插件数据备份/恢复、插件健康检查、依赖图与数据占用",
+    "classification": [
+      "运维"
+    ],
+    "filename": "数据维护.js",
+    "fileDir": "/plugins/xinz/数据维护.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "B4AKH2ZUOBoxBh46RxOtyyoHcMQ=",
+    "isChatPlugin": true
+  },
   "Amd5jY4yUSjYtta0SIZTW1/ky0k=": {
     "type": "github",
     "name": "星座运势",
@@ -504,6 +702,28 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "3JnGy+cfmHvQIVbTYFJcmBy0rU4=",
+    "isChatPlugin": true
+  },
+  "qVBtB2b5/ggUkrEvwISEtaFkb5s=": {
+    "type": "github",
+    "name": "每周回顾",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "聚合 GitHub、RSS、巡检、证书、打卡、记账、纪念日、待读，生成每周回顾",
+    "classification": [
+      "效率"
+    ],
+    "filename": "每周回顾.js",
+    "fileDir": "/plugins/xinz/每周回顾.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "qVBtB2b5/ggUkrEvwISEtaFkb5s=",
     "isChatPlugin": true
   },
   "UosC73daLJcJvkCXq/D+1MCvl+w=": {
@@ -660,6 +880,72 @@
     "id": "oigUOD/4TraRJoFf5L1jjtzAIyI=",
     "isChatPlugin": true
   },
+  "romhXBEKOkMOLcrdoQEgq//HjhU=": {
+    "type": "github",
+    "name": "网页监控",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "监控网页正文变化，支持关键词过滤，变化时通过通知路由提醒",
+    "classification": [
+      "工具"
+    ],
+    "filename": "网页监控.js",
+    "fileDir": "/plugins/xinz/网页监控.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "romhXBEKOkMOLcrdoQEgq//HjhU=",
+    "isChatPlugin": true
+  },
+  "TaFgOH35pawwMz00vEWkZqAqZjc=": {
+    "type": "github",
+    "name": "群互动",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "群投票、接龙、抽奖，数据按群隔离",
+    "classification": [
+      "群管"
+    ],
+    "filename": "群互动.js",
+    "fileDir": "/plugins/xinz/群互动.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "TaFgOH35pawwMz00vEWkZqAqZjc=",
+    "isChatPlugin": true
+  },
+  "JdKoExeco0CtWbh8Jlb19tglbAQ=": {
+    "type": "github",
+    "name": "群治理",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "群规、欢迎语、广告词提醒与活跃榜",
+    "classification": [
+      "群管"
+    ],
+    "filename": "群治理.js",
+    "fileDir": "/plugins/xinz/群治理.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "JdKoExeco0CtWbh8Jlb19tglbAQ=",
+    "isChatPlugin": true
+  },
   "FXW0cf4qV2TQnC29mLVx45K07r8=": {
     "type": "github",
     "name": "联动中心",
@@ -792,6 +1078,28 @@
     "id": "86UzyvvByC9r3gaZuY4AQ5HGS3M=",
     "isChatPlugin": true
   },
+  "iOkw5I8Zntq4AIe6qphOdzBxAEw=": {
+    "type": "github",
+    "name": "设备中心",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "设备与场景入口：MQTT 开关、HomeAssistant 状态/场景",
+    "classification": [
+      "工具"
+    ],
+    "filename": "设备中心.js",
+    "fileDir": "/plugins/xinz/设备中心.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "iOkw5I8Zntq4AIe6qphOdzBxAEw=",
+    "isChatPlugin": true
+  },
   "Feo3gPDNaqMoLAM360FuOaN5wNM=": {
     "type": "github",
     "name": "通知路由",
@@ -812,6 +1120,28 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "Feo3gPDNaqMoLAM360FuOaN5wNM=",
+    "isChatPlugin": true
+  },
+  "PhNh41Gk55tnf0qGZQb6O6zIevk=": {
+    "type": "github",
+    "name": "链接摘要",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "抓取网页标题、描述与正文摘要，可一键存入稍后读",
+    "classification": [
+      "内容"
+    ],
+    "filename": "链接摘要.js",
+    "fileDir": "/plugins/xinz/链接摘要.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "PhNh41Gk55tnf0qGZQb6O6zIevk=",
     "isChatPlugin": true
   }
 }

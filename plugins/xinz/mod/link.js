@@ -217,6 +217,8 @@ function emit(event, payload = {}) {
     }
     try {
         bus.emit(event, evt);
+        // 通配符订阅，便于规则引擎统一接管事件；不影响原有按事件名订阅。
+        bus.emit('*', evt);
     } catch (e) {
         console.error('[联动总线] 事件处理失败:', event, e.message);
     }
