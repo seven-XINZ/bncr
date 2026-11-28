@@ -8,7 +8,7 @@
  *  @public false
  *  @priority 999999
  *  @disable false
- * @version 2.0.1
+ * @version 2.0.3
  * @license MIT
  * @repo https://github.com/seven-XINZ/bncr
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
@@ -18,18 +18,126 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+const crypto = require('crypto');
 
 const PLUGIN_ROOT = path.join(__dirname, '..');
 const SELF_FILE = __filename;
+const MOD_DIR = path.join(__dirname, 'mod');
+const MODEL_CACHE_FILE = path.join(MOD_DIR, 'data', 'models.json');
 
 const STATE_KEY = 'state';
 const LEX_KEY = 'lexicon';
 const MEM_KEY = 'memory';
 
+// 方舟控制台展示名 → API Model ID；直接填展示名会 404
+const MODEL_ID_ALIASES = {
+    'DeepSeek-V4.1-Flash经济版': 'deepseek-v4-1-flash-economy-261017',
+    'DeepSeek-V4.1-Flash': 'deepseek-v4-1-flash-261017',
+};
+
+function keyTag(key) {
+    return crypto.createHash('sha256').update(String(key || '')).digest('hex').slice(0, 10);
+}
+function readModelCache() {
+    try {
+        const j = JSON.parse(fs.readFileSync(MODEL_CACHE_FILE, 'utf8'));
+        return {
+            models: Array.isArray(j.models) ? j.models.filter(x => x && x.id) : [],
+            updatedAt: Number(j.updatedAt) || 0,
+            apiBase: String(j.apiBase || ''),
+            keyTag: String(j.keyTag || ''),
+        };
+    } catch (e) {
+        return { models: [], updatedAt: 0, apiBase: '', keyTag: '' };
+    }
+}
+const MODEL_CACHE = readModelCache();
+function normalizeModelId(model) {
+    const m = String(model || '').trim();
+    if (MODEL_ID_ALIASES[m]) return MODEL_ID_ALIASES[m];
+    const hit = MODEL_CACHE.models.find(x => x.id === m || x.name === m);
+    return hit ? hit.id : m;
+}
+function normalizeApiBase(base) {
+    let b = String(base || 'https://ark.cn-beijing.volces.com/api/v3').trim().replace(/\/+$/, '');
+    b = b.replace(/\/chat\/completions$/i, '');
+    if (!/\/v\d+(?:\/)?$/i.test(b) && !/\/api\/v\d+(?:\/)?$/i.test(b)) b += '/v1';
+    return b;
+}
+function modelFieldSchema() {
+    const base = BncrCreateSchema.string()
+        .setTitle('模型')
+        .setDescription('填 Model ID；保存 Key 后会自动拉取列表，重新打开配置页即可下拉选择');
+    const ids = MODEL_CACHE.models.map(x => x.id);
+    if (!ids.length) return base.setDefault('deepseek-v4-1-flash-economy-261017');
+    const values = [...new Set([...ids, ...Object.keys(MODEL_ID_ALIASES)])];
+    return base.setEnum(values).setEnumNames(values).setDefault(ids[0]);
+}
+async function fetchModelList(cfg) {
+    const base = normalizeApiBase(cfg.apiBase);
+    const res = await axios.get(`${base}/models`, {
+        headers: { Authorization: 'Bearer ' + cfg.apiKey, Accept: 'application/json' },
+        timeout: 20000,
+    });
+    const raw = res.data && (Array.isArray(res.data.data) ? res.data.data : (Array.isArray(res.data) ? res.data : res.data.models));
+    const list = Array.isArray(raw) ? raw : [];
+    return list.map(x => ({
+        id: String((x && (x.id || x.model)) || '').trim(),
+        name: String((x && (x.name || x.id || x.model)) || '').trim(),
+        domain: String((x && x.domain) || ''),
+        apiSupported: x && x.api_supported,
+    })).filter(x => {
+        if (!x.id) return false;
+        if (x.apiSupported && x.apiSupported['chat/completions'] === false) return false;
+        if (x.domain && !/llm|vlm|chat|text/i.test(x.domain)) return false;
+        if (/embedding|rerank|seedream|seedance|image|video|tts|audio|3d|translation/i.test(x.id)) return false;
+        return true;
+    });
+}
+function saveModelCache(cfg, models) {
+    try {
+        fs.mkdirSync(path.dirname(MODEL_CACHE_FILE), { recursive: true });
+        const tmp = MODEL_CACHE_FILE + '.tmp';
+        fs.writeFileSync(tmp, JSON.stringify({
+            updatedAt: Date.now(),
+            apiBase: normalizeApiBase(cfg.apiBase),
+            keyTag: keyTag(cfg.apiKey),
+            models,
+        }, null, 2), 'utf8');
+        fs.renameSync(tmp, MODEL_CACHE_FILE);
+    } catch (e) {
+        console.log('[智能管家] 模型列表缓存写入失败:', e.message);
+    }
+}
+let modelCatalogTask = null;
+async function ensureModelCatalog(cfg, force = false) {
+    if (!String(cfg.apiKey || '').trim()) return MODEL_CACHE.models;
+    const sameKey = MODEL_CACHE.keyTag === keyTag(cfg.apiKey) && MODEL_CACHE.apiBase === normalizeApiBase(cfg.apiBase);
+    if (!force && sameKey && MODEL_CACHE.models.length && Date.now() - MODEL_CACHE.updatedAt < 30 * 60 * 1000) {
+        return MODEL_CACHE.models;
+    }
+    if (modelCatalogTask) return modelCatalogTask;
+    modelCatalogTask = (async () => {
+        const models = await fetchModelList(cfg);
+        if (!models.length) throw new Error('接口没有返回可用模型');
+        const before = JSON.stringify(MODEL_CACHE.models.map(x => x.id));
+        saveModelCache(cfg, models);
+        const after = JSON.stringify(models.map(x => x.id));
+        // 列表变化时 touch 自身，触发 Bncr 热重载，让配置页出现新的下拉选项
+        if (before !== after) {
+            setTimeout(() => {
+                try { fs.utimesSync(SELF_FILE, new Date(), new Date()); } catch (e) {}
+            }, 1500);
+        }
+        return models;
+    })().finally(() => { modelCatalogTask = null; });
+    return modelCatalogTask;
+}
+
 const jsonSchema = BncrCreateSchema.object({
-    apiBase: BncrCreateSchema.string().setTitle('接口地址').setDefault('https://ark.cn-beijing.volces.com/api/v3'),
-    apiKey: BncrCreateSchema.string().setTitle('API Key').setDescription('可留空，留空走本地词库').setDefault(''),
-    model: BncrCreateSchema.string().setTitle('模型').setDefault('doubao-seed-2-1-turbo'),
+    apiBase: BncrCreateSchema.string().setTitle('接口地址').setDescription('OpenAI 兼容地址，如 https://api.openai.com/v1 或方舟 https://ark.cn-beijing.volces.com/api/v3').setDefault('https://ark.cn-beijing.volces.com/api/v3'),
+    apiKey: BncrCreateSchema.string().setTitle('API Key').setDescription('可留空，留空走本地词库；保存后自动拉模型列表').setDefault(''),
+    model: modelFieldSchema(),
     name: BncrCreateSchema.string().setTitle('名字').setDefault('小新'),
     persona: BncrCreateSchema.string()
         .setTitle('性格设定')
@@ -64,7 +172,17 @@ const jsonSchema = BncrCreateSchema.object({
 const ConfigDB = new BncrPluginConfig(jsonSchema);
 const StateDB = new BncrDB('智能管家状态');
 const child = require('child_process');
-const MOD_DIR = path.join(__dirname, 'mod');
+
+// 启动后自动拉一次模型列表；Key 变更或列表过期时也会刷新
+setTimeout(async () => {
+    try {
+        await ConfigDB.get();
+        const cfg0 = ConfigDB.userConfig || {};
+        if (cfg0.apiKey) await ensureModelCatalog(cfg0);
+    } catch (e) {
+        console.log('[智能管家] 启动拉取模型列表失败:', e.message);
+    }
+}, 5000).unref?.();
 let modStore = null;
 try { modStore = require('./mod/store'); } catch (e) { console.log('[智能管家] mod/store 不可用:', e.message); }
 let kbMod = null;
@@ -676,7 +794,7 @@ async function think(cfg, text, all, st, uid, mem, userM) {
     for (let i = 0; i < 2; i++) {
         try {
             const res = await axios.post(
-                `${String(cfg.apiBase).replace(/\/+$/, '')}/chat/completions`,
+                `${normalizeApiBase(cfg.apiBase)}/chat/completions`,
                 {
                     model: cfg.model,
                     temperature: 0.7,
@@ -688,7 +806,11 @@ async function think(cfg, text, all, st, uid, mem, userM) {
                 },
                 { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + cfg.apiKey }, timeout: 60000 }
             );
-            const raw = String((((res.data || {}).choices || [])[0] || {}).message?.content || '');
+            const msg = (((res.data || {}).choices || [])[0] || {}).message || {};
+            const raw0 = msg.content;
+            const raw = Array.isArray(raw0)
+                ? raw0.map(x => (typeof x === 'string' ? x : (x && (x.text || x.content)) || '')).join('')
+                : String(raw0 || '');
             const clean = raw.replace(/```json|```/gi, '').trim();
             const js = (clean.match(/\{[\s\S]*\}/) || [''])[0];
             if (!js) throw new Error('模型未返回 JSON');
@@ -883,6 +1005,8 @@ module.exports = async s => {
         },
         ConfigDB.userConfig || {}
     );
+    cfg.model = normalizeModelId(cfg.model);
+    if (cfg.apiKey) ensureModelCatalog(cfg).catch(e => console.log('[智能管家] 模型列表拉取失败:', e.message));
 
     const rawMsg = String(s.getMsg() || '').trim();
     const prefix = String(cfg.prefix || 'ai');
@@ -906,6 +1030,19 @@ module.exports = async s => {
         const hitRule = p0.some(p => ruleFits(p, rawMsg));
         if (!hitLex && !hitChat && !hitRule) return 'next';
         text = rawMsg;
+    }
+    // 模型目录命令：立即刷新并回显，方便把 Model ID 填进配置
+    if (/^(模型列表|可用模型|刷新模型|拉取模型|modelist)$/i.test(normalize(text))) {
+        if (!String(cfg.apiKey || '').trim()) return s.reply('还没填 API Key，填完再拉模型列表。');
+        try {
+            const models = await ensureModelCatalog(cfg, true);
+            const head = `可用模型（${models.length}）：\n`;
+            const body = models.slice(0, 40).map(x => x.id).join('\n');
+            const tail = models.length > 40 ? `\n…还有 ${models.length - 40} 个` : '';
+            return s.reply(head + body + tail + '\n\n已写入缓存，重新打开插件配置页即可下拉选择。');
+        } catch (e) {
+            return s.reply(`拉取模型列表失败：${e.message}`);
+        }
     }
     /* ---------- 群里没点名：自己判断该不该接话 ---------- */
     const gid = groupIdOf(s);
