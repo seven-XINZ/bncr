@@ -2,7 +2,7 @@
  * @author 薛定谔的大灰机
  * @name 全网影视
  * @team xinz
- * @version 1.0.1
+ * @version 1.0.2
  * @description 全网免费影视动漫（数据来源：妖狐数据开放API接口：https://api.yaohud.cn）
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo
  * @rule ^(vip|VIP|动漫|电影|影视)(.*)$
@@ -14,6 +14,16 @@
 
 const mo = require('./mod/subassembly')      // 此脚本依赖仓库模块，请拉取全部文件
 const sysdb = new BncrDB('API')
+
+/** 接口可能返回 JSON 字符串或对象；只做 JSON 解析，绝不执行代码 */
+function parseMaybeJson(value) {
+    if (typeof value !== 'string') return value
+    try {
+        return JSON.parse(value)
+    } catch {
+        return null
+    }
+}
 
 module.exports = async s => {
     let key;
@@ -64,7 +74,7 @@ async function main(s, key) {
         }
     }
     if (params.n && (data = await mo.request({ url, method: 'get', params })).status == 200) {
-        if (((data = data.data)?.code == 200) || ((data = eval("(" + data + ")"))?.code == 200)) {
+        if (((data = data.data)?.code == 200) || ((data = parseMaybeJson(data))?.code == 200)) {
             image = data.data.picture
             msg = `${data.data.name}`
             msg += `\n${data.data.language}`

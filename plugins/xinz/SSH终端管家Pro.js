@@ -2,9 +2,9 @@
  * @author seven (modified by xinz)
  * @name SSH终端管家Pro
  * @team xinz
- * @version 2.4.0
+ * @version 2.5.0
  * @description 智能SSH管理 (简化提示, 结果不截断, 5s/60s删除)
- * @rule ^(ssh|SSH)$
+ * @rule ^(ssh|SSH)(?:\s+(\d+))?$
  * @priority 10000
  * @admin true
  * @public false
@@ -94,7 +94,16 @@ const main = async (s) => {
     // --- 主流程 ---
     try {
         const session = { startTime: Date.now(), commandCount: 0, lastActivity: null };
-        const device = await showDeviceMenu(s, configuredDevices, selectionTimeout);
+        // 支持 "ssh 3" 直接连接第 3 台设备；只发 "ssh" 时仍弹设备菜单
+        const directIndex = Number(String(s.param(2) || '').trim());
+        let device;
+        if (Number.isInteger(directIndex) && directIndex > 0) {
+            validateDeviceIndex(directIndex - 1, configuredDevices.length);
+            device = configuredDevices[directIndex - 1];
+            await replyAndDelete(s, `⚡ 直连 #${directIndex} ${device.icon || '⚙️'} ${device.name}`, SHORT_DELETE_DELAY_MS, logPrefix);
+        } else {
+            device = await showDeviceMenu(s, configuredDevices, selectionTimeout);
+        }
         await verifyConnection(s, device, connectTimeoutMs, Client);
         const conn = await createConnection(s, device, connectTimeoutMs, Client);
         await commandLoop(s, device, conn, session, commandTimeout, Client);

@@ -516,7 +516,7 @@ GitHub动态 检查
 
 ```bash
 node scripts/check-plugins.js
-# 72/72 通过语法检查
+# 93/93 通过（含语法、加密块、动态执行、元信息检查）
 ```
 
 需要外部接口的插件在 Bncr 面板补配置即可：`媒体栈` 填 Emby 地址/API Key，`Halo运营` 填站点地址（评论/统计需要时再填 Token），`设备中心` 填 MQTT/HA/Frigate，`多模态` 填 OCR/ASR/审核接口，`NAS健康` 填 SMART 设备、UPS 名称和备份路径。`设备中心` 的 MQTT 发送依赖 Bncr 运行环境里有 `mqtt` 模块；没装时只有 MQTT 开关会提示，其余功能不受影响。
@@ -541,8 +541,8 @@ node scripts/check-plugins.js
 
 | 插件 | 版本 | 说明 |
 |---|---|---|
-| 智能管家 | 1.3.1 | 接管全仓插件，记忆/词库/情绪/上下文 |
-| 插件工坊 | 1.0.0 | 大模型生成插件，独立目录 + 校验 |
+| 智能管家 | 1.8.2 | 接管全仓插件，记忆/词库/情绪/上下文 |
+| 插件工坊 | 1.0.1 | 大模型生成插件，独立目录 + 沙箱语法校验 |
 | 智能AI聊天 | 1.1.0 | OpenAI 兼容接口，多轮上下文 |
 | ChatGPT | 1.0.6 | 经典对话插件（触发词 gpt/画图） |
 | Bncr_ChatGP | 1.2.1 | 带 TTS 的对话插件（触发词 yy） |
@@ -569,7 +569,7 @@ node scripts/check-plugins.js
 | 热点趋势 | 1.1.0 | 微博官方 + 第三方兜底 |
 | 每天60s | 1.1.0 | 60 秒早报，可定时推送 |
 | 星座运势 | 1.0.9 | 运势查询，接口可换 |
-| 全网影视 | 1.0.1 | 影视聚合搜索 |
+| 全网影视 | 1.0.2 | 影视聚合搜索 |
 | 博客文章搜索 | 1.3.1 | RSS 内文搜索 |
 | BT种子搜索 | 1.1.0 | Jackett 模糊搜索 |
 
@@ -580,8 +580,7 @@ node scripts/check-plugins.js
 | 运行状态 | 1.6.2 | CPU/内存/磁盘美化展示 |
 | 状态查询 | 1.0.0 | 本机资源快查 |
 | 容器操作 | 1.5.1 | 容器状态、日志、截图、二维码 |
-| SSH终端管家Pro | 2.4.0 | 简化提示、结果不截断 |
-| bncr_ssh2.0 | 1.2.1 | SSH 连接 + 容器更新命令 |
+| SSH终端管家Pro | 2.5.0 | 简化提示、结果不截断，支持 `ssh 3` 直连 |
 | qbittorrent操作 | 2.2.0 | qB 任务管理 |
 | Aria2 push | 1.0.5 | Aria2 下载任务 |
 | ping | 1.17.0 | ping / 测速 |
@@ -626,7 +625,7 @@ node scripts/check-plugins.js
 | 鑫仔bot菜单 | 3.0.1 | 实时扫描插件，分页菜单 |
 | 菜单 | 1.0.4 | 自定义菜单 |
 | 命令大全 | 1.0.1 | 无界命令速查 |
-| 定时消息推送 | 1.3.2 | Cron 定时推文本/文件/JSON/API |
+| 定时消息推送 | 1.3.3 | Cron 定时推文本/文件/JSON/API |
 | 疯狂星期四 | 1.1.0 | 周四 10:03 自动玩梗 |
 
 ### 娱乐
@@ -655,6 +654,20 @@ node scripts/check-plugins.js
 ---
 
 ## 更新日志
+
+### v1.12.0
+- **全仓开源审计**：递归扫描 `plugins/` 全部 93 个 JS，确认不再包含 `Code Encryption Block`、`HideStart/HideEnd` 加密块或压缩混淆代码
+- 移除 3 个加密插件，均有仓库内明文实现替代：
+  - `运行状态美化版.js` → 由 `运行状态.js`（v1.6.2 明文）替代
+  - `_archive/自定义菜单.js` → 由 `菜单.js` 替代
+  - `bncr_ssh2.0.js` → 由 `SSH终端管家Pro.js` 替代，并补回 `ssh 3` 序号直连
+- 消除动态执行：`全网影视` 的 `eval` 改为 `JSON.parse`；`智能管家` 的四则运算改为自研安全解析器；`插件工坊` 的 `new Function` 改为 `vm.Script` 只编译不执行，并把 `new Function` 加入生成代码黑名单
+- 重写 `_archive/每天60秒读懂世界.js`：移除远程 `eval` 加载 cheerio 和 9KB 压缩 `Env`，改为本地 `cheerio` + `axios` 明文实现
+- 移除 `定时消息推送.js` 的 `HideStart/HideEnd` 标记，避免 Bncr 保存时再次生成加密副本
+- 删除无任何引用的 `plugins/xinz/mod/CryptoJS.js`（约 192KB 历史第三方库）
+- `scripts/check-plugins.js` 升级为全目录体检：语法、加密块、加密标记、`eval`/`new Function`/`atob`、超长混淆行、`@name` 与触发定义；本轮 93/93 通过
+- 新增 GitHub Actions `插件开源体检`，push/PR 改动 `plugins/` 时自动跑同一套检查，防止加密或动态执行代码回流
+- 新增 `LICENSE`（MIT）与 `THIRD_PARTY_NOTICES.md`，补齐第三方依赖来源与许可证说明
 
 ### v1.11.0
 - 按“除镜像更新外全部做”的方向新增 15 个插件：每周回顾、网页监控、域名到期、设备中心、NAS健康、媒体栈、Halo运营、内容订阅、链接摘要、群互动、群治理、多模态、事件规则、数据维护、安全审计
@@ -766,4 +779,4 @@ node scripts/check-plugins.js
 
 ## 声明
 
-仓库内部分插件来自 Bncr 社区，版权归原作者；`xinz/` 下的适配器与插件为本项目自用改造版。使用前请自行确认所在地区法规与平台条款，风险自负。
+仓库内部分插件来自 Bncr 社区，版权归原作者；`xinz/` 下的适配器与插件为本项目自用改造版。本次开源审计范围是 `plugins/`，`Adapter/` 下的官方适配器为上游分发、保持原样。除第三方依赖外，本仓库源码以 [MIT License](LICENSE) 开源；第三方依赖与代码来源见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。使用前请自行确认所在地区法规与平台条款，风险自负。

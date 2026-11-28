@@ -1,0 +1,24 @@
+name: 插件开源体检
+
+on:
+  push:
+    paths:
+      - 'plugins/**'
+      - 'scripts/check-plugins.js'
+      - '.github/workflows/plugin-audit.yml'
+  pull_request:
+    paths:
+      - 'plugins/**'
+      - 'scripts/check-plugins.js'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 检查加密块、动态执行与语法
+        run: node scripts/check-plugins.js

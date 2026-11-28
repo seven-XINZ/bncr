@@ -2,7 +2,7 @@
  * @author xinz
  * @name 插件工坊
  * @team xinz
- * @version 1.0.0
+ * @version 1.0.1
  * @description 用一句话让大模型写出可用的 Bncr 插件，落盘并做语法校验（仅管理员）
  * @rule ^(做个插件|写个插件|生成插件)\s+([\s\S]+)$
  * @rule ^(插件工坊|生成的插件|插件清单)$
@@ -13,6 +13,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 const axios = require('axios');
 
 const PLUGIN_ROOT = path.join(__dirname, '..');
@@ -27,7 +28,7 @@ const jsonSchema = BncrCreateSchema.object({
 const ConfigDB = new BncrPluginConfig(jsonSchema);
 const DB = new BncrDB('插件工坊');
 
-const DANGEROUS = /child_process|execSync|spawnSync|\bspawn\(|\bfs\.rm\b|rmdirSync|unlinkSync|process\.exit|require\(['"]https?['"]\)|eval\s*\(/;
+const DANGEROUS = /child_process|execSync|spawnSync|\bspawn\(|\bfs\.rm\b|rmdirSync|unlinkSync|process\.exit|require\(['"]https?['"]\)|eval\s*\(|new\s+Function\s*\(/;
 
 function outDirOf(cfg) {
     const d = String((cfg || {}).outDir || '自动生成').replace(/^[./]+/, '').replace(/[\\:*?"<>|]/g, '');
@@ -115,8 +116,8 @@ module.exports = async s => {
     if (!/@name/.test(code) || !/@(rule|cron)/.test(code)) return s.reply('生成的代码缺少触发规则或定时信息，已拒绝写入。');
 
     try {
-        // 语法校验：用 Function 编译，不执行
-        new Function(code);
+        // 语法校验：在独立沙箱编译，只编译不执行，也不接触当前上下文
+        new vm.Script(code, { filename: 'plugin-workshop-check.js' });
     } catch (e) {
         return s.reply('生成的代码有语法错误，未写入：' + e.message);
     }

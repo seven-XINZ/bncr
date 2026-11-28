@@ -2,7 +2,7 @@
  *  @author xinz
  *  @name 智能管家
  *  @team xinz
- *  @version 1.8.1
+ *  @version 1.8.2
  *  @description 启动即接管全部插件：本地知识库、槽位追问、指代消解、危险确认、生词自学习，无大模型也能干活
  *  @rule ^([\s\S]+)$
  *  @admin false
@@ -417,6 +417,56 @@ function extractQuery(text, hitKey) {
 }
 
 /* ================= 离线内置能力 ================= */
+/**
+ * 安全四则运算，不执行任意代码。
+ * 仅接受数字、括号和 + - * /，用递归下降解析。
+ */
+function safeCalc(input) {
+    const source = String(input).replace(/\s+/g, '');
+    const tokens = source.match(/\d+(?:\.\d+)?|[()+\-*/]/g);
+    if (!tokens || tokens.join('') !== source) return null;
+    let pos = 0;
+    const peek = () => tokens[pos];
+    const parseExpr = () => {
+        let v = parseTerm();
+        while (peek() === '+' || peek() === '-') {
+            const op = tokens[pos++];
+            const r = parseTerm();
+            v = op === '+' ? v + r : v - r;
+        }
+        return v;
+    };
+    const parseTerm = () => {
+        let v = parseFactor();
+        while (peek() === '*' || peek() === '/') {
+            const op = tokens[pos++];
+            const r = parseFactor();
+            v = op === '*' ? v * r : v / r;
+        }
+        return v;
+    };
+    const parseFactor = () => {
+        if (peek() === '+') { pos++; return parseFactor(); }
+        if (peek() === '-') { pos++; return -parseFactor(); }
+        if (peek() === '(') {
+            pos++;
+            const v = parseExpr();
+            if (tokens[pos++] !== ')') throw new Error('括号不匹配');
+            return v;
+        }
+        const t = tokens[pos++];
+        if (!t || !/^\d/.test(t)) throw new Error('非法字符');
+        return Number(t);
+    };
+    try {
+        const value = parseExpr();
+        if (pos !== tokens.length || !Number.isFinite(value)) return null;
+        return value;
+    } catch {
+        return null;
+    }
+}
+
 function builtinReply(text) {
     const t = normalize(text);
     if (/^(现在几点|几点了|什么时间|报时|时间)$/.test(t)) {
@@ -432,10 +482,8 @@ function builtinReply(text) {
     if (calc) {
         const expr = calc[1].replace(/%/g, '/100').replace(/[^0-9+\-*/(). ]/g, '');
         if (/^[0-9+\-*/(). ]+$/.test(expr)) {
-            try {
-                const v = Function('return (' + expr + ')')();
-                if (typeof v === 'number' && isFinite(v)) return `${expr.trim()} = ${Math.round(v * 1e6) / 1e6}`;
-            } catch (e) {}
+            const v = safeCalc(expr);
+            if (typeof v === 'number') return `${expr.trim()} = ${Math.round(v * 1e6) / 1e6}`;
         }
         return '这个式子我算不了，换个写法。';
     }

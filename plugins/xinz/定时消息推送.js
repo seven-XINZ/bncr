@@ -2,7 +2,7 @@
  * @author xinz
  * @name 定时消息推送
  * @team xinz
- * @version 1.3.2
+ * @version 1.3.3
  * @description 根据Cron表达式定时发送多种类型内容(文本,URL内容,JSON,文件,Markdown,随机项,API调用,位置,Sticker等)到多个目标。包含详细配置说明。
  * @rule ^$-----NEVER-MATCH-----$
  * @admin false
@@ -11,7 +11,6 @@
  * @public false
  * @service true
  */
-/* HideStart */
 'use strict';
 
 const fs = require('fs').promises;
@@ -336,4 +335,3 @@ module.exports = async () => {
     console.info(`${PLUGIN_NAME_FOR_LOG} Service finished setup. Registered ${registeredCount} task(s).`);
 
 }; // End of module.exports service function
-/* HideEnd */
