@@ -2,8 +2,8 @@
  * @author xinz
  * @name 每日简报
  * @team xinz
- * @version 1.0.0
- * @description 聚合天气、热搜、RSS、服务巡检和待读清单，生成每日简报并推送
+ * @version 1.1.0
+ * @description 聚合天气、热搜、RSS、服务巡检、生态数据和待读清单，生成每日简报并推送
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^(今日简报|每日简报|简报)$
  * @admin false
@@ -26,6 +26,7 @@ const jsonSchema = BncrCreateSchema.object({
     includeHot: BncrCreateSchema.boolean().setTitle('包含热搜').setDefault(true),
     includeRss: BncrCreateSchema.boolean().setTitle('包含 RSS').setDefault(true),
     includeHealth: BncrCreateSchema.boolean().setTitle('包含服务巡检').setDefault(true),
+    includeEcosystem: BncrCreateSchema.boolean().setTitle('包含生态数据').setDescription('GitHub / 证书 / 打卡 / 记账 / 纪念日').setDefault(true),
     includeReadlater: BncrCreateSchema.boolean().setTitle('包含待读').setDefault(true),
     targets: BncrCreateSchema.string().setTitle('推送目标').setDescription('通知路由里的目标名，逗号分隔；留空走默认目标').setDefault(''),
 });
@@ -99,6 +100,61 @@ async function healthSection(cfg) {
     return `🩺 服务\n${targets.length} 个目标，${down.length ? '异常：' + down.map(t => t.name).join('、') : '全部正常'}`;
 }
 
+function dateKey(d = new Date()) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function nextDays(item) {
+    const m = String(item.date || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return null;
+    const base = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    const today = new Date();
+    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    if (item.repeat === 'once') return Math.ceil((base - start) / 86400000);
+    let next = new Date(today.getFullYear(), base.getMonth(), Math.min(base.getDate(), new Date(today.getFullYear(), base.getMonth() + 1, 0).getDate()));
+    if (next < start) next = new Date(today.getFullYear() + 1, base.getMonth(), Math.min(base.getDate(), new Date(today.getFullYear() + 1, base.getMonth() + 1, 0).getDate()));
+    return Math.ceil((next - start) / 86400000);
+}
+
+async function ecosystemSection(cfg) {
+    if (!cfg.includeEcosystem) return '';
+    const [repos, certs, habits, entries, anniversaries] = await Promise.all([
+        store.get('github', 'repos', []),
+        store.get('cert', 'certs', []),
+        store.get('habit', 'habits', []),
+        store.get('ledger', 'entries', []),
+        store.get('anniversary', 'items', []),
+    ]);
+    const lines = [];
+    if (Array.isArray(repos) && repos.length) {
+        const failed = repos.filter(x => x.lastError).length;
+        lines.push(`· GitHub：${repos.length} 个仓库${failed ? `，${failed} 个抓取失败` : ''}`);
+    }
+    if (Array.isArray(certs) && certs.length) {
+        const near = certs.filter(x => x.last && !x.last.error && Number(x.last.days) <= 14);
+        lines.push(`· 证书：${certs.length} 个域名${near.length ? `，${near.length} 个 14 天内到期` : '，全部正常'}`);
+    }
+    if (Array.isArray(habits) && habits.length) {
+        const today = dateKey();
+        const done = habits.filter(h => Object.keys(h.records || {}).some(k => (h.records[k] || []).includes(today))).length;
+        lines.push(`· 打卡：今日 ${done}/${habits.length} 个习惯有人打卡`);
+    }
+    if (Array.isArray(entries) && entries.length) {
+        const month = dateKey().slice(0, 7);
+        const expense = entries.filter(x => x.type === 'expense' && String(x.date || '').startsWith(month)).reduce((n, x) => n + Number(x.amount || 0), 0);
+        lines.push(`· 记账：本月支出 ${expense.toFixed(2)}`);
+    }
+    if (Array.isArray(anniversaries) && anniversaries.length) {
+        const next = anniversaries
+            .map(x => ({ name: x.name, days: nextDays(x) }))
+            .filter(x => x.days !== null && x.days >= 0)
+            .sort((a, b) => a.days - b.days)[0];
+        lines.push(next ? `· 纪念日：${next.name} ${next.days === 0 ? '就是今天' : `还有 ${next.days} 天`}` : `· 纪念日：${anniversaries.length} 个`);
+    }
+    if (!lines.length) return '🧩 生态\n暂无 GitHub / 证书 / 打卡 / 记账 / 纪念日数据';
+    return '🧩 生态\n' + lines.join('\n');
+}
+
 async function readlaterSection(cfg) {
     if (!cfg.includeReadlater) return '';
     const items = await store.get('readlater', 'items', []);
@@ -108,7 +164,7 @@ async function readlaterSection(cfg) {
 
 async function buildBrief(cfg) {
     const sections = [`🌅 每日简报 · ${todayText()}`];
-    for (const fn of [weatherSection, hotSection, rssSection, healthSection, readlaterSection]) {
+    for (const fn of [weatherSection, hotSection, rssSection, healthSection, ecosystemSection, readlaterSection]) {
         try {
             const section = await fn(cfg);
             if (section) sections.push(section);
@@ -116,7 +172,7 @@ async function buildBrief(cfg) {
             sections.push('⚠️ 一段内容生成失败：' + e.message);
         }
     }
-    sections.push('—\n回复「订阅列表 / 巡检 / 稍后读列表」查看详情');
+    sections.push('—\n回复「订阅列表 / 巡检 / 证书 / 打卡列表 / 记账列表 / 纪念日列表」查看详情');
     return sections.join('\n\n');
 }
 
@@ -131,6 +187,7 @@ module.exports = async s => {
             includeHot: true,
             includeRss: true,
             includeHealth: true,
+            includeEcosystem: true,
             includeReadlater: true,
             targets: '',
         },

@@ -198,6 +198,28 @@
     "id": "J+17f9sYzVwMnDK0Mjj39zIpAKI=",
     "isChatPlugin": true
   },
+  "OqNX/rewm/ibo7MlYtIHwACOLKU=": {
+    "type": "github",
+    "name": "GitHub动态",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "订阅 GitHub 仓库提交 Atom，定时检查新提交并推送到通知路由",
+    "classification": [
+      "工具"
+    ],
+    "filename": "GitHub动态.js",
+    "fileDir": "/plugins/xinz/GitHub动态.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "OqNX/rewm/ibo7MlYtIHwACOLKU=",
+    "isChatPlugin": true
+  },
   "Vz+9Ew7UNoaiqCCbEh2PF2j7VJA=": {
     "type": "github",
     "name": "IKUN",
@@ -328,6 +350,28 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "fqglT/LUjxe/ftVwql910keHGs4=",
+    "isChatPlugin": true
+  },
+  "qqakjLyD/SseGbg7Mfym4MVJdYw=": {
+    "type": "github",
+    "name": "习惯打卡",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "习惯打卡、连续天数、今日完成和近 7 天统计，数据供每日简报读取",
+    "classification": [
+      "效率"
+    ],
+    "filename": "习惯打卡.js",
+    "fileDir": "/plugins/xinz/习惯打卡.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "qqakjLyD/SseGbg7Mfym4MVJdYw=",
     "isChatPlugin": true
   },
   "CnSNt7HhDyxvH10xE1PZGNfv1Jo=": {
@@ -489,8 +533,8 @@
     "name": "每日简报",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
-    "description": "聚合天气、热搜、RSS、服务巡检和待读清单，生成每日简报并推送",
+    "version": "1.1.0",
+    "description": "聚合天气、热搜、RSS、服务巡检、生态数据和待读清单，生成每日简报并推送",
     "classification": [
       "效率"
     ],
@@ -570,6 +614,50 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "qBEGAAxQckq5loR89ZyF3TSA3PM=",
+    "isChatPlugin": true
+  },
+  "4aqGhtFul/0NQ/x9vZl4U8QSBgE=": {
+    "type": "github",
+    "name": "站点证书",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "检查 HTTPS 站点 TLS 证书剩余天数，临期或过期时通过通知路由告警",
+    "classification": [
+      "工具"
+    ],
+    "filename": "站点证书.js",
+    "fileDir": "/plugins/xinz/站点证书.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "4aqGhtFul/0NQ/x9vZl4U8QSBgE=",
+    "isChatPlugin": true
+  },
+  "oigUOD/4TraRJoFf5L1jjtzAIyI=": {
+    "type": "github",
+    "name": "纪念日",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "纪念日/倒计时管理，按年重复或只提醒一次，当天推送到通知路由",
+    "classification": [
+      "效率"
+    ],
+    "filename": "纪念日.js",
+    "fileDir": "/plugins/xinz/纪念日.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "oigUOD/4TraRJoFf5L1jjtzAIyI=",
     "isChatPlugin": true
   },
   "FXW0cf4qV2TQnC29mLVx45K07r8=": {
@@ -680,6 +768,28 @@
     "isAuthentication": false,
     "isEncPlugin": false,
     "id": "igoPTLlTJSwn8BHC8emGklKO0yM=",
+    "isChatPlugin": true
+  },
+  "86UzyvvByC9r3gaZuY4AQ5HGS3M=": {
+    "type": "github",
+    "name": "记账",
+    "author": "xinz",
+    "team": "xinz",
+    "version": "1.0.0",
+    "description": "轻量收支记账：支出/收入、本月汇总、分类统计，数据供每日简报读取",
+    "classification": [
+      "效率"
+    ],
+    "filename": "记账.js",
+    "fileDir": "/plugins/xinz/记账.js",
+    "systemVersionRange": "",
+    "isCron": false,
+    "isAdapter": false,
+    "isMod": false,
+    "isService": false,
+    "isAuthentication": false,
+    "isEncPlugin": false,
+    "id": "86UzyvvByC9r3gaZuY4AQ5HGS3M=",
     "isChatPlugin": true
   },
   "Feo3gPDNaqMoLAM360FuOaN5wNM=": {

@@ -53,14 +53,14 @@ async function eventText() {
 async function selfTest() {
     const all = link.scan(true);
     const names = all.map(p => p.name);
-    const expected = ['通知路由', '服务巡检', 'RSS订阅', '每日简报', '稍后读'];
+    const expected = ['通知路由', '服务巡检', 'RSS订阅', '每日简报', '稍后读', 'GitHub动态', '站点证书', '习惯打卡', '记账', '纪念日'];
     const missing = expected.filter(n => !names.includes(n));
     const ping = link.emit('ping', { from: '联动中心' });
     const pushReady = typeof global.sysMethod !== 'undefined' && typeof global.sysMethod.push === 'function';
     return [
         '🧪 联动自检',
         `· 已发现插件：${all.length} 个`,
-        `· 联动组：${missing.length ? '缺少 ' + missing.join('、') : '5 个组件齐全'}`,
+        `· 联动组：${missing.length ? '缺少 ' + missing.join('、') : expected.length + ' 个组件齐全'}`,
         `· 事件总线：${ping.at ? '正常' : '异常'}`,
         `· 推送通道 sysMethod.push：${pushReady ? '可用' : '不可用'}`,
         `· 事件记录：${(await store.get('link', 'events', [])).length || 0} 条`,
