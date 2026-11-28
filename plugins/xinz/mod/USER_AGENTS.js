@@ -1,12 +1,15 @@
 /**
  * @name USER_AGENTS
- * @version v1.0.4
+ * @version 1.0.4
  * @author seven
  * @team xinz
  * @description 🐒本仓库插件依赖此模块
  * @module true
  * @public true
- * @classification ["功能插件"]  
+ * @classification ["工具"]
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 
  module.exports = {
