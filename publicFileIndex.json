@@ -181,10 +181,10 @@
     "name": "ChatGPT",
     "author": "seven",
     "team": "xinz",
-    "version": "1.0.6",
+    "version": "2.0.0",
     "description": "ChatGpt聊天（触发词改为 gpt/画图，ai 前缀让位智能管家），适配无界3.0",
     "classification": [
-      "插件"
+      "AI"
     ],
     "filename": "ChatGPT.js",
     "fileDir": "/plugins/xinz/ChatGPT.js",
@@ -203,7 +203,7 @@
     "name": "GitHub动态",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "订阅 GitHub 仓库提交 Atom，定时检查新提交并推送到通知路由",
     "classification": [
       "工具"
@@ -225,7 +225,7 @@
     "name": "Halo运营",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "读取 Halo 文章、评论、友链与站点统计，辅助博客运营",
     "classification": [
       "内容"
@@ -247,10 +247,10 @@
     "name": "IKUN",
     "author": "seven",
     "team": "xinz",
-    "version": "1.0.3",
+    "version": "2.0.0",
     "description": "发送IKUN语录和表情包支持所有平台",
     "classification": [
-      "功能插件"
+      "工具"
     ],
     "filename": "IKUN.js",
     "fileDir": "/plugins/xinz/IKUN.js",
@@ -269,7 +269,7 @@
     "name": "NAS健康",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "本机磁盘、SMART、UPS、备份时效巡检",
     "classification": [
       "运维"
@@ -291,7 +291,7 @@
     "name": "RSS订阅",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "订阅 RSS/Atom/JSON Feed，定时抓取新条目，通过通知路由推送",
     "classification": [
       "工具"
@@ -335,7 +335,7 @@
     "name": "dify",
     "author": "seven (adapted by xinz for Dify)",
     "team": "xinz",
-    "version": "2.3.0",
+    "version": "2.4.0",
     "description": "通过 Dify API 进行聊天对话，可自定义参考用模型信息和系统提示。",
     "classification": [
       "AI"
@@ -379,10 +379,10 @@
     "name": "ping",
     "author": "seven",
     "team": "xinz",
-    "version": "1.17.1",
+    "version": "2.0.0",
     "description": "ping/web测速插件",
     "classification": [
-      "功能插件"
+      "工具"
     ],
     "filename": "ping.js",
     "fileDir": "/plugins/xinz/ping.js",
@@ -401,7 +401,7 @@
     "name": "习惯打卡",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "习惯打卡、连续天数、今日完成和近 7 天统计，数据供每日简报读取",
     "classification": [
       "效率"
@@ -423,10 +423,10 @@
     "name": "事件规则",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "监听联动总线事件，按规则调用其它插件，形成自动化工作流",
     "classification": [
-      "自动化"
+      "运维"
     ],
     "filename": "事件规则.js",
     "fileDir": "/plugins/xinz/事件规则.js",
@@ -445,7 +445,7 @@
     "name": "二维码生成",
     "author": "seven",
     "team": "xinz",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "description": "二维码生成插件，通过自定义的API接口生成二维码",
     "classification": [
       "工具"
@@ -467,7 +467,7 @@
     "name": "内容订阅",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "视频、播客、arXiv 等内容的 RSS/Atom 订阅与新条目提醒",
     "classification": [
       "内容"
@@ -489,7 +489,7 @@
     "name": "各种小姐姐视频",
     "author": "zhu",
     "team": "xinz",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "description": "小姐姐视频聚合，按关键词返回对应分类视频接口结果",
     "classification": [
       "娱乐"
@@ -511,10 +511,10 @@
     "name": "命令大全",
     "author": "Doraemon",
     "team": "xinz",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "description": "无界命令大全",
     "classification": [
-      "功能插件"
+      "工具"
     ],
     "filename": "命令大全.js",
     "fileDir": "/plugins/xinz/命令大全.js",
@@ -533,7 +533,7 @@
     "name": "域名到期",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "通过 RDAP 查询域名到期时间，30/7 天临期告警",
     "classification": [
       "工具"
@@ -555,7 +555,7 @@
     "name": "多模态",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "通过可配置的 OCR/ASR/审核接口处理图片与音频链接",
     "classification": [
       "工具"
@@ -577,7 +577,7 @@
     "name": "媒体栈",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "查询 Emby 服务状态、最近入库、正在播放与会话",
     "classification": [
       "媒体"
@@ -599,7 +599,7 @@
     "name": "安全审计",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "联动事件审计、Token 估算与用量统计",
     "classification": [
       "运维"
@@ -621,10 +621,10 @@
     "name": "微信好友申请、拉群",
     "author": "薛定谔的大灰机",
     "team": "xinz",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "description": "下方加群关键词可自定义",
     "classification": [
-      "功能插件"
+      "工具"
     ],
     "filename": "微信好友申请、拉群.js",
     "fileDir": "/plugins/xinz/微信好友申请、拉群.js",
@@ -643,7 +643,7 @@
     "name": "摸鱼",
     "author": "Dswang",
     "team": "xinz",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "description": "摸鱼人日历，可以自定义接口 自用接口 https://api.vvhan.com/api/moyu",
     "classification": [
       "工具"
@@ -665,7 +665,7 @@
     "name": "数据维护",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "插件数据备份/恢复、插件健康检查、依赖图与数据占用",
     "classification": [
       "运维"
@@ -687,7 +687,7 @@
     "name": "星座运势",
     "author": "seven",
     "team": "xinz",
-    "version": "1.0.9",
+    "version": "2.0.0",
     "description": "星座运势插件，通过自定义API接口获取星座运势并自动匹配   自用接口https://api.vvhan.com/api/horoscope",
     "classification": [
       "工具"
@@ -709,7 +709,7 @@
     "name": "服务巡检",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "HTTP 服务健康巡检：状态、延迟、连续失败告警，可通过通知路由推送",
     "classification": [
       "工具"
@@ -731,7 +731,7 @@
     "name": "每周回顾",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "description": "聚合 GitHub、RSS、巡检、证书、打卡、记账、纪念日、待读，生成每周回顾",
     "classification": [
       "效率"
@@ -753,10 +753,10 @@
     "name": "每天60s",
     "author": "seven",
     "team": "xinz",
-    "version": "1.1.0",
+    "version": "2.0.0",
     "description": "60秒读懂世界（定时推送目标平台/群/用户在插件配置中填写）",
     "classification": [
-      "功能插件"
+      "数据"
     ],
     "filename": "每天60s.js",
     "fileDir": "/plugins/xinz/每天60s.js",
@@ -775,7 +775,7 @@
     "name": "每日简报",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.1.0",
+    "version": "2.0.0",
     "description": "聚合天气、热搜、RSS、服务巡检、生态数据和待读清单，生成每日简报并推送",
     "classification": [
       "效率"
@@ -797,10 +797,10 @@
     "name": "消息转发",
     "author": "seven",
     "team": "xinz",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "监听某个人或群,当触发关键字,转发到指定目的地",
     "classification": [
-      "功能插件"
+      "工具"
     ],
     "filename": "消息转发.js",
     "fileDir": "/plugins/xinz/消息转发.js",
@@ -819,10 +819,10 @@
     "name": "爱快重拨",
     "author": "seven",
     "team": "xinz",
-    "version": "1.1.7",
+    "version": "2.0.0",
     "description": "控制iKuai重新拨号",
     "classification": [
-      "功能插件"
+      "工具"
     ],
     "filename": "爱快重拨.js",
     "fileDir": "/plugins/xinz/爱快重拨.js",
@@ -841,7 +841,7 @@
     "name": "稍后读",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "收藏链接、自动抓标题、列表/搜索/完成/删除，并与日报统计联动",
     "classification": [
       "效率"
@@ -863,7 +863,7 @@
     "name": "站点证书",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "检查 HTTPS 站点 TLS 证书剩余天数，临期或过期时通过通知路由告警",
     "classification": [
       "工具"
@@ -885,7 +885,7 @@
     "name": "纪念日",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "纪念日/倒计时管理，按年重复或只提醒一次，当天推送到通知路由",
     "classification": [
       "效率"
@@ -907,7 +907,7 @@
     "name": "网页监控",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "监控网页正文变化，支持关键词过滤，变化时通过通知路由提醒",
     "classification": [
       "工具"
@@ -929,10 +929,10 @@
     "name": "群互动",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "群投票、接龙、抽奖，数据按群隔离",
     "classification": [
-      "群管"
+      "群管理"
     ],
     "filename": "群互动.js",
     "fileDir": "/plugins/xinz/群互动.js",
@@ -951,10 +951,10 @@
     "name": "群治理",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "群规、欢迎语、广告词提醒与活跃榜",
     "classification": [
-      "群管"
+      "群管理"
     ],
     "filename": "群治理.js",
     "fileDir": "/plugins/xinz/群治理.js",
@@ -973,7 +973,7 @@
     "name": "联动中心",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "查看插件联动清单、最近事件，手动调用任意插件，自检总线与通知链路",
     "classification": [
       "工具"
@@ -995,7 +995,7 @@
     "name": "联系管理员助手",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "description": "允许用户向所有管理员发送消息。",
     "classification": [
       "工具"
@@ -1017,7 +1017,7 @@
     "name": "自定义通知人",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.1.1",
+    "version": "2.0.0",
     "description": "允许用户通过命令向配置的指定用户发送消息。",
     "classification": [
       "工具"
@@ -1039,10 +1039,10 @@
     "name": "舔狗日记",
     "author": "seven",
     "team": "xinz",
-    "version": "1.1.0",
+    "version": "2.0.0",
     "description": "舔狗日记，天行 API 密钥在插件配置中填写",
     "classification": [
-      "功能插件"
+      "工具"
     ],
     "filename": "舔狗日记.js",
     "fileDir": "/plugins/xinz/舔狗日记.js",
@@ -1061,8 +1061,8 @@
     "name": "菜单",
     "author": "seven",
     "team": "xinz",
-    "version": "1.0.4",
-    "description": "可自定义菜单内容和底部显示的菜单插件",
+    "version": "2.0.0",
+    "description": "可自定义菜单内容和底部显示的菜单插件，并支持动态插件清单",
     "classification": [
       "工具"
     ],
@@ -1083,7 +1083,7 @@
     "name": "记账",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "轻量收支记账：支出/收入、本月汇总、分类统计，数据供每日简报读取",
     "classification": [
       "效率"
@@ -1105,7 +1105,7 @@
     "name": "设备中心",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "设备与场景入口：MQTT 开关、HomeAssistant 状态/场景",
     "classification": [
       "工具"
@@ -1127,7 +1127,7 @@
     "name": "通知路由",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "统一管理通知目标，接收其他插件发出的 notify/alert 事件并推送到对应平台",
     "classification": [
       "工具"
@@ -1149,7 +1149,7 @@
     "name": "链接摘要",
     "author": "xinz",
     "team": "xinz",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "抓取网页标题、描述与正文摘要，可一键存入稍后读",
     "classification": [
       "内容"
