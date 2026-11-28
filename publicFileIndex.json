@@ -357,10 +357,10 @@
     "name": "USER_AGENTS",
     "author": "seven",
     "team": "xinz",
-    "version": "v1.0.4",
+    "version": "1.0.4",
     "description": "🐒本仓库插件依赖此模块",
     "classification": [
-      "功能插件"
+      "工具"
     ],
     "filename": "USER_AGENTS.js",
     "fileDir": "/plugins/xinz/mod/USER_AGENTS.js",
