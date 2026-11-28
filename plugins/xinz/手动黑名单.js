@@ -2,13 +2,18 @@
  * @author 咸鱼&xinz
  * @name 手动黑名单
  * @team xinz
- * @version 1.1.1
  * @description 用户黑白名单管理系统｜支持操作备注
  * @rule ^(拉黑|拉白) (\S+)$
  * @priority 10
  * @admin true
  * @disable false
  * @public false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 const jsonSchema = BncrCreateSchema.object({

@@ -2,13 +2,18 @@
  * @author xinz
  * @name 容器操作
  * @team xinz
- * @version 1.5.1
  * @description 增强版容器操作，包含状态、资源、日志查询(截图)、二维码发送等
  * @rule ^(容器操作)$
  * @priority 10000
  * @admin true
  * @public false
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 // 引入必要的模块，并尝试安装 ssh2 和 puppeteer

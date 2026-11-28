@@ -2,7 +2,6 @@
  * @author xinz
  * @name 记账
  * @team xinz
- * @version 1.0.0
  * @description 轻量收支记账：支出/收入、本月汇总、分类统计，数据供每日简报读取
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^记账列表$
@@ -16,6 +15,10 @@
  * @priority 1000000
  * @disable false
  * @classification ["效率"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

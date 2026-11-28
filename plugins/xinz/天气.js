@@ -2,7 +2,6 @@
  * @author seven
  * @name 天气
  * @team xinz
- * @version 1.0.23
  * @description 中文城市自动转英文查询天气
  * @rule ^天气(?!\s)([\s\S]+)$
  * @rule ^([\s\S]+)(天气)$
@@ -11,6 +10,12 @@
  * @priority 9999
  * @disable false
  * @service false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["数据"]
  */
 // https://api.weatherapi.com 注册获取 WeatherAPI 密钥，在前端"插件配置"中填写，源码不留明文
 const https = require('https'); // 使用 Node.js 内置的 https 模块

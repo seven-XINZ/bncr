@@ -7,13 +7,17 @@
  * @author zhu
  * @team xinz
  * @Github https://github.com/Mrzqd
- * @version 1.0.1
  * @disable false
  * @priority 100
  * @create_at 2023-08-06 16:42:58
  * @description 小姐姐视频聚合，按关键词返回对应分类视频接口结果
  * @LastEditTime 2023-08-06 20:02:55
  * @Copyright Copyright (c) 2023 by zhu, All Rights Reserved.
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
  */
 const jsonSchema = BncrCreateSchema.object({
     apiBase: BncrCreateSchema.string().setTitle('接口地址').setDefault('http://api.yujn.cn/api'),

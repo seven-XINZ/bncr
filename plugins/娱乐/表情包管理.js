@@ -3,7 +3,6 @@
  * @name 表情包管理
  * @team xinz
  * @origin 娱乐
- * @version 1.1.0
  * @description 表情包搜索、保存、发送功能
  * @platform qqBot wxKeAImao wxQianxun
  * @rule ^(搜表情 | 找表情) (.+)$
@@ -14,6 +13,11 @@
  * @disable false
  * @admin false
  * @public false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["娱乐"]
  */
 
 const jsonSchema = BncrCreateSchema.object({

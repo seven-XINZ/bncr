@@ -2,7 +2,6 @@
  * @author xinz
  * @name 插件工坊
  * @team xinz
- * @version 1.0.1
  * @description 用一句话让大模型写出可用的 Bncr 插件，落盘并做语法校验（仅管理员）
  * @rule ^(做个插件|写个插件|生成插件)\s+([\s\S]+)$
  * @rule ^(插件工坊|生成的插件|插件清单)$
@@ -10,6 +9,12 @@
  * @public false
  * @priority 99997
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 const fs = require('fs');
 const path = require('path');

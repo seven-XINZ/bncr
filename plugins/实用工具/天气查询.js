@@ -3,7 +3,6 @@
  * @name 天气查询
  * @team xinz
  * @origin 实用工具
- * @version 1.0.1
  * @description 查询天气信息，支持城市名查询
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(天气 | 气温 | 天气情况) (.+)$
@@ -11,6 +10,11 @@
  * @disable true
  * @admin false
  * @public false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["数据"]
  */
 
 const jsonSchema = BncrCreateSchema.object({

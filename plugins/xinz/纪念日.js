@@ -2,7 +2,6 @@
  * @author xinz
  * @name 纪念日
  * @team xinz
- * @version 1.0.0
  * @description 纪念日/倒计时管理，按年重复或只提醒一次，当天推送到通知路由
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^纪念日$
@@ -17,6 +16,10 @@
  * @disable false
  * @cron 0 5 9 * * *
  * @classification ["效率"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

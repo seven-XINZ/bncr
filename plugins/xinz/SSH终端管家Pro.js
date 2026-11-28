@@ -2,7 +2,6 @@
  * @author seven (modified by xinz)
  * @name SSH终端管家Pro
  * @team xinz
- * @version 2.5.0
  * @description 智能SSH管理 (简化提示, 结果不截断, 5s/60s删除)
  * @rule ^(ssh|SSH)(?:\s+(\d+))?$
  * @priority 10000
@@ -10,6 +9,12 @@
  * @public false
  * @disable false
  * @service false
+ * @version 2.6.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["运维"]
  */
 
 /*

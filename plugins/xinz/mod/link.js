@@ -36,6 +36,12 @@ function parseMeta(file, code) {
         const m = line.match(/@(?:rule|cron)\s+([^\n\r]+)/);
         if (m) rules.push(stripRule(m[1]));
     }
+    const abs = path.resolve(PLUGIN_ROOT, file);
+    let stat = {};
+    try {
+        stat = fs.statSync(abs);
+    } catch (e) {}
+    const classification = pick('classification').replace(/^\[|\]$/g, '').replace(/["']/g, '').trim();
     return {
         name,
         version: pick('version') || '0.0.0',
@@ -47,8 +53,14 @@ function parseMeta(file, code) {
         public: pick('public') === 'true',
         service: pick('service') === 'true',
         cron: (code.match(/@cron\s+([^\n\r]+)/) || [])[1] || '',
+        classification,
+        platform: pick('platform'),
+        license: pick('license'),
+        updated: pick('updated'),
+        size: stat.size || 0,
+        mtime: stat.mtimeMs || 0,
         file,
-        abs: path.resolve(PLUGIN_ROOT, file),
+        abs,
         kind: 'plugin',
     };
 }
@@ -274,10 +286,46 @@ function hash(text) {
     return crypto.createHash('md5').update(String(text)).digest('hex');
 }
 
+function isOfficial(meta) {
+    return /^官方插件[\\/]/.test(String(meta && meta.file || ''));
+}
+
+function isArchive(meta) {
+    return /(^|[\\/])_archive[\\/]/.test(String(meta && meta.file || ''));
+}
+
+function isMod(meta) {
+    return /(^|[\\/])mod[\\/]/.test(String(meta && meta.file || ''));
+}
+
+/** 只返回非官方、非归档的活动插件 */
+function listActive() {
+    return scan(false).filter(p => !isOfficial(p) && !isArchive(p) && !isMod(p));
+}
+
+/** 活动/官方/归档数量统计 */
+function stats() {
+    const all = scan(false);
+    const active = all.filter(p => !isOfficial(p) && !isArchive(p) && !isMod(p));
+    const official = all.filter(isOfficial);
+    const archive = all.filter(isArchive);
+    return {
+        total: all.length,
+        active: active.length,
+        official: official.length,
+        archive: archive.length,
+    };
+}
+
 module.exports = {
     PLUGIN_ROOT,
     scan,
     list,
+    listActive,
+    stats,
+    isOfficial,
+    isArchive,
+    isMod,
     find,
     register,
     callPlugin,

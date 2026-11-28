@@ -2,7 +2,6 @@
  * @author seven (adapted by xinz for Dify)
  * @name dify
  * @team xinz
- * @version 2.3.0
  * @description 通过 Dify API 进行聊天对话，可自定义参考用模型信息和系统提示。
  * @rule ^[aA] ([\s\S]+)$
  * @rule ^[aA]$
@@ -12,6 +11,11 @@
  * @classification ["AI"]
  * @disable false
  * @service false
+ * @version 2.4.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
  */
 
 /*

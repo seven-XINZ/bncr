@@ -2,7 +2,6 @@
  * @author seven
  * @name 二维码生成
  * @team xinz
- * @version 1.0.1
  * @description 二维码生成插件，通过自定义的API接口生成二维码
  * @rule ^(二维码生成) (.+)$
  * @priority 99999
@@ -10,6 +9,11 @@
  * @public true
  * @classification ["工具"]
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
  */
 const axios = require('axios');
 const fs = require('fs');

@@ -2,7 +2,6 @@
  * @author xinz
  * @name 每日简报
  * @team xinz
- * @version 1.1.0
  * @description 聚合天气、热搜、RSS、服务巡检、生态数据和待读清单，生成每日简报并推送
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^(今日简报|每日简报|简报)$
@@ -12,6 +11,10 @@
  * @disable false
  * @cron 0 0 8 * * *
  * @classification ["效率"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

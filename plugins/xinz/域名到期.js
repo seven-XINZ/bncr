@@ -2,7 +2,6 @@
  * @author xinz
  * @name 域名到期
  * @team xinz
- * @version 1.0.0
  * @description 通过 RDAP 查询域名到期时间，30/7 天临期告警
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^域名$
@@ -17,6 +16,10 @@
  * @disable false
  * @cron 0 0 10 * * *
  * @classification ["工具"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

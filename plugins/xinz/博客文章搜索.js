@@ -2,7 +2,6 @@
  * @author xinz
  * @name 博客文章搜索
  * @team xinz
- * @version 1.3.1
  * @description 根据关键词在配置的 RSS Feed 中搜索文章。需在博客后台开启 RSS 摘要；配置的输出条数尽量大于文章总数。
  * @rule ^博客\s+(.+)$
  * @rule ^[bB][kK]\s+(.+)$
@@ -11,6 +10,12 @@
  * @priority 100
  * @disable false
  * @service false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 /*

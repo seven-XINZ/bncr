@@ -2,13 +2,18 @@
  *  @author xinz
  *  @name 智能管家
  *  @team xinz
- *  @version 1.8.2
  *  @description 启动即接管全部插件：本地知识库、槽位追问、指代消解、危险确认、生词自学习，无大模型也能干活
  *  @rule ^([\s\S]+)$
  *  @admin false
  *  @public false
  *  @priority 999999
  *  @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 const fs = require('fs');
 const path = require('path');

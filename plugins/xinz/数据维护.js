@@ -2,7 +2,6 @@
  * @author xinz
  * @name 数据维护
  * @team xinz
- * @version 1.0.0
  * @description 插件数据备份/恢复、插件健康检查、依赖图与数据占用
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^维护$
@@ -18,6 +17,10 @@
  * @disable false
  * @cron 0 0 3 * * 0
  * @classification ["运维"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

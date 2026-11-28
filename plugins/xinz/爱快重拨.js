@@ -2,7 +2,6 @@
  * @author seven
  * @name 爱快重拨
  * @team xinz
- * @version 1.1.7
  * @description 控制iKuai重新拨号
  * @rule ^(爱快|ikuai|iKuai)(重拨|重播)([0-9]+)$
  * @rule ^(爱快|ikuai|iKuai)(查询|重拨|重播|重启|重置)$
@@ -10,7 +9,12 @@
  * @public true
  * @disable false
  * @priority 50
- * @classification ["功能插件"]  
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 /**

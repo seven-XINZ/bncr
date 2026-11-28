@@ -2,7 +2,6 @@
  * @author seven
  * @name IKUN
  * @team xinz
- * @version 1.0.3
  * @description 发送IKUN语录和表情包支持所有平台
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty
  * @rule ^(鸡你太美|坤坤|ikun|IKUN|小黑子|小黑粉|真爱粉|你干嘛|纯路人|人民网)(.*)$
@@ -10,7 +9,11 @@
  * @public true
  * @disable false
  * @priority 50
- * @classification ["功能插件"]  
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 const path = require('path');

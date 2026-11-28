@@ -3,7 +3,6 @@
  * @name 猜歌游戏
  * @team xinz
  * @origin 娱乐
- * @version 1.0.0
  * @description 猜歌名游戏，发送歌词猜歌名，支持积分排行
  * @platform qqBot wxKeAImao wxQianxun
  * @rule ^(开始猜歌 | 猜歌游戏)$
@@ -13,6 +12,11 @@
  * @disable false
  * @admin false
  * @public false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["娱乐"]
  */
 
 const currentGame = new Map(); // 存储各群的游戏状态

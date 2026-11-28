@@ -2,7 +2,6 @@
  * @author seven
  * @name Bncr_ChatGPT
  * @team xinz
- * @version 1.2.2
  * @description ChatGpt聊天 借助于chatgpt模块，增加tts功能
  * @rule ^(yy) ([\s\S]+)$
  * @rule ^(yy)$
@@ -13,7 +12,11 @@
  * @platform wx pgm tg web qq ntqq
  * @disable false
  * @systemVersion >=:2.0.5
- * @classification ["ai","gpt"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["AI"]
  */
 
 /* 

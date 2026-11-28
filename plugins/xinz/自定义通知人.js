@@ -2,7 +2,6 @@
  * @author xinz
  * @name 自定义通知人
  * @team xinz
- * @version 1.1.1
  * @description 允许用户通过命令向配置的指定用户发送消息。
  * @rule ^通知$
  * @admin false
@@ -11,6 +10,11 @@
  * @classification ["工具"]
  * @disable false
  * @service false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
  */
 
 /*

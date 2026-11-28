@@ -2,7 +2,6 @@
  * @author xinz
  * @name 站点证书
  * @team xinz
- * @version 1.0.0
  * @description 检查 HTTPS 站点 TLS 证书剩余天数，临期或过期时通过通知路由告警
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^证书$
@@ -16,6 +15,10 @@
  * @disable false
  * @cron 0 0 9 * * *
  * @classification ["工具"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

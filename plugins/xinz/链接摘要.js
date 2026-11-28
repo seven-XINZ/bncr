@@ -2,7 +2,6 @@
  * @author xinz
  * @name 链接摘要
  * @team xinz
- * @version 1.0.0
  * @description 抓取网页标题、描述与正文摘要，可一键存入稍后读
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^摘要\s+保存\s+(\S+)(?:\s+([\s\S]+))?$
@@ -13,6 +12,10 @@
  * @priority 1000000
  * @disable false
  * @classification ["内容"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

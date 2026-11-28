@@ -2,16 +2,23 @@
  * @author seven
  * @name 菜单
  * @team xinz
- * @version 1.0.4
- * @description 可自定义菜单内容和底部显示的菜单插件
+ * @description 可自定义菜单内容和底部显示的菜单插件，并支持动态插件清单
  * @rule ^(菜单)$
+ * @rule ^插件菜单$
  * @admin false
  * @public true
  * @priority 1000
  * @disable false
  * @classification ["工具"]
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @version 2.0.0
  */
 /// <reference path="../../@types/Bncr.d.ts" />
+const link = require('./mod/link');
+const kit = require('./mod/plugin-kit');
 const defaultConfig = {
     menuItems: [
       {
@@ -94,12 +101,43 @@ const defaultConfig = {
     return message.join('\n');
   }
   
+  function generatePluginMenu() {
+    const plugins = link.listActive();
+    const groups = new Map();
+    for (const p of plugins) {
+      const key = p.classification || '未分类';
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(p);
+    }
+    const count = link.stats();
+    const lines = [
+      '🧩 插件菜单',
+      `活动 ${count.active} 个 · 官方 ${count.official} 个 · 归档 ${count.archive} 个`,
+      '┄┅┄┅┄┅┄┅┄┅┄┅┄'
+    ];
+    for (const [category, items] of groups) {
+      lines.push(`【${category}】${items.length} 个`);
+      items.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+      for (const p of items) {
+        const desc = (p.description || '无描述').slice(0, 40);
+        lines.push(`${p.name} v${p.version} — ${desc}`);
+      }
+      lines.push('┄┅┄┅┄┅┄┅┄┅┄┅┄');
+    }
+    lines.push('发送「插件体检」可查看健康状态');
+    return lines.join('\n');
+  }
+
   /**
    * 插件入口
    * @param {Sender} s
    */
   module.exports = async s => {
     try {
+      const msg = String((s.getMsg && s.getMsg()) || '').trim();
+      if (/^插件菜单$/.test(msg)) {
+        return await kit.replyLong(s, generatePluginMenu());
+      }
       await ConfigDB.get();
       if (!Object.keys(ConfigDB.userConfig).length) {
         return await s.reply('请先发送"修改无界配置",或者前往前端web"插件配置"来完成插件首次配置');

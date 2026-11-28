@@ -2,7 +2,6 @@
  * @author xinz
  * @name Halo运营
  * @team xinz
- * @version 1.0.0
  * @description 读取 Halo 文章、评论、友链与站点统计，辅助博客运营
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^博客$
@@ -15,6 +14,10 @@
  * @priority 1000000
  * @disable false
  * @classification ["内容"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

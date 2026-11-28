@@ -2,7 +2,6 @@
  *  @author xinz
  *  @name 智能AI聊天
  *  @team xinz
- *  @version 1.1.0
  *  @description 兼容 OpenAI 格式的聊天接口（豆包/DeepSeek/Ollama 均可），支持多轮上下文
  *  @rule ^聊天 (.+)$
  *  @rule ^聊天$ 
@@ -10,6 +9,12 @@
  *  @public false
  *  @priority 1
  *  @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 const axios = require('axios');
 

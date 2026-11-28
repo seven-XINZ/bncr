@@ -2,7 +2,6 @@
  * @author xinz
  * @name 群治理
  * @team xinz
- * @version 1.0.0
  * @description 群规、欢迎语、广告词提醒与活跃榜
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^群规(?:$|\s+[\s\S]+)$
@@ -15,7 +14,11 @@
  * @public true
  * @priority 1000000
  * @disable false
- * @classification ["群管"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["群管理"]
  */
 'use strict';
 

@@ -2,7 +2,6 @@
  * @author xinz
  * @name 网页监控
  * @team xinz
- * @version 1.0.0
  * @description 监控网页正文变化，支持关键词过滤，变化时通过通知路由提醒
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^监控\s+添加\s+(\S+)\s+(\S+)(?:\s+([\s\S]+))?$
@@ -17,6 +16,10 @@
  * @disable false
  * @cron 0 10,40 * * * *
  * @classification ["工具"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

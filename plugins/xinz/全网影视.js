@@ -2,7 +2,6 @@
  * @author 薛定谔的大灰机
  * @name 全网影视
  * @team xinz
- * @version 1.0.2
  * @description 全网免费影视动漫（数据来源：妖狐数据开放API接口：https://api.yaohud.cn）
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo
  * @rule ^(vip|VIP|动漫|电影|影视)(.*)$
@@ -10,6 +9,11 @@
  * @disable false
  * @public false
  * @priority 50
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 const mo = require('./mod/subassembly')      // 此脚本依赖仓库模块，请拉取全部文件

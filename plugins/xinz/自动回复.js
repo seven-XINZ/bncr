@@ -1,19 +1,23 @@
 /**
  * @author seven
  * @name 自动回复
- * @description 关键词自动回复：管理员可添加/删除关键词，发送「菜单」查看关键词列表；关键词数据存于 mod/autoReplyData.json
+ * @description 关键词自动回复：管理员可添加/删除关键词，发送「关键词菜单」查看关键词列表；关键词数据存于 mod/autoReplyData.json
  * @team xinz
- * @version 1.1.0
  * @rule ^(删除自动回复) ([^\n]+)$
  * @rule ^(添加自动回复) ([^\n]+) ([\s\S]+)$
  * @rule ^(自动回复列表)$
- * @rule ^(菜单)$
+ * @rule ^(关键词菜单)$
  * @rule [\s\S]+
  * @priority 1
  * @admin false
  * @disable false
  * @public false
- * @classification ["功能插件"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 const fs = require('fs');
@@ -82,7 +86,7 @@ module.exports = async s => {
             return s.delMsg(await s.reply('没有该关键词回复列表'), { wait: 10 });
         }
 
-        case '菜单': {
+        case '关键词菜单': {
             const replyKeywords = loadAutoReplies();
             const keywordList = Object.keys(replyKeywords).map(key => `${key}`).join('\n');
             const menuMessage = ` ——功能列表——\n` +

@@ -2,7 +2,6 @@
  * @author xinz
  * @name 内容订阅
  * @team xinz
- * @version 1.0.0
  * @description 视频、播客、arXiv 等内容的 RSS/Atom 订阅与新条目提醒
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^内容$
@@ -19,6 +18,10 @@
  * @disable false
  * @cron 0 0 * * * *
  * @classification ["内容"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

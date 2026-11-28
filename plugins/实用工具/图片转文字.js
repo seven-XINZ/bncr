@@ -3,7 +3,6 @@
  * @name 图片转文字
  * @team xinz
  * @origin 实用工具
- * @version 1.1.0
  * @description 图片 OCR 识别，支持百度 OCR，可在后台配置应用凭证
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(识别图片 | OCR|图片转文字)$
@@ -11,6 +10,11 @@
  * @disable false
  * @admin false
  * @public false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["娱乐"]
  */
 
 const fs = require('fs').promises;

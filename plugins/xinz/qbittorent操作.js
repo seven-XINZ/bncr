@@ -2,13 +2,18 @@
  * @author xinz
  * @name qbittorent操作
  * @team xinz
- * @version 2.2.0
  * @description qBittorrent 下载器操作
  * @rule ^(qb操作)$
  * @priority 10000
  * @admin true
  * @public false
  * @disable false
+ * @version 2.3.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 // 确保 @ctrl/qbittorrent 模块已安装

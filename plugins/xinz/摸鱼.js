@@ -2,7 +2,6 @@
  * @author Dswang
  * @name 摸鱼
  * @team xinz
- * @version 1.0.1
  * @description 摸鱼人日历，可以自定义接口 自用接口 https://api.vvhan.com/api/moyu
  * @rule ^(摸鱼)$
  * @priority 99999
@@ -10,6 +9,11 @@
  * @public true
  * @classification ["工具"]
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
  */
 const axios = require('axios');
 const fs = require('fs');

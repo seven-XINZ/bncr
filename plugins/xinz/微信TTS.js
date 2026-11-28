@@ -2,7 +2,6 @@
  * @author xinz
  * @name 微信TTS
  * @team xinz
- * @version 1.0.0
  * @description 文字转语音开关与多平台配置，配合 wxClawBot 适配器使用（默认关闭）
  * @rule ^(tts|TTS)$
  * @rule ^(tts|TTS)\s+(开|关|状态|列表)$
@@ -13,6 +12,12 @@
  * @public false
  * @priority 5
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 const fs = require('fs');
 const path = require('path');

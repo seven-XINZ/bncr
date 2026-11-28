@@ -2,7 +2,6 @@
  * @author xinz
  * @name 媒体栈
  * @team xinz
- * @version 1.0.0
  * @description 查询 Emby 服务状态、最近入库、正在播放与会话
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^媒体$
@@ -14,6 +13,10 @@
  * @priority 1000000
  * @disable false
  * @classification ["媒体"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

@@ -2,7 +2,6 @@
  * @author xinz
  * @name 稍后读
  * @team xinz
- * @version 1.0.0
  * @description 收藏链接、自动抓标题、列表/搜索/完成/删除，并与日报统计联动
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^稍后读\s+(https?:\/\/\S+)(?:\s+([\s\S]+))?$
@@ -15,6 +14,10 @@
  * @priority 1000000
  * @disable false
  * @classification ["效率"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

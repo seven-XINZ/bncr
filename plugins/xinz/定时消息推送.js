@@ -2,7 +2,6 @@
  * @author xinz
  * @name 定时消息推送
  * @team xinz
- * @version 1.3.3
  * @description 根据Cron表达式定时发送多种类型内容(文本,URL内容,JSON,文件,Markdown,随机项,API调用,位置,Sticker等)到多个目标。包含详细配置说明。
  * @rule ^$-----NEVER-MATCH-----$
  * @admin false
@@ -10,6 +9,12 @@
  * @disable false
  * @public false
  * @service true
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["效率"]
  */
 'use strict';
 

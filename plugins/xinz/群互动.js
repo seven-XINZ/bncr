@@ -2,7 +2,6 @@
  * @author xinz
  * @name 群互动
  * @team xinz
- * @version 1.0.0
  * @description 群投票、接龙、抽奖，数据按群隔离
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^投票(?:$|\s+[\s\S]+)$
@@ -12,7 +11,11 @@
  * @public true
  * @priority 1000000
  * @disable false
- * @classification ["群管"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["群管理"]
  */
 'use strict';
 

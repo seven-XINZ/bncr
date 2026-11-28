@@ -2,13 +2,18 @@
  * @name pixiv完整版
  * @author xinz&啊屁
  * @team xinz
- * @version 1.1.0
  * @description 更具分类搜索随机获取一组涩涩纸片人 也可自定义搜索 并且设置了代理或者直连模式直连速度视你的科学网速而定 图片可以存到本地分类存放
  * @rule ^zpr(18)? (all|illustration|manga|novel|animation|game|original|doujinshi)?$|^pp$|^zpr (.+)$
  * @admin false
  * @public false
  * @priority 50
  @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["娱乐"]
  */
 
 // 常量定义

@@ -2,7 +2,6 @@
  * @author xinz
  * @name NAS健康
  * @team xinz
- * @version 1.0.0
  * @description 本机磁盘、SMART、UPS、备份时效巡检
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^NAS$
@@ -15,6 +14,10 @@
  * @disable false
  * @cron 0 30 8 * * *
  * @classification ["运维"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

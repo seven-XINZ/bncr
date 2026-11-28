@@ -3,7 +3,6 @@
  * @name 智能搜索
  * @team xinz
  * @origin 实用工具
- * @version 1.0.1
  * @description 支持多种搜索引擎：百度、谷歌、必应、B 站、知乎等
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(搜索 | 搜一下) (.+)$
@@ -12,6 +11,11 @@
  * @disable false
  * @admin false
  * @public false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 

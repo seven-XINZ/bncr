@@ -2,7 +2,6 @@
  * @author xinz
  * @name 设备中心
  * @team xinz
- * @version 1.0.0
  * @description 设备与场景入口：MQTT 开关、HomeAssistant 状态/场景
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^设备$
@@ -20,6 +19,10 @@
  * @priority 1000000
  * @disable false
  * @classification ["工具"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

@@ -3,7 +3,6 @@
  * @name 待办事项
  * @team xinz
  * @origin 效率工具
- * @version 1.0.1
  * @description 个人待办事项管理：添加、查看、完成、删除
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(待办 | 任务 | 计划) (.+)$
@@ -14,6 +13,11 @@
  * @disable false
  * @admin false
  * @public false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["效率"]
  */
 
 

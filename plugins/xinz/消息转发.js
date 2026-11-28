@@ -3,14 +3,17 @@
  * @team xinz
  * @author seven
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty
- * @version 2.0.0
  * @name 消息转发
  * @rule [\s\S]+
  * @priority 100000
  * @admin false
  * @disable false
  * @public true
- * @classification ["功能插件"]  
+ * @version 2.1.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 /* 

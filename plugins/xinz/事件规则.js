@@ -2,7 +2,6 @@
  * @author xinz
  * @name 事件规则
  * @team xinz
- * @version 1.0.0
  * @description 监听联动总线事件，按规则调用其它插件，形成自动化工作流
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^规则$
@@ -16,7 +15,11 @@
  * @public true
  * @priority 1000000
  * @disable false
- * @classification ["自动化"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["运维"]
  */
 'use strict';
 

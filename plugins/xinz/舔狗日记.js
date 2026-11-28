@@ -2,14 +2,18 @@
  * @author seven
  * @name 舔狗日记
  * @team xinz
- * @version 1.1.0
  * @description 舔狗日记，天行 API 密钥在插件配置中填写
  * @rule ^(舔狗|舔狗日记|我舔)$
  * @admin false
  * @public true
  * @priority 9999
  * @disable false
- * @classification ["功能插件"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 const axios = require('axios');

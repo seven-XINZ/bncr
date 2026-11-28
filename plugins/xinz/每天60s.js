@@ -2,7 +2,6 @@
  * @author seven
  * @name 每天60s
  * @team xinz
- * @version 1.1.0
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty
  * @description 60秒读懂世界（定时推送目标平台/群/用户在插件配置中填写）
  * @rule ^(60s|每日60)$
@@ -11,7 +10,11 @@
  * @priority 99999
  * @disable false
  * @cron 0 10 9 * * *
- * @classification ["功能插件"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["数据"]
  */
 
 const axios = require('axios').default;

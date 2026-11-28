@@ -2,7 +2,6 @@
  * @author xinz
  * @name 服务巡检
  * @team xinz
- * @version 1.0.0
  * @description HTTP 服务健康巡检：状态、延迟、连续失败告警，可通过通知路由推送
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^巡检(?:\s+([\s\S]+))?$
@@ -12,6 +11,10 @@
  * @disable false
  * @cron 0 0,5,10,15,20,25,30,35,40,45,50,55 * * * *
  * @classification ["工具"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

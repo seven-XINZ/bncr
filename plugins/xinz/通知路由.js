@@ -2,7 +2,6 @@
  * @author xinz
  * @name 通知路由
  * @team xinz
- * @version 1.0.0
  * @description 统一管理通知目标，接收其他插件发出的 notify/alert 事件并推送到对应平台
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^通知列表$
@@ -12,6 +11,10 @@
  * @priority 1000000
  * @disable false
  * @classification ["工具"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

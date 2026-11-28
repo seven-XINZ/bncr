@@ -2,7 +2,6 @@
  * @author Dswang
  * @name 热点趋势
  * @team xinz & SmartAI
- * @version 1.1.0
  * @description 获取网络热点（微博走官方榜单接口，其余平台走第三方，失效时明确提示）
  * @platform tgBot qq ssh HumanTG wxQianxun wxXyo wechaty wxClawBot
  * @rule ^((抖音|微博|知乎|bilibili|bili|哔哩|哔哩哔哩)热搜)$
@@ -10,6 +9,10 @@
  * @public false
  * @priority 9999
  * @classification ["工具"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 const axios = require('axios');
 

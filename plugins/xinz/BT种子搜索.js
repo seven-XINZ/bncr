@@ -2,13 +2,18 @@
  * @author seven
  * @name BT种子搜索
  * @team xinz
- * @version 1.1.0
  * @description 自动在 Jackett 模糊搜索 BT 种子并输出结果；Jackett 地址与 API Key 在插件配置中填写
  * @rule ^bt (.+)$
  * @admin true
  * @public false
  * @priority 99
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 // 引入 axios 库，用于发送 HTTP 请求

@@ -3,13 +3,18 @@
  * @name 黑丝_白丝
  * @team xinz
  * @origin Masato
- * @version 1.0.2
  * @description 黑丝白丝图片
  * @rule ^([\s\S]+)丝$
  * @admin false
  * @public false
  * @priority 9999
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 const axios = require('axios').default

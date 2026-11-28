@@ -1,15 +1,19 @@
 /**
  * @author Merrick & Collaborator (AI)
  * @name Gemini
- * @version 1.0.3
  * @description gemini聊天, 支持自定义模型
  * @team xinz
  * @rule ^(gems|gemc|gemp)([\s\S]+)$
  * @admin true
  * @public false
  * @priority 9999
- * @classification ["插件"]
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["AI"]
  */
 /*
 使用方法：打开https://ai.google.dev/ 获取API key并填入配置界面（获取方法请自行搜索）

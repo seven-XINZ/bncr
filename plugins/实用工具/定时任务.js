@@ -3,7 +3,6 @@
  * @name 定时任务
  * @team xinz
  * @origin 实用工具
- * @version 1.0.1
  * @description 创建、查看、删除定时任务
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(添加定时任务 | 创建任务|定时) (.+)$
@@ -13,6 +12,11 @@
  * @priority 100
  * @disable false
  * @public false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["效率"]
  */
 
 const tasks = new Map();

@@ -2,7 +2,6 @@
  * @author xinz
  * @name 联动中心
  * @team xinz
- * @version 1.0.0
  * @description 查看插件联动清单、最近事件，手动调用任意插件，自检总线与通知链路
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^联动列表$
@@ -16,6 +15,10 @@
  * @priority 1000000
  * @disable false
  * @classification ["工具"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

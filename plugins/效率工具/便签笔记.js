@@ -3,7 +3,6 @@
  * @name 便签笔记
  * @team xinz
  * @origin 效率工具
- * @version 1.0.1
  * @description 快速记录便签和笔记，支持分类和标签
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(便签 | 笔记 | 记录) (.+)$
@@ -14,6 +13,11 @@
  * @disable false
  * @admin false
  * @public false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["效率"]
  */
 
 

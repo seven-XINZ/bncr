@@ -3,7 +3,6 @@
  * @name 鑫仔bot菜单
  * @team xinz
  * @origin Utility
- * @version 3.0.1
  * @description 实时扫描插件，按分类分页生成命令菜单，支持关键词筛选、命令精简与自动撤回。
  * @rule ^(#菜单|menu)(?:\s+([\s\S]+))?$
  * @admin false
@@ -12,6 +11,11 @@
  * @public false
  * @service false
  * @classification ["工具"]
+ * @version 3.1.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
  */
 
 'use strict';

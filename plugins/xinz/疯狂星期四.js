@@ -2,7 +2,6 @@
  *  @author seven
  *  @name 疯狂星期四
  *  @team xinz
- *  @version 1.1.0
  *  @description 疯狂星期四文案，每日 10:03 定时检查，仅周四推送
  *  @rule ^(疯狂星期四)$
  *  @admin false
@@ -10,6 +9,12 @@
  *  @priority 99999
  *  @disable false
  *  @cron 16 3 10 * * *
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 const axios = require('axios');
 

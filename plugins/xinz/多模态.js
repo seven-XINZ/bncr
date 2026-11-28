@@ -2,7 +2,6 @@
  * @author xinz
  * @name 多模态
  * @team xinz
- * @version 1.0.0
  * @description 通过可配置的 OCR/ASR/审核接口处理图片与音频链接
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^多模态$
@@ -14,6 +13,10 @@
  * @priority 1000000
  * @disable false
  * @classification ["工具"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

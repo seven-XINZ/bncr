@@ -3,7 +3,6 @@
  * @name 群管理助手
  * @team xinz
  * @origin 群管理
- * @version 1.0.1
  * @description 群管理功能：欢迎新人、自动踢人、禁言、群公告等
  * @platform qqBot wxKeAImao wxQianxun
  * @rule ^(欢迎消息 | 欢迎词)$
@@ -16,6 +15,11 @@
  * @priority 110
  * @disable false
  * @public false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["群管理"]
  */
 
 

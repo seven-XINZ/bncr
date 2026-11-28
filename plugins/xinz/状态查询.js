@@ -2,13 +2,18 @@
  * @author seven
  * @name 状态查询
  * @team xinz
- * @version 1.0.0
- * @description 本机资源查询
- * @rule ^(运行状态)$
+ * @description 本机资源查询简版：发送「状态查询」查看 CPU/内存/磁盘概览
+ * @rule ^(状态查询)$
  * @admin true
  * @public false
  * @priority 9999
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["数据"]
  */
 
 const os = require('os');

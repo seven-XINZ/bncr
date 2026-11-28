@@ -3,15 +3,19 @@
  * @author seven
  * @name ChatGPT
  * @team xinz
- * @version 1.0.6
  * @description ChatGpt聊天（触发词改为 gpt/画图，ai 前缀让位智能管家），适配无界3.0
  * @rule ^(gpt|画图) ([\s\S]+)$
  * @rule ^(gpt|画图)$
  * @admin false
  * @public true
  * @priority 99999
- * @classification ["插件"]
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["AI"]
  */
 
 const fs = require('fs'); // 文件系统模块，用于读取文件

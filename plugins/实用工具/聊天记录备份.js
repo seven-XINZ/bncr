@@ -3,7 +3,6 @@
  * @name 聊天记录备份
  * @team xinz
  * @origin 实用工具
- * @version 1.1.0
  * @description 将 BncrDB 数据导出为 JSON 文件，支持手动备份与定时备份
  * @platform tgBot qqBot wxKeAImao wxQianxun
  * @rule ^(备份记录 | 导出聊天 | 保存聊天)$
@@ -13,6 +12,11 @@
  * @disable false
  * @public false
  * @cron 0 0 3 * * *
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
+ * @classification ["运维"]
  */
 
 const fs = require('fs').promises;

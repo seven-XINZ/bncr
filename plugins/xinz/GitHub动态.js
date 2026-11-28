@@ -2,7 +2,6 @@
  * @author xinz
  * @name GitHub动态
  * @team xinz
- * @version 1.0.0
  * @description 订阅 GitHub 仓库提交 Atom，定时检查新提交并推送到通知路由
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^GitHub动态\s+订阅\s+(\S+)(?:\s+(\S+))?$
@@ -17,6 +16,10 @@
  * @disable false
  * @cron 0 15,45 * * * *
  * @classification ["工具"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

@@ -2,13 +2,18 @@
  * @author Dswang
  * @team xinz
  * @name 网抑云
- * @version 1.0.1
  * @description 网抑云插件
  * @rule ^网抑云$
  * @admin false
  * @public false
  * @priority 1
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 const axios = require('axios');
 

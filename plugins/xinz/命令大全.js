@@ -2,14 +2,18 @@
  * @author Doraemon
  * @name 命令大全
  * @team xinz
- * @version 1.0.1
  * @description 无界命令大全
  * @rule ^(命令)$
  * @admin true
  * @public true
  * @priority 1000
  @disable false
- * @classification ["功能插件"]  
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 

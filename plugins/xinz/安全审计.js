@@ -2,7 +2,6 @@
  * @author xinz
  * @name 安全审计
  * @team xinz
- * @version 1.0.0
  * @description 联动事件审计、Token 估算与用量统计
  * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
  * @rule ^审计$
@@ -15,6 +14,10 @@
  * @priority 1000000
  * @disable false
  * @classification ["运维"]
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @updated 2026-11-28
  */
 'use strict';
 

@@ -2,7 +2,6 @@
  * @author 啊屁
  * @team xinz
  * @name Aria2 push
- * @version 1.0.5
  * @description 管理Aria2下载任务
  * @rule ^(magnet:\?xt=urn:btih:[a-zA-Z0-9]+)
  * @rule ^(下载中|等待中|已完成|暂停任务|恢复任务|删除任务)$
@@ -10,6 +9,12 @@
  * @public false
  * @priority 50
  @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["工具"]
  */
 
 const axios = require('axios');

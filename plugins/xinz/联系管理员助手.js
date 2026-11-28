@@ -2,7 +2,6 @@
  * @author xinz
  * @name 联系管理员助手
  * @team xinz
- * @version 1.0.1
  * @description 允许用户向所有管理员发送消息。
  * @rule ^联系管理员$
  * @admin false
@@ -11,6 +10,11 @@
  * @classification ["工具"]
  * @disable false
  * @service false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
  */
 
 // --- 引入/声明全局对象和依赖 ---

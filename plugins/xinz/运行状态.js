@@ -2,13 +2,18 @@
  * @author seven
  * @name 运行状态
  * @team xinz
- * @version 1.6.3
  * @description 本机资源查询 - 美化版 (自动过滤磁盘, 无网络信息)
  * @rule ^(运行状态)$
  * @admin false
  * @public false
  * @priority 9999
  * @disable false
+ * @version 2.0.0
+ * @license MIT
+ * @repo https://github.com/seven-XINZ/bncr
+ * @platform qq tgBot wxClawBot wxQianxun wxXyo HumanTG web ssh
+ * @updated 2026-11-28
+ * @classification ["运维"]
  */
 
 const os = require('os');
