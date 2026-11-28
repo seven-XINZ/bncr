@@ -5,6 +5,12 @@ on:
     paths:
       - 'Adapter/**'
       - 'plugins/**'
+      - '.github/workflows/generate-json-index.yml'
+      - '.github/workflows/generate_index.js'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -12,15 +18,12 @@ jobs:
 
     steps:
       - name: 检出代码
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 设置 Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '14'
-
-      - name: 安装依赖
-        run: npm install
+          node-version: '20'
 
       - name: 由Actions自动生成插件市场所需JSON索引
         run: node .github/workflows/generate_index.js
@@ -30,7 +33,11 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add publicFileIndex.json
+          if git diff --cached --quiet; then
+            echo "索引无变化，跳过提交"
+            exit 0
+          fi
           git commit -m '由Actions自动生成插件市场所需JSON索引'
-          git push
+          git push origin HEAD:main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
