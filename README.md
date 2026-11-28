@@ -668,7 +668,7 @@ node scripts/check-plugins.js
 - `菜单` 新增 `插件菜单`：按分类动态列出全部活动插件、版本与描述，长消息自动分片
 - 修复真实规则冲突：`状态查询` 改触发词为「状态查询」，不再与 `运行状态` 抢「运行状态」；`自动回复` 的「菜单」改为「关键词菜单」，不再与主菜单冲突
 - 新增 `scripts/upgrade-plugins.js` 批量规范元信息、`scripts/gen-plugin-docs.js` 生成 `docs/PLUGINS.md`；全目录 95 个 JS 语法与安全体检 0 失败
-- 线上 Bncr 同步后重启验证，活动插件全部加载、0 报错
+- 线上 Bncr 同步后重启验证：81 个启用插件全部加载、2 个按原配置停用、0 个插件报错；容器内 `插件体检` 83 个活动插件全绿
 
 ### v1.12.0
 - **全仓开源审计**：递归扫描 `plugins/` 全部 93 个 JS，确认不再包含 `Code Encryption Block`、`HideStart/HideEnd` 加密块或压缩混淆代码
